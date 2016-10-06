@@ -1,0 +1,43 @@
+import java.awt.*;
+import javax.swing.*;
+
+public class TabbedPaneFrame extends JFrame {
+    public TabbedPaneFrame() {
+            
+        JTabbedPane tabbedPane = new JTabbedPane(); 
+        
+        //panel one
+        JLabel label1 = new JLabel("Hello and welcome to the first panel", SwingConstants.CENTER); //creates a label for the panel, centers it
+        JPanel panel1 = new JPanel(); //creates the panel
+        panel1.add(label1); //adds the label to the panel
+        tabbedPane.addTab("Tab One", null, panel1, "First Panel"); //adds the panel as a tab
+        
+        ///panel two
+        JLabel label2 = new JLabel("This is the second panel", SwingConstants.CENTER);
+        JPanel panel2 = new JPanel(); 
+        panel2.setBackground(Color.GREEN); //changes the background color
+        panel2.add(label2);
+        tabbedPane.addTab("Tab Two", null, panel2, "Second Panel");
+        
+        //panel three
+        JLabel label3 = new JLabel("What is your favorite animal?", SwingConstants.CENTER);
+        JPanel panel3 = new JPanel();
+        panel3.setBackground(Color.WHITE);
+        JTextField animal = new JTextField("", 10); //creates a box for the user to input text
+        JButton submit = new JButton("Submit"); //creates a submit button (it doesn't actually do anything though)
+        tabbedPane.addTab("Tab Three", null, panel3, "Third Panel");
+        panel3.add(label3);
+        panel3.add(animal);
+        panel3.add(submit);
+                
+        
+        add(tabbedPane);
+    }
+    
+public static void main(String[] args) {
+    TabbedPaneFrame tabbedPaneFrame = new TabbedPaneFrame(); //creates the tabbed pane based on the above parameters
+    tabbedPaneFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //how the window closes
+    tabbedPaneFrame.setSize(250,200); //size of window
+    tabbedPaneFrame.setVisible(true); 
+    }
+}
