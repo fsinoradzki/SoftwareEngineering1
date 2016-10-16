@@ -1,23 +1,29 @@
+import java.io.*;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+import java.util.Scanner;
+
 public class GradeBook1 {
 
-	public static class Student {
-		private String name;	//Student name
-		private int student_id; //Student ID
-
-		//Constructor for Student
-		public Student(String Sname, int ID){
-			name = Sname;
-			student_id = ID;
-		}
-		
-		//Returns the student's name
- 		public String getName(){
-			return name;}
-		
-		//Returns the student's ID
-		public int getID(){
-			return student_id;}
+    public static class Student {
+	private String name;	//Student name
+	private int student_id; //Student ID
+	
+	//Constructor for Student
+	public Student(String Sname, int ID){
+	    name = Sname;
+	    student_id = ID;
 	}
+	
+	//Returns the student's name
+	public String getName(){
+	    return name;}
+	
+	//Returns the student's ID
+	    public int getID(){
+		return student_id;}	
+    }
+    
 
 	public static class Class {
 		private int[][] gradebook; //Matrix that stores the student ID as the first
@@ -27,6 +33,8 @@ public class GradeBook1 {
 		//Constructor
 		public Class(int[][] SandG){
 			gradebook = SandG;}
+
+	    
 		
 		//Prints out all grades for a specific student
 		public void getGradesForStudent(int ID){
@@ -151,18 +159,40 @@ public class GradeBook1 {
 	}
 
 	public static void main(String[] args) {
-		//Create 4 test students
-		Student f = new Student("Frank",123);
-		Student b = new Student("Ben",456);
-		Student p = new Student("Phoebe",789);
-		Student x = new Student("Dummy",000);
+	    Scanner user_input = new Scanner(System.in);
+	    
+	    Student f = new Student("Frank",123);
+	    Student b = new Student("Ben",456);
+	    Student p = new Student("Phoebe",789);
+	    Student x = new Student("Dummy",000);
+	    
+	    System.out.println("Please enter the new student's name:");
+	    String name = user_input.next();
+	    System.out.println("Please enter the student ID #:");
+	    String identification = user_input.next();
+	    int iD = Integer.parseInt(identification);
+	    
+	    Student n = new Student(name, iD);
+	    System.out.println(n.getName());
+	    System.out.println(n.getID());
 		
-		//Create test gradebook
-		int[][] SandG = { {123, 10, 20, 30},
-				  {456, 40, 50, 60},
-				  {789, 70, 80, 90},
-				  {000, 0, 0, 0, 0}
-				};
+	    System.out.println(f.getName());
+	    
+	    try{
+		int [][]SandG = new int[4][4];
+		BufferedReader br = new BufferedReader(new FileReader(args[0]));
+		String line;
+		int i =0;
+		while((line = br.readLine())!=null){
+		    StringTokenizer st = new StringTokenizer(line);
+		    int num = 0;
+		    while(st.hasMoreTokens()){
+			int value1 = Integer.parseInt(st.nextToken());
+			SandG[i][num]=value1;
+			num++;
+		    }
+		    i++;
+		}
 		
 		//Prints out Ben's grades
 		Class c1 = new Class(SandG);
@@ -190,5 +220,8 @@ public class GradeBook1 {
 		System.out.println("Stan Dev for assignment 1 = " + SD1);
 		double SD2 = c1.getStanDevForStudent(1);
 		System.out.println("Stan Dev for student 1 = " + SD2);
+		}
+		catch(Exception e){}
 	}
 }
+
