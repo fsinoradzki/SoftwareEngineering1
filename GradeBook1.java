@@ -74,7 +74,7 @@ public class GradeBook1 {
 		//Constructor
 		public Class(Vector<int>[][] SandG, int HWs, int Quizzes, int Labs){
 			gradebook = SandG;
-			numHWs = HWs
+			numHWs = HWs;
 			numQuizzes = Quizzes;
 			numLabs = Labs;
 			R = new Rubric();}
@@ -210,7 +210,7 @@ public class GradeBook1 {
 			
 			for(int i=1;i<gradebook[ID].size();i++)
 				total += gradebook[ID][i];
-			av = total/((numHWs*R.getHWValue())+(numQuizzes*R.getQuizValue())+(numLabs*R.getLabValue());
+			av = total/((numHWs*R.getHWValue())+(numQuizzes*R.getQuizValue())+(numLabs*R.getLabValue()));
 			
 			return av;
 		}
