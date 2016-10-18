@@ -36,7 +36,7 @@ public class GradeBook1 {
 			labValue = 50;}
 		
 		//Constructor with values
-		public Rubric(HW, quiz, lab){
+		public Rubric(int HW, int quiz, int lab){
 			HWValue = HW;
 			quizValue = quiz;
 			labValue = lab;}
@@ -54,7 +54,7 @@ public class GradeBook1 {
 			return labValue;}
 		
 		//Call this to change the values for each type of assignment
-		public void editRubricValues(HW, quiz, lab){
+		public void editRubricValues(int HW, int quiz, int lab){
 			HWValue = HW;
 			quizValue = quiz;
 			labValue = lab;}
@@ -71,7 +71,7 @@ public class GradeBook1 {
 		private Rubric R;          //The rubric for the class
 		
 		//Constructor
-		public Class(int[][] SandG, HWs, Quizzes, Labs){
+		public Class(int[][] SandG, int HWs, int Quizzes, int Labs){
 			gradebook = SandG;
 			numHWs = HWs
 			numQuizzes = Quizzes;
@@ -203,7 +203,6 @@ public class GradeBook1 {
 		}
 		
 		//Returns the weighted average for the student (using the amount of different assignments)
-		//THIS IS A TEMPLATE. WILL PULL ACTUAL WEIGHTS FROM A RUBRIC
 		public double getWeightedAverageForStudent(int ID){
 			int total=0;
 			int av;
