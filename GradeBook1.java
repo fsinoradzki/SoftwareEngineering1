@@ -23,22 +23,60 @@ public class GradeBook1 {
 	    public int getID(){
 		return student_id;}	
     }
+	
+	public static class Rubric {
+		private int HWValue;    //Value of a homework assignment for a class
+		private int quizValue;  //Value of a quiz for a class
+		private int labValue;   //Value of a lab assignment for a class
+		
+		//Default constructor
+		public Rubric(){
+			HWValue = 10;
+			quizValue = 100;
+			labValue = 50;}
+		
+		//Constructor with values
+		public Rubric(HW, quiz, lab){
+			HWValue = HW;
+			quizValue = quiz;
+			labValue = lab;}
+		
+		//Returns value for a homework assignment
+		public int getHWValue(){
+			return HWValue;}
+		
+		//Returns value for a quiz
+		public int getQuizValue(){
+			return quizValue;}
+		
+		//Returns value for a lab
+		public int getLabValue(){
+			return labValue;}
+		
+		//Call this to change the values for each type of assignment
+		public void editRubricValues(HQ, quiz, lab){
+			HWValue = HW;
+			quizValue = quiz;
+			labValue = lab;}
+	}
     
 
 	public static class Class {
 		private int[][] gradebook; //Matrix that stores the student ID as the first
 					   //As the first element in every row. Every other
 					   //cell is a grade
-		private int numHWs;
-		private int numQuizzes;
-		private int numLabs;
+		private int numHWs;        //# of homework assignments
+		private int numQuizzes;    //# of quizzes
+		private int numLabs;       //# of lab assignments
+		private Rubric R;          //The rubric for the class
 		
 		//Constructor
 		public Class(int[][] SandG, HWs, Quizzes, Labs){
-		public gradebook = SandG;
-		public numHWs = HWs
-		public numQuizzes = Quizzes;
-		public numLabs = Labs;}
+			gradebook = SandG;
+			numHWs = HWs
+			numQuizzes = Quizzes;
+			numLabs = Labs;
+			R = new Rubric(10,100,50);}
 
 	    	
 		
@@ -115,6 +153,7 @@ public class GradeBook1 {
 			return (double) total/gradebook.length;
 		}
 		
+		//Returns the value of the average for a given student
 		public double getAverageForStudent(int ID){
 			int total=0;
 			for(int i=1;i<gradebook[ID].length;i++)
@@ -160,6 +199,19 @@ public class GradeBook1 {
 			av = total/(gradebook[ID].length-1);
 			av = Math.sqrt(av);
 
+			return av;
+		}
+		
+		//Returns the weighted average for the student (using the amount of different assignments)
+		//THIS IS A TEMPLATE. WILL PULL ACTUAL WEIGHTS FROM A RUBRIC
+		public double getWeightedAverageForStudent(int ID){
+			int total=0;
+			int av;
+			
+			for(int i=1;i<gradebook[ID].length;i++)
+				total += gradebook[ID][i];
+			av = total/((numHWs*10)+(numQuizzes*100)+(numLabs*50);
+			
 			return av;
 		}
 	}
