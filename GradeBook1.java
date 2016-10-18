@@ -54,7 +54,7 @@ public class GradeBook1 {
 			return labValue;}
 		
 		//Call this to change the values for each type of assignment
-		public void editRubricValues(HQ, quiz, lab){
+		public void editRubricValues(HW, quiz, lab){
 			HWValue = HW;
 			quizValue = quiz;
 			labValue = lab;}
@@ -76,7 +76,7 @@ public class GradeBook1 {
 			numHWs = HWs
 			numQuizzes = Quizzes;
 			numLabs = Labs;
-			R = new Rubric(10,100,50);}
+			R = new Rubric();}
 
 	    	
 		
@@ -210,7 +210,7 @@ public class GradeBook1 {
 			
 			for(int i=1;i<gradebook[ID].length;i++)
 				total += gradebook[ID][i];
-			av = total/((numHWs*10)+(numQuizzes*100)+(numLabs*50);
+			av = total/((numHWs*R.getHWValue())+(numQuizzes*R.getQuizValue())+(numLabs*R.getLabValue());
 			
 			return av;
 		}
