@@ -29,23 +29,29 @@ public class GradeBook1 {
 		private int[][] gradebook; //Matrix that stores the student ID as the first
 					   //As the first element in every row. Every other
 					   //cell is a grade
+		private int numHWs;
+		private int numQuizzes;
+		private int numLabs;
 		
 		//Constructor
-		public Class(int[][] SandG){
-			gradebook = SandG;}
+		public Class(int[][] SandG, HWs, Quizzes, Labs){
+		public gradebook = SandG;
+		public numHWs = HWs
+		public numQuizzes = Quizzes;
+		public numLabs = Labs;}
 
-	    
+	    	
 		
 		//Prints out all grades for a specific student
 		public void getGradesForStudent(int ID){
-			for(int i=1;i<gradebook[0].length;i++)
+			for(int i=1;i<gradebook[ID].length;i++)
 					System.out.println("Grade: " + gradebook[ID][i]);
 		}
 
 		//Prints out all grades for a specific assignment
 		public void getGradesForClass(int assignment){
 			if(assignment != 0){
-				for(int i=0;i<gradebook[0].length;i++)
+				for(int i=0;i<gradebook.length;i++)
 						System.out.println("Grade: " + gradebook[i][assignment]);
 			} else
 				System.out.println("That's for student_id");
@@ -55,7 +61,7 @@ public class GradeBook1 {
 		public void printHighestGradeForAssignment(int assignment){
 			int max=gradebook[1][assignment];
 			if(assignment != 0){
-				for(int i=1;i<gradebook[0].length;i++)
+				for(int i=1;i<gradebook.length;i++)
 					if(gradebook[i][assignment] > max)
 						max = gradebook[i][assignment];
 			} else
@@ -68,7 +74,7 @@ public class GradeBook1 {
 		public void printLowestGradeForAssignment(int assignment){
 			int low=gradebook[1][assignment];
 			if(assignment != 0){
-				for(int i=1;i<gradebook[0].length;i++)
+				for(int i=1;i<gradebook.length;i++)
 					if(gradebook[i][assignment] < low)
 						low = gradebook[i][assignment];
 			} else
@@ -80,7 +86,7 @@ public class GradeBook1 {
 		//Prints out the Student's highest grade
 		public void printHighestGradeForStudent(int ID){
 			int high = gradebook[ID][1];
-			for(int i=1;i<gradebook[0].length;i++)
+			for(int i=1;i<gradebook[ID].length;i++)
 				if(gradebook[ID][i] > high)
 					high = gradebook[ID][i];
 					
@@ -90,31 +96,31 @@ public class GradeBook1 {
 		//Prints out the Student's lowest grade
 		public void printLowestGradeForStudent(int ID){
 			int low = gradebook[ID][1];
-			for(int i=1;i<gradebook[0].length;i++)
+			for(int i=1;i<gradebook[ID].length;i++)
 				if(gradebook[ID][i] < low)
 					low = gradebook[ID][i];
 					
-			System.out.println("The lowest grade for Student " + ID + " is " + low);
+			System.out.println("The lowest grade for Student #" + ID + " is " + low);
 		}
 		
 		//Returns the value of the average for a given assignment
 		public double getAverageForAssignment(int assignment){
 			int total = 0;
 			if(assignment != 0)
-				for(int i=0;i<gradebook[0].length;i++)
+				for(int i=0;i<gradebook.length;i++)
 					total += gradebook[i][assignment];
 			 else
 				System.out.println("That's for student_id");
 
-			return (double) total/gradebook[0].length;
+			return (double) total/gradebook.length;
 		}
 		
 		public double getAverageForStudent(int ID){
 			int total=0;
-			for(int i=1;i<gradebook[0].length;i++)
+			for(int i=1;i<gradebook[ID].length;i++)
 				total += gradebook[ID][i];
 			
-			return (double) total/(gradebook[0].length-1);	
+			return (double) total/(gradebook[ID].length-1);	
 		}
 		
 		//Gets Standard Deviation for a given assignment
@@ -122,16 +128,16 @@ public class GradeBook1 {
 			double total = 0;
 			double av=0;
 			
-			for(int i=0;i<gradebook[0].length;i++)
+			for(int i=0;i<gradebook.length;i++)
 				total += gradebook[i][assignment];
 				
-			av = total/gradebook[0].length;
+			av = total/gradebook.length;
 			total = 0;
 			
-			for(int i=0;i<gradebook[0].length;i++)
+			for(int i=0;i<gradebook.length;i++)
 				total += (gradebook[i][assignment]-av) * (gradebook[i][assignment]-av);
 				
-			av = total/gradebook[0].length;
+			av = total/gradebook.length;
 			av = Math.sqrt(av);
 
 			return av;
@@ -142,16 +148,16 @@ public class GradeBook1 {
 			double total = 0;
 			double av=0;
 			
-			for(int i=1;i<gradebook[0].length;i++)
+			for(int i=1;i<gradebook[ID].length;i++)
 				total += gradebook[ID][i];
 				
-			av = total/(gradebook[0].length-1);
+			av = total/(gradebook[ID].length-1);
 			total = 0;
 			
-			for(int i=1;i<gradebook[0].length;i++)
+			for(int i=1;i<gradebook[ID].length;i++)
 				total += (gradebook[ID][i]-av) * (gradebook[ID][i]-av);
 				
-			av = total/(gradebook[0].length-1);
+			av = total/(gradebook[ID].length-1);
 			av = Math.sqrt(av);
 
 			return av;
@@ -193,9 +199,13 @@ public class GradeBook1 {
 		    }
 		    i++;
 		}
+		    
+		int HWs = 3;
+		int Quizzes = 0;
+		int Labs = 0;
 		
 		//Prints out Ben's grades
-		Class c1 = new Class(SandG);
+		Class c1 = new Class(SandG, HWs, Quizzes, Labs);
 		System.out.println("Ben's grades:");
 		c1.getGradesForStudent(1);
 		
