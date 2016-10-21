@@ -1,8 +1,5 @@
 import java.io.*;
 import java.util.*;
-//import java.util.Arrays;
-//import java.util.StringTokenizer;
-//import java.util.Scanner;
 import java.lang.*;
 
 public class GradeBook1
