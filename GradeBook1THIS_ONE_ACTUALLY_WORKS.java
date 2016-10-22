@@ -63,9 +63,9 @@ public class GradeBook1 {
     
 
 	public static class Class {
-		private Vector<Vector<Integer>> gradebook; //Matrix that stores the student ID as the first
-					   //As the first element in every row. Every other
-					   //cell is a grade
+		private Vector<Vector<Integer>> gradebook; //Vector matrix that stores the student ID as the first
+					   		   //As the first element in every row. Every other
+					   		   //cell is a grade
 		private int numHWs;        //# of homework assignments
 		private int numQuizzes;    //# of quizzes
 		private int numLabs;       //# of lab assignments
