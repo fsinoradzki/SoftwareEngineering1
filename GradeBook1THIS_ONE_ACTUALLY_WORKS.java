@@ -235,35 +235,27 @@ public class GradeBook1 {
 		Vector<Integer> test3 = new Vector<Integer>();
 		Vector<Integer> test4 = new Vector<Integer>();
 		
-		
+		//Creates the initial 2D Vector
 		test1.addElement(123);
 		test1.addElement(10);
 		test1.addElement(20);
 		test1.addElement(30);
 		SandG.addElement(test1);
-		//System.out.println("After adding the first student: ");
-		//System.out.println(SandG);
 		test2.addElement(456);
 		test2.addElement(40);
 		test2.addElement(50);
 		test2.addElement(60);
 		SandG.addElement(test2);
-		//System.out.println("After adding the second student: ");
-		//System.out.println(SandG);
 		test3.addElement(789);
 		test3.addElement(70);
 		test3.addElement(80);
 		test3.addElement(90);
 		SandG.addElement(test3);
-		//System.out.println("After adding the third student: ");
-		//System.out.println(SandG);
 		test4.addElement(000);
 		test4.addElement(0);
 		test4.addElement(0);
 		test4.addElement(0);
 		SandG.addElement(test4);
-		//System.out.println("After adding the last student: ");
-		//System.out.println(SandG);
 		
 		int HWs = 3;
 		int Quizzes = 0;
