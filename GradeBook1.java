@@ -1,11 +1,9 @@
 import java.io.*;
 import java.util.*;
 
-public class GradeBook1
-{
-
-  public static class Student
-  {
+public class GradeBook1{
+  
+  public static class Student{
     private String name;	//Student name
     private int student_id;	//Student ID
 
@@ -84,6 +82,7 @@ public class GradeBook1
     private Vector < Vector < Integer >> gradebook;	//Vector matrix that stores the student ID as the first
     //As the first element in every row. Every other
     //cell is a grade
+	  private Vector<Student>students;
     private int numHWs;		//# of homework assignments
     private int numQuizzes;	//# of quizzes
     private int numLabs;	//# of lab assignments
@@ -92,10 +91,11 @@ public class GradeBook1
     private int classNum;
 
     //Simple Constructor
-    public Class (Vector < Vector < Integer >> SandG, int HWs, int Quizzes,
+	  public Class (Vector < Vector < Integer >> SandG,Vector<Student> pupils, int HWs, int Quizzes,
 		  int Labs, String name, int number)
     {
       gradebook = new Vector < Vector < Integer >> (SandG);
+		students = new Vector <Student>(pupils);
       numHWs = HWs;
       numQuizzes = Quizzes;
       numLabs = Labs;
@@ -115,32 +115,34 @@ public class GradeBook1
 		@post condition: a class' gradebook has been generated from file input
 		@returns: this function returns the gradebook of the class calling the function 
 		*/
-	  public Class (File file, int HWs, int Quizzes, int Labs, String name,int number)
+	  public Class (File file, Vector<Student> pupils, int HWs, int Quizzes, int Labs, String name,int number)
 		  {
 			  try
 			  {
-				  Vector < Vector < Integer >> matrix = new Vector < Vector < Integer >> ();	//vector of vectors
-				  BufferedReader br = new BufferedReader (new FileReader (file));
-				  String line;
-				  while ((line = br.readLine ()) != null)
-				  {
-					  StringTokenizer st = new StringTokenizer (line);
-					  int num = 0;
-					  Vector < Integer > test = new Vector < Integer > ();	//vector used for input
-					  test.clear ();
-					  while (st.hasMoreTokens ())
-					  {
-						  int value1 = Integer.parseInt (st.nextToken ());
-						  test.addElement (value1);
-						  if (!st.hasMoreTokens ())
-							  matrix.addElement (test);	//inserts entire test vector into the main vector
-					  }
-				  }
-				  gradebook = matrix;
+				  Vector < Vector < Integer >> matrix = new Vector < Vector < Integer >> ();  //vector of vectors
+              BufferedReader br = new BufferedReader (new FileReader (file));
+              String line;
+              while ((line = br.readLine ()) != null)
+              {
+                 StringTokenizer st = new StringTokenizer (line);
+                 int num = 0;
+                 Vector < Integer > test = new Vector < Integer > ();   //vector used for input
+                 test.clear ();
+                 while (st.hasMoreTokens ())
+                 {
+                    int value1 = Integer.parseInt (st.nextToken ());
+                    test.addElement (value1);
+                    if (!st.hasMoreTokens ())
+                       matrix.addElement (test);   //inserts entire test vector into the main vector
+                 }
+              }
+              gradebook = matrix;
+				  
 			  }
 			  catch (IOException e)
 			  {
 			  }
+			  students = new Vector<Student>(pupils);
 			  numHWs = HWs;
 			  numQuizzes = Quizzes;
 			  numLabs = Labs;
@@ -148,6 +150,7 @@ public class GradeBook1
 			  classNum = number;
 			  R = new Rubric ();
     }
+	  
 	  /*
 		 Purpose: create a standard file to save the gradebook to for each class. This will be done by using the className and classNum to create a standard file name.
 		 This standard file name will be className+ClassNum+.txt and an example would be CISC1600.txt where CISC is the class name and 1600 is the class number.
@@ -183,13 +186,33 @@ public class GradeBook1
 			  {
 			  }
 		  }
-	  
 
+	  /*
+		 Purpose: Used within the GUI for Class creation to check whether the class has an existing file in the standard format. 
+		 @return: if the file exists, the function returns true, otherwise it returns false
+		*/
+	  public boolean checkFile(){
+			  String key = this.className + this.classNum;
+			  File file = new File("./Classes/"+key+".txt");
+			  if(file.exists())
+				  return true;
+			  else
+				  return false;
+	  }
+	  
 	  //Prints the whole gradebook
 	  public void printGradebook ()
 		  {
 			  System.out.println (gradebook);
 		  }
+
+	  public String printStudentName(int ID){
+		  int position = 0;
+		  for(int i =0;i<students.size();i++)
+			  if(students.get(i).getID()==ID)
+				  position = i;
+		  return students.get(position).getName();
+	  }
 
     //Prints out all grades for a specific student
     public void getGradesForStudent (int ID)
@@ -343,27 +366,38 @@ public class GradeBook1
     public double getWeightedAverageForStudent (int ID)
     {
       int total = 0;
-      int av;
+		double divisor = 0;
+      double av=0;
 
+		//gets the total points lost 
       for (int i = 1; i < (gradebook.get (ID)).size (); i++)
-	total += (gradebook.get (ID)).get (i);
-      av =
-	total / ((numHWs * R.getHWValue ()) +
-		 (numQuizzes * R.getQuizValue ()) +
-		 (numLabs * R.getLabValue ()));
+			total += (gradebook.get (ID)).get (i);
+		//returns number of homeworks, quizzes, and labs
+		//multiplies each by the respective rubric value and adds them all up
+		//if there are 3 homeworks, no quizzes, no labs then on a default class
+		// it would be: (3*10)+(0*100)+(0*50)
+		divisor = (numHWs*R.getHWValue())+(numQuizzes*R.getQuizValue())+(numLabs*R.getLabValue());
+		av = ((divisor-total)/divisor)*100;
 
       return av;
     }
   }
 
-  public static void main (String[]args)
-  {
-
+public static void main (String[]args)
+  {	  
     File file = new File ("./Classes/grades.txt");
+	 File standard = new File ("./Classes/SoftEng2.txt");
     Student f = new Student ("Frank", 123);
     Student b = new Student ("Ben", 456);
     Student p = new Student ("Phoebe", 789);
     Student x = new Student ("Dummy", 000);
+
+	 Vector<Student>pupils = new Vector<Student>();
+	 pupils.addElement(f);
+	 pupils.addElement(b);
+	 pupils.addElement(p);
+	 pupils.addElement(x);
+	 System.out.println(pupils);
 
     Vector < Vector < Integer >> SandG = new Vector < Vector < Integer >> ();
     Vector < Integer > test1 = new Vector < Integer > ();
@@ -397,21 +431,26 @@ public class GradeBook1
     int HWs = 3;
     int Quizzes = 0;
     int Labs = 0;
-    String name = "CompSci";
-    int number = 1600;
+    String name = "SoftEng";
+    int number = 2;
 
-    Class c2 = new Class (file, HWs, Quizzes, Labs, name, number);
+    Class c2 = new Class (file,pupils, HWs, Quizzes, Labs, name, number);
     // c2.createFile(output);
     c2.createFile ();
 	 System.out.println("After creating gradebook from file: ");
     c2.printGradebook ();
+	 Class c3 = new Class (standard,pupils, HWs, Quizzes, Labs, name, number);
+	 if(c3.checkFile())
+		 System.out.println("The File exists");
+	 System.out.println("After pulling from a standard file:");
+	 c3.printGradebook();
 
-    Class c1 = new Class (SandG, HWs, Quizzes, Labs, name, number);
+    Class c1 = new Class (SandG,pupils, HWs, Quizzes, Labs, name, number);
     System.out.println ("After creating c1: ");
     c1.printGradebook ();
     System.out.println ("Ben's grades:");
     c1.getGradesForStudent (1);
-
+	 
     //Prints out all grades for assignment 1
     System.out.println ("Grades for assignment 1:");
     c1.getGradesForClass (1);
@@ -433,5 +472,10 @@ public class GradeBook1
     System.out.println ("Stan Dev for assignment 1 = " + SD1);
     double SD2 = c1.getStanDevForStudent (1);
     System.out.println ("Stan Dev for student 1 = " + SD2);
+
+	 //prints the weighted average for a single student
+	 double WA = c1.getWeightedAverageForStudent(3);
+	 System.out.println("The weighted average for " + c1.printStudentName(000) + " is: "+WA);
+	 
   }
 }
