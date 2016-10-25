@@ -62,72 +62,81 @@ public class GradeBook1 {
 	}
     
 
-	public static class Class {
-		private Vector<Vector<Integer>> gradebook; //Vector matrix that stores the student ID as the first
-					   		   //As the first element in every row. Every other
-					   		   //cell is a grade
-		private int numHWs;        //# of homework assignments
-		private int numQuizzes;    //# of quizzes
-		private int numLabs;       //# of lab assignments
-		private Rubric R;          //The rubric for the class
-		
+    public static class Class {
+	private Vector<Vector<Integer>> gradebook; //Vector matrix that stores the student ID as the first
+	//As the first element in every row. Every other
+	//cell is a grade
+	private int numHWs;        //# of homework assignments
+	private int numQuizzes;    //# of quizzes
+	private int numLabs;       //# of lab assignments
+	private Rubric R;//The rubric for the class
+	private String className; //name of class
+	private int classNum;
+	    
 		//Constructor
-	    public Class(Vector<Vector<Integer>> SandG, int HWs, int Quizzes, int Labs){
+	public Class(Vector<Vector<Integer>> SandG, int HWs, int Quizzes, int Labs, String name, int number){
 		gradebook = new Vector<Vector<Integer>>(SandG);
 		numHWs = HWs;
 		numQuizzes = Quizzes;
 		numLabs = Labs;
+		className = name;
+		classNum = number;
 		R = new Rubric();}
 	    
 	    
-	    public Class (File file, int HWs, int Quizzes, int Labs){
+	public Class (File file, int HWs, int Quizzes, int Labs, String name, int number){
 		try{	  
-		    Vector<Vector<Integer>>matrix = new Vector<Vector<Integer>>();
+		    Vector<Vector<Integer>>matrix = new Vector<Vector<Integer>>();//vector of vectors
 		    BufferedReader br = new BufferedReader(new FileReader(file));
 		    String line;
 		    while((line = br.readLine())!=null){
 			StringTokenizer st = new StringTokenizer(line);
 			int num = 0;
-			Vector<Integer>test = new Vector<Integer>();
+			Vector<Integer>test = new Vector<Integer>(); //vector used for input
 			test.clear();
 			while(st.hasMoreTokens()){
 			    int value1 = Integer.parseInt(st.nextToken());
 			    test.addElement(value1);
 			    if(!st.hasMoreTokens())
-				matrix.addElement(test);
+				matrix.addElement(test); //inserts entire test vector into the main vector
 			}
 		    }
 		    gradebook = matrix;	      
 		}
 		catch(IOException e){
 		}
+		numHWs = HWs;
+		numQuizzes = Quizzes;
+		numLabs = Labs;
+		className = name;
+		classNum = number;
+		R = new Rubric();
 	    }
 	    
-	    public void createFile(File file){
-		try{
-		    if(!file.exists()){
-			file.createNewFile();
-		    }
-		}catch(IOException e){
-		}
+	public void createFile(){
+	    try{
+		String key = this.className + this.classNum; //used to standardize file format
+		File file = new File("./Classes/"+key+".txt"); //accesses file of standard format within a subdirectory
+		if(!file.exists())
+		    file.createNewFile();
+		
 		Vector<Vector<Integer>>matrix = new Vector<Vector<Integer>>();
 		matrix=this.gradebook;
-		try{
-		    FileWriter fw = new FileWriter(file);
-		    BufferedWriter bw = new BufferedWriter(fw);
-		    for (int i =0;i<matrix.size();i++){
-			for(int k =0;k<(matrix.get(i).size());k++){
-			    bw.write(String.valueOf((matrix.get(i)).get(k)));
-			    bw.write(" ");
-			}
-			bw.write("\n");
+		FileWriter fw = new FileWriter(file);
+		BufferedWriter bw = new BufferedWriter(fw);
+		for (int i =0;i<matrix.size();i++){
+		    for(int k =0;k<(matrix.get(i).size());k++){
+			bw.write(String.valueOf((matrix.get(i)).get(k)));
+			bw.write(" ");
 		    }
-		    bw.close();
-		    
+		    bw.write("\n");
 		}
-		catch(IOException e){
-		}
+		bw.close();
+		
 	    }
+	    catch(IOException e){
+	    }
+	}
 	    
 	    
 	    //Prints the whole gradebook
@@ -273,8 +282,7 @@ public class GradeBook1 {
 
 	public static void main(String[] args) {
 	    
-	    File file = new File("grades.txt");
-	    File output = new File("output.txt");
+	    File file = new File("./Classes/grades.txt");
 	    Student f = new Student("Frank",123);
 	    Student b = new Student("Ben",456);
 	    Student p = new Student("Phoebe",789);
@@ -311,13 +319,16 @@ public class GradeBook1 {
 	    int HWs = 3;
 	    int Quizzes = 0;
 	    int Labs = 0;
+	    String name = "CompSci";
+	    int number = 1600;
 	    
 	    //Prints out Ben's grades
-	    Class c2 = new Class(file, HWs, Quizzes, Labs);
-	    c2.createFile(output);
+	    Class c2 = new Class(file, HWs, Quizzes, Labs,name,number);
+	    // c2.createFile(output);
+	    c2.createFile();
 	    c2.printGradebook();
 	    
-	    Class c1 = new Class(SandG, HWs, Quizzes, Labs);
+	    Class c1 = new Class(SandG, HWs, Quizzes, Labs,name,number);
 	    System.out.println("After creating c1: ");
 	    c1.printGradebook();
 	    System.out.println("Ben's grades:");
