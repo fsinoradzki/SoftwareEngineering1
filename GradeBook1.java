@@ -150,6 +150,24 @@ public class GradeBook1{
 			  classNum = number;
 			  R = new Rubric ();
     }
+
+	  public void createStudentsFile(){
+		  try{
+		  String key = this.className+this.classNum;
+		  File file = new File("./Classes/"+key+"Students.txt");
+		  if(!file.exists())
+			  file.createNewFile();
+		  FileWriter fw = new FileWriter(file);
+		  BufferedWriter bw = new BufferedWriter(fw);
+		  for(int i =0;i<students.size();i++){
+			  bw.write(String.valueOf(students.get(i).getID()));
+			  bw.write(" ");
+			  bw.write(students.get(i).getName());
+			  bw.write("\n");
+		  }
+		  bw.close();
+		  }catch(IOException e){}
+	  }
 	  
 	  /*
 		 Purpose: create a standard file to save the gradebook to for each class. This will be done by using the className and classNum to create a standard file name.
@@ -162,7 +180,7 @@ public class GradeBook1{
 			  try
 			  {
 				  String key = this.className + this.classNum;	//used to standardize file format
-				  File file = new File ("./Classes/" + key + ".txt");	//accesses file of standard format within a subdirectory
+				  File file = new File ("./Classes/" + key + "grades.txt");	//accesses file of standard format within a subdirectory
 				  if (!file.exists ())
 					  file.createNewFile ();
 				  
@@ -476,6 +494,7 @@ public static void main (String[]args)
 	 //prints the weighted average for a single student
 	 double WA = c1.getWeightedAverageForStudent(3);
 	 System.out.println("The weighted average for " + c1.printStudentName(000) + " is: "+WA);
+	 c1.createStudentsFile();
 	 
   }
 }
