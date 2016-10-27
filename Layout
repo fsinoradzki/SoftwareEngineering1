@@ -1,0 +1,72 @@
+import java.awt.*;
+import javax.swing.*;
+import javax.swing.border.*;
+
+public class Layout extends JFrame {
+    public Layout(JTable grades) {
+        //panels for the split frame
+        JPanel navPanel = new JPanel();
+        //JPanel tabsPanel = new JPanel();
+        
+        //creating the tabbedpane
+        JTabbedPane tabbedPane = new JTabbedPane();  
+        //tabsPanel.add(tabbedPane);
+
+        
+        //creating the split pane
+        //JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, navPanel, tabsPanel);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, navPanel, tabbedPane);
+        splitPane.setOneTouchExpandable(false);
+        splitPane.setDividerLocation(300);
+        splitPane.setBackground(Color.WHITE);
+        
+        //navigation panel
+        JLabel navTitle = new JLabel("NAVIGATION");
+        navTitle.setFont(new Font("Arial", Font.BOLD, 18));
+        navPanel.add(navTitle);
+        navPanel.setBackground(Color.WHITE);
+        
+        //grades panel
+        JPanel gradesPanel = new JPanel();
+        JScrollPane gradeScrollPane = new JScrollPane(grades);
+        String title = "Class Name";
+        gradeScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), title, TitledBorder.LEFT, TitledBorder.TOP));
+        gradeScrollPane.setBackground(Color.WHITE);
+        tabbedPane.add(gradeScrollPane, "Grades");
+        
+        //rubric panel
+        JPanel rubricPanel = new JPanel();
+        rubricPanel.setBackground(Color.CYAN);
+        tabbedPane.add(new JScrollPane(rubricPanel), "Rubric");
+        
+        //stats panel
+        JPanel statsPanel = new JPanel();
+        statsPanel.setBackground(Color.GREEN);
+        tabbedPane.add(new JScrollPane(statsPanel), "Statistics");
+        
+        getContentPane().add(splitPane, BorderLayout.CENTER);
+        setSize(1500, 1000);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+    }
+    
+    
+    public static void main(String[] args) {
+        Object rowData[][] = { { "Row1-Column1", "Row1-Column2", "Row1-Column3" },
+                            { "Row2-Column1", "Row2-Column2", "Row2-Column3" },
+                            { "x", "x", "x"           },
+                            { "x", "x", "x"           },
+                            { "x", "x", "x"           },
+                            { "x", "x", "x"           },
+                            { "x", "x", "x"           },
+                            { "x", "x", "x"           },
+                            { "x", "x", "x"           },
+                            { "x", "x", "x"           },
+                            { "x", "x", "x"           }
+                                            };
+        Object columnNames[] = { "Column One", "Column Two", "Column Three" };
+        JTable table = new JTable(rowData, columnNames);   
+        Layout theGui = new Layout(table);
+    }
+    
+}
