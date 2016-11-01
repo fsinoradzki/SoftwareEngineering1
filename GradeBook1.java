@@ -14,6 +14,7 @@ public class GradeBook1{
       student_id = ID;
     }
 
+
     //Returns the student's name
     public String getName ()
     {
@@ -82,7 +83,8 @@ public class GradeBook1{
     private Vector < Vector < Integer >> gradebook;	//Vector matrix that stores the student ID as the first
     //As the first element in every row. Every other
     //cell is a grade
-	  private Vector<Student>students;
+      private Vector<Student>students;
+      private Vector<Integer> values;
     private int numHWs;		//# of homework assignments
     private int numQuizzes;	//# of quizzes
     private int numLabs;	//# of lab assignments
@@ -91,11 +93,12 @@ public class GradeBook1{
     private int classNum;
 
     //Simple Constructor
-	  public Class (Vector < Vector < Integer >> SandG,Vector<Student> pupils, int HWs, int Quizzes,
+      public Class (Vector < Vector < Integer >> SandG,Vector<Student> pupils,Vector<Integer> indexes, int HWs, int Quizzes,
 		  int Labs, String name, int number)
     {
       gradebook = new Vector < Vector < Integer >> (SandG);
-		students = new Vector <Student>(pupils);
+      students = new Vector <Student>(pupils);
+      values = new Vector<Integer>(indexes);
       numHWs = HWs;
       numQuizzes = Quizzes;
       numLabs = Labs;
@@ -115,7 +118,7 @@ public class GradeBook1{
 		@post condition: a class' gradebook has been generated from file input
 		@returns: this function returns the gradebook of the class calling the function 
 		*/
-	  public Class (File file, Vector<Student> pupils, int HWs, int Quizzes, int Labs, String name,int number)
+      public Class (File file, Vector<Student> pupils, Vector<Integer> indexes, int HWs, int Quizzes, int Labs, String name,int number)
 		  {
 			  try
 			  {
@@ -143,6 +146,7 @@ public class GradeBook1{
 			  {
 			  }
 			  students = new Vector<Student>(pupils);
+			  values = new Vector<Integer>(indexes);
 			  numHWs = HWs;
 			  numQuizzes = Quizzes;
 			  numLabs = Labs;
@@ -168,7 +172,35 @@ public class GradeBook1{
 		  bw.close();
 		  }catch(IOException e){}
 	  }
-	  
+      
+      public void returnStudentsFile(){
+	  try{
+	      String key = this.className+this.classNum;
+	      File file = new File("./Classes/"+key+"Students.txt");
+	      Vector<Student>pupils = new Vector<Student>();
+	      BufferedReader br = new BufferedReader (new FileReader (file));
+              String line;
+              while ((line = br.readLine ()) != null)
+		  {
+		      StringTokenizer st = new StringTokenizer (line);
+		      Student test = new Student("JohnDoe", 999); 
+		      while (st.hasMoreTokens ())
+			  {
+			      test.student_id = Integer.valueOf(st.nextToken());
+			      test.name = st.nextToken();
+			      if (!st.hasMoreTokens ())
+				  pupils.addElement (test); 
+			  }
+		  }	      
+	      this.students = pupils;
+	      for (int i =0;i<students.size();i++){
+		  System.out.println(students.get(i).name);
+		  System.out.println(students.get(i).student_id);
+	      }
+	  }catch(IOException e){}
+      }
+      
+
 	  /*
 		 Purpose: create a standard file to save the gradebook to for each class. This will be done by using the className and classNum to create a standard file name.
 		 This standard file name will be className+ClassNum+.txt and an example would be CISC1600.txt where CISC is the class name and 1600 is the class number.
@@ -399,17 +431,103 @@ public class GradeBook1{
 
       return av;
     }
+      //gets type of assignment given an index
+      public int getAssignmentType(int assignment){
+	  int type = 0;
+	  if(values.get(assignment) == 1)
+	      type=1;
+	  else if (values.get(assignment)==2)
+	      type =2;
+	  
+	  return type;
+      }
+      //adds new student. Initializes their grades to 0.
+      public void addStudent(Student kid){
+	  //adds the student object to the Students vector
+	  students.addElement(kid);
+
+	  //creates the vector to add to gradebook. Sets the first value fo the student's ID
+	  //All other values are intiialized to 0 
+	  Vector<Integer> grades = new Vector<Integer>();
+	  grades.addElement(kid.getID());
+	  for (int i = 1;i<gradebook.get(0).size();i++)
+	      grades.addElement(0);
+	  gradebook.addElement(grades);
+      }
+      
+      //adds a new assignment based on the assignment type. Initializes all enw values to 0.
+      public void addAssignment(int type){
+	  if (type < 0 && type >2)
+	      System.out.println("Not a valid assignment type.");
+	  else {
+	      System.out.println(type);
+	      values.addElement(type);
+	      if(type == 0)
+		  numHWs++;
+	      else if (type == 1)
+		  numQuizzes++;
+	      else if(type == 2)
+		  numLabs++;
+	      for(int i =0;i<gradebook.size();i++)
+		  (gradebook.get(i)).addElement(0);
+	  }
+      }
+      
+      //changes a specific grade. when you call this from text, remember that the first position is actually the student ID. DERP.
+      public void changeGrade(int newGrade, int ID, int assignment){
+	  (gradebook.get(ID)).set(assignment,newGrade);
+      }
+
+      //Prints out the Student's highest HW grade
+      public void printHighestHWGradeForStudent(int ID){
+	  Vector<Integer> HWIndexes = new Vector<Integer>();
+	  for(int i = 0;i<values.size();i++)
+	      if(values.get(i) == 0)
+		  HWIndexes.addElement(i);
+	  
+	  int high = (gradebook.get(ID)).get(HWIndexes.get(0));
+	  
+	  for(int i=1;i<(gradebook.get(ID)).size();i++)
+	      if(i < HWIndexes.size())
+		  if(i == HWIndexes.get(i))
+		      if((gradebook.get(ID)).get(i) > high)
+			  high = (gradebook.get(ID)).get(i);
+	  
+	  System.out.println("The highest HW grade for Student " + ID + " is " + high);
+      }		
+      
+      //Prints out the Student's lowest grade
+      public void printLowestHWGradeForStudent(int ID){
+	  Vector<Integer> HWIndexes = new Vector<Integer>();
+	  for(int i = 0;i<values.size();i++)
+	      if(values.get(i) == 0)
+		  HWIndexes.addElement(i);
+	  
+	  int low = (gradebook.get(ID)).get(HWIndexes.get(0));
+	  
+	  for(int i=1;i<(gradebook.get(ID)).size();i++)
+	      if(i < HWIndexes.size())
+		  if(i == HWIndexes.get(i))
+		      if((gradebook.get(ID)).get(i) < low)
+			  low = (gradebook.get(ID)).get(i);
+	  
+	  System.out.println("The lowest HW grade for Student #" + ID + " is " + low);
+      }
+      
+      
+      
+      
   }
-
-public static void main (String[]args)
-  {	  
-    File file = new File ("./Classes/grades.txt");
-	 File standard = new File ("./Classes/SoftEng2.txt");
-    Student f = new Student ("Frank", 123);
-    Student b = new Student ("Ben", 456);
-    Student p = new Student ("Phoebe", 789);
-    Student x = new Student ("Dummy", 000);
-
+    
+    public static void main (String[]args)
+    {	  
+	File file = new File ("./Classes/grades.txt");
+	File standard = new File ("./Classes/SoftEng2.txt");
+	Student f = new Student ("Frank", 123);
+	Student b = new Student ("Ben", 456);
+	Student p = new Student ("Phoebe", 789);
+	Student x = new Student ("Dummy", 000);
+	
 	 Vector<Student>pupils = new Vector<Student>();
 	 pupils.addElement(f);
 	 pupils.addElement(b);
@@ -445,6 +563,12 @@ public static void main (String[]args)
     test4.addElement (0);
     SandG.addElement (test4);
 
+    Vector<Integer>indexes = new Vector<Integer>();
+    indexes.addElement(-1);
+    indexes.addElement(0);
+    indexes.addElement(0);
+    indexes.addElement(0);
+
 	 //test values used prior to GUI implementation 
     int HWs = 3;
     int Quizzes = 0;
@@ -452,18 +576,18 @@ public static void main (String[]args)
     String name = "SoftEng";
     int number = 2;
 
-    Class c2 = new Class (file,pupils, HWs, Quizzes, Labs, name, number);
+    Class c2 = new Class (file,pupils,indexes, HWs, Quizzes, Labs, name, number);
     // c2.createFile(output);
     c2.createFile ();
 	 System.out.println("After creating gradebook from file: ");
     c2.printGradebook ();
-	 Class c3 = new Class (standard,pupils, HWs, Quizzes, Labs, name, number);
+    Class c3 = new Class (standard,pupils,indexes, HWs, Quizzes, Labs, name, number);
 	 if(c3.checkFile())
 		 System.out.println("The File exists");
 	 System.out.println("After pulling from a standard file:");
 	 c3.printGradebook();
 
-    Class c1 = new Class (SandG,pupils, HWs, Quizzes, Labs, name, number);
+	 Class c1 = new Class (SandG,pupils,indexes, HWs, Quizzes, Labs, name, number);
     System.out.println ("After creating c1: ");
     c1.printGradebook ();
     System.out.println ("Ben's grades:");
@@ -474,13 +598,34 @@ public static void main (String[]args)
     c1.getGradesForClass (1);
 
     //Prints average for assignment 1
-    double av = c1.getAverageForAssignment (1);
+    double avg = c1.getAverageForAssignment (1);
     System.out.print ("Average for assignment 1: ");
-    System.out.println (av);
+    System.out.println (avg);
 
+    //Add new student
+    Student q = new Student("Katie", 999);
+    c1.addStudent(q);
+    c1.changeGrade(1,4,1);
+    c1.changeGrade(1,4,2);
+    c1.changeGrade(1,4,3);
+    System.out.println("Katie's grades:");
+    c1.getGradesForStudent(4);
+    
+    //Adds a new assignment, changes some people's grades
+    c1.addAssignment(1);
+    c1.changeGrade(10,0,4);
+    c1.changeGrade(15,1,4);
+    c1.changeGrade(20,2,4);
+    c1.changeGrade(25,4,4);
+    
+    //Prints average for assignment 1
+    double av = c1.getAverageForAssignment(1);
+    System.out.print("Average for assignment 1: ");
+    System.out.println(avg);
+    
     //Prints average of Ben's grades
-    av = c1.getAverageForStudent (1);
-    System.out.println ("Average for student 1: " + av);
+    avg = c1.getAverageForStudent (1);
+    System.out.println ("Average for student 1: " + avg);
 
     c1.printHighestGradeForAssignment (1);
     c1.printLowestGradeForAssignment (1);
@@ -491,10 +636,10 @@ public static void main (String[]args)
     double SD2 = c1.getStanDevForStudent (1);
     System.out.println ("Stan Dev for student 1 = " + SD2);
 
-	 //prints the weighted average for a single student
-	 double WA = c1.getWeightedAverageForStudent(3);
-	 System.out.println("The weighted average for " + c1.printStudentName(000) + " is: "+WA);
-	 c1.createStudentsFile();
-	 
+    //prints the weighted average for a single student
+    double WA = c1.getWeightedAverageForStudent(1);
+    System.out.println("The weighted average for " + c1.printStudentName(456) + " is: "+WA);
+    c1.createStudentsFile();
+    c1.returnStudentsFile();
   }
 }
