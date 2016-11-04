@@ -319,29 +319,6 @@ public class GradeBook1{
       System.out.println ("The lowest grade is: " + low);
     }
 
-    //Prints out the Student's highest grade
-    public void printHighestGradeForStudent (int ID)
-    {
-      int high = (gradebook.get (ID)).get (1);
-      for (int i = 1; i < (gradebook.get (ID)).size (); i++)
-	if ((gradebook.get (ID)).get (i) > high)
-	  high = (gradebook.get (ID)).get (i);
-
-      System.out.println ("The highest grade for Student " + ID + " is " +
-			  high);
-    }
-
-    //Prints out the Student's lowest grade
-    public void printLowestGradeForStudent (int ID)
-    {
-      int low = (gradebook.get (ID)).get (1);
-      for (int i = 1; i < (gradebook.get (ID)).size (); i++)
-	if ((gradebook.get (ID)).get (i) < low)
-	  low = (gradebook.get (ID)).get (i);
-
-      System.out.println ("The lowest grade for Student #" + ID + " is " +
-			  low);
-    }
 
     //Returns the value of the average for a given assignment
     public double getAverageForAssignment (int assignment)
@@ -515,10 +492,80 @@ public class GradeBook1{
       }
       
       
+      //Prints out the Student's highest HW grade
+      public void printHighestQuizGradeForStudent(int ID){
+	  Vector<Integer> quizIndexes = new Vector<Integer>();
+	  for(int i = 0;i<values.size();i++)
+	      if(values.get(i) == 1)
+		  quizIndexes.addElement(i);
+	  
+	  int high = (gradebook.get(ID)).get(quizIndexes.get(0));
+	  
+	  for(int i=1;i<(gradebook.get(ID)).size();i++)
+	      if(i < quizIndexes.size())
+		  if(i == quizIndexes.get(i))
+		      if((gradebook.get(ID)).get(i) > high)
+			  high = (gradebook.get(ID)).get(i);
+	  
+	  System.out.println("The highest quiz grade for Student #" + ID + " is " + high);
+      }		
       
+      //Prints out the Student's lowest grade
+      public void printLowestQuizGradeForStudent(int ID){
+	  Vector<Integer> quizIndexes = new Vector<Integer>();
+	  for(int i = 0;i<values.size();i++)
+	      if(values.get(i) == 1)
+		  quizIndexes.addElement(i);
+	  
+	  int low = (gradebook.get(ID)).get(quizIndexes.get(0));
+	  
+	  for(int i=1;i<(gradebook.get(ID)).size();i++)
+	      if(i < quizIndexes.size())
+		  if(i == quizIndexes.get(i))
+		      if((gradebook.get(ID)).get(i) < low)
+			  low = (gradebook.get(ID)).get(i);
+	  
+	  System.out.println("The lowest quiz grade for Student #" + ID + " is " + low);
+      }
       
-  }
+      //Prints out the Student's highest HW grade
+      public void printHighestLabGradeForStudent(int ID){
+	  Vector<Integer> HWIndexes = new Vector<Integer>();
+	  for(int i = 0;i<values.size();i++)
+	      if(values.get(i) == 2)
+		  HWIndexes.addElement(i);
+			
+	  int high = (gradebook.get(ID)).get(HWIndexes.get(0));
+	  
+	  for(int i=1;i<(gradebook.get(ID)).size();i++)
+	      if(i < HWIndexes.size())
+					if(i == HWIndexes.get(i))
+					    if((gradebook.get(ID)).get(i) > high)
+						high = (gradebook.get(ID)).get(i);
+	  
+	  System.out.println("The highest lab grade for Student #" + ID + " is " + high);
+      }      
+     
+      //Prints out the Student's lowest grade
+      public void printLowestLabGradeForStudent(int ID){
+	  Vector<Integer> HWIndexes = new Vector<Integer>();
+	  for(int i = 0;i<values.size();i++)
+	      if(values.get(i) == 2)
+		  HWIndexes.addElement(i);
+	  
+	  int low = (gradebook.get(ID)).get(HWIndexes.get(0));
+	  
+	  for(int i=1;i<(gradebook.get(ID)).size();i++)
+	      if(i < HWIndexes.size())
+		  if(i == HWIndexes.get(i))
+		      if((gradebook.get(ID)).get(i) < low)
+			  low = (gradebook.get(ID)).get(i);
+	  
+	  System.out.println("The lowest lab grade for Student #"); 
+	  
+      }
     
+  }
     public static void main (String[]args)
     {	  
 	File file = new File ("./Classes/grades.txt");
@@ -528,41 +575,41 @@ public class GradeBook1{
 	Student p = new Student ("Phoebe", 789);
 	Student x = new Student ("Dummy", 000);
 	
-	 Vector<Student>pupils = new Vector<Student>();
-	 pupils.addElement(f);
-	 pupils.addElement(b);
-	 pupils.addElement(p);
-	 pupils.addElement(x);
-	 System.out.println(pupils);
-
-    Vector < Vector < Integer >> SandG = new Vector < Vector < Integer >> ();
-    Vector < Integer > test1 = new Vector < Integer > ();
-    Vector < Integer > test2 = new Vector < Integer > ();
-    Vector < Integer > test3 = new Vector < Integer > ();
-    Vector < Integer > test4 = new Vector < Integer > ();
-
-    //Creates the initial 2D Vector
-    test1.addElement (123);
-    test1.addElement (10);
-    test1.addElement (20);
-    test1.addElement (30);
-    SandG.addElement (test1);
-    test2.addElement (456);
-    test2.addElement (40);
-    test2.addElement (50);
-    test2.addElement (60);
-    SandG.addElement (test2);
-    test3.addElement (789);
-    test3.addElement (70);
-    test3.addElement (80);
-    test3.addElement (90);
-    SandG.addElement (test3);
-    test4.addElement (000);
-    test4.addElement (0);
+	Vector<Student>pupils = new Vector<Student>();
+	pupils.addElement(f);
+	pupils.addElement(b);
+	pupils.addElement(p);
+	pupils.addElement(x);
+	System.out.println(pupils);
+	
+	Vector < Vector < Integer >> SandG = new Vector < Vector < Integer >> ();
+	Vector < Integer > test1 = new Vector < Integer > ();
+	Vector < Integer > test2 = new Vector < Integer > ();
+	Vector < Integer > test3 = new Vector < Integer > ();
+	Vector < Integer > test4 = new Vector < Integer > ();
+	
+	  //Creates the initial 2D Vector
+	test1.addElement (123);
+	test1.addElement (10);
+	test1.addElement (20);
+	test1.addElement (30);
+	SandG.addElement (test1);
+	test2.addElement (456);
+	test2.addElement (40);
+	test2.addElement (50);
+	test2.addElement (60);
+	SandG.addElement (test2);
+	test3.addElement (789);
+	test3.addElement (70);
+	test3.addElement (80);
+	test3.addElement (90);
+	SandG.addElement (test3);
+	test4.addElement (000);
+	test4.addElement (0);
     test4.addElement (0);
     test4.addElement (0);
     SandG.addElement (test4);
-
+    
     Vector<Integer>indexes = new Vector<Integer>();
     indexes.addElement(-1);
     indexes.addElement(0);
@@ -629,8 +676,6 @@ public class GradeBook1{
 
     c1.printHighestGradeForAssignment (1);
     c1.printLowestGradeForAssignment (1);
-    c1.printLowestGradeForStudent (1);
-    c1.printHighestGradeForStudent (1);
     double SD1 = c1.getStanDevForAssignment (1);
     System.out.println ("Stan Dev for assignment 1 = " + SD1);
     double SD2 = c1.getStanDevForStudent (1);
@@ -641,5 +686,5 @@ public class GradeBook1{
     System.out.println("The weighted average for " + c1.printStudentName(456) + " is: "+WA);
     c1.createStudentsFile();
     c1.returnStudentsFile();
-  }
+    }   
 }
