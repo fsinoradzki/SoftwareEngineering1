@@ -237,11 +237,57 @@ public class GradeBook1{
 			  }
 		  }
 
-	  /*
-		 Purpose: Used within the GUI for Class creation to check whether the class has an existing file in the standard format. 
-		 @return: if the file exists, the function returns true, otherwise it returns false
-		*/
-	  public boolean checkFile(){
+      /*
+	Purpose: create or modify a standard file containing a vector of integers representing assignment types
+	postcondition: the assignment types for a class have been saved to a standard file 
+       */
+      public void createAssignmentsFile(){
+		  try{
+		  String key = this.className+this.classNum;
+		  File file = new File("./Classes/"+key+"Assignments.txt");
+		  if(!file.exists())
+			  file.createNewFile();
+		  FileWriter fw = new FileWriter(file);
+		  BufferedWriter bw = new BufferedWriter(fw);
+		  for(int i =0;i<values.size();i++){
+		      bw.write(String.valueOf(values.get(i)));
+		      bw.write("\n");
+		  }
+		  bw.close();
+		  }catch(IOException e){}
+	  }
+      
+      /*
+	Purpose: to return the values of an assignment vector to a gradebook from a standard file 
+	postcondition: values have been returned to represent the assignment types for a class
+       */
+      public void returnAssignmentsFile(){
+	  try{
+	      String key = this.className+this.classNum;
+	      File file = new File("./Classes/"+key+"Assignments.txt");
+	      Vector<Integer>indexes = new Vector<Integer>();
+	      BufferedReader br = new BufferedReader (new FileReader (file));
+              String line;
+              while ((line = br.readLine ()) != null)
+		  {
+		      StringTokenizer st = new StringTokenizer (line); 
+		      while (st.hasMoreTokens ())
+			  {
+			      int value1 = Integer.parseInt (st.nextToken ());
+			      if (!st.hasMoreTokens ())
+				  indexes.addElement(value1);
+			  }
+		  }	      
+	      this.values = indexes;
+	      System.out.println(values);
+	  }catch(IOException e){}
+      }
+
+      /*
+	Purpose: Used within the GUI for Class creation to check whether the class has an existing file in the standard format. 
+	@return: if the file exists, the function returns true, otherwise it returns false
+      */
+      public boolean checkFile(){
 			  String key = this.className + this.classNum;
 			  File file = new File("./Classes/"+key+".txt");
 			  if(file.exists())
@@ -686,5 +732,8 @@ public class GradeBook1{
     System.out.println("The weighted average for " + c1.printStudentName(456) + " is: "+WA);
     c1.createStudentsFile();
     c1.returnStudentsFile();
+    c1.createAssignmentsFile();
+    c1.returnAssignmentsFile();
+    System.out.println(c1.values);
     }   
 }
