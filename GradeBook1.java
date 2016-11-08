@@ -91,6 +91,7 @@ public class GradeBook1{
     private Rubric R;		//The rubric for the class
     private String className;	//name of class
     private int classNum;
+      Boolean locked;          //boolean value for locking class 
 
     //Simple Constructor
       public Class (Vector < Vector < Integer >> SandG,Vector<Student> pupils,Vector<Integer> indexes, int HWs, int Quizzes,
@@ -105,6 +106,7 @@ public class GradeBook1{
       className = name;
       classNum = number;
       R = new Rubric ();
+      locked = false;
     }
 
 	  /*
@@ -153,6 +155,7 @@ public class GradeBook1{
 			  className = name;
 			  classNum = number;
 			  R = new Rubric ();
+			  locked = false;
     }
 
 	  public void createStudentsFile(){
