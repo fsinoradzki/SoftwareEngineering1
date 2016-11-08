@@ -122,8 +122,21 @@ public class GradeBook1{
 		*/
       public Class (File file, Vector<Student> pupils, Vector<Integer> indexes, int HWs, int Quizzes, int Labs, String name,int number)
 		  {
-			  try
+		      students = new Vector<Student>(pupils);
+		      values = new Vector<Integer>(indexes);
+		      numHWs = HWs;
+		      numQuizzes = Quizzes;
+		      numLabs = Labs;
+		      className = name;
+		      classNum = number;
+		      R = new Rubric ();
+		      locked = false;
+		      try
 			  {
+			      String key = this.className+this.classNum;
+			      File mydir = new File("./Classes/"+key);
+			      if(!mydir.exists())
+				  mydir.mkdir();
 				  Vector < Vector < Integer >> matrix = new Vector < Vector < Integer >> ();  //vector of vectors
               BufferedReader br = new BufferedReader (new FileReader (file));
               String line;
@@ -147,21 +160,13 @@ public class GradeBook1{
 			  catch (IOException e)
 			  {
 			  }
-			  students = new Vector<Student>(pupils);
-			  values = new Vector<Integer>(indexes);
-			  numHWs = HWs;
-			  numQuizzes = Quizzes;
-			  numLabs = Labs;
-			  className = name;
-			  classNum = number;
-			  R = new Rubric ();
-			  locked = false;
+			 
     }
 
 	  public void createStudentsFile(){
 		  try{
 		  String key = this.className+this.classNum;
-		  File file = new File("./Classes/"+key+"Students.txt");
+		  File file = new File("./Classes/"+key+"/"+key+"Students.txt");
 		  if(!file.exists())
 			  file.createNewFile();
 		  FileWriter fw = new FileWriter(file);
@@ -179,7 +184,7 @@ public class GradeBook1{
       public void returnStudentsFile(){
 	  try{
 	      String key = this.className+this.classNum;
-	      File file = new File("./Classes/"+key+"Students.txt");
+	      File file = new File("./Classes/"+key+"/"+key+"Students.txt");
 	      Vector<Student>pupils = new Vector<Student>();
 	      BufferedReader br = new BufferedReader (new FileReader (file));
               String line;
@@ -202,9 +207,56 @@ public class GradeBook1{
 	      }
 	  }catch(IOException e){}
       }
-      
 
-	  /*
+      public void createRubricFile(){
+		  try{
+		  String key = this.className+this.classNum;
+		  File file = new File("./Classes/"+key+"/"+key+"Rubric.txt");
+		  if(!file.exists())
+			  file.createNewFile();
+		  FileWriter fw = new FileWriter(file);
+		  BufferedWriter bw = new BufferedWriter(fw);
+		  bw.write(String.valueOf(R.HWValue));
+		  bw.write("\n");
+		  bw.write(String.valueOf(R.quizValue));
+		  bw.write("\n");
+		  bw.write(String.valueOf(R.labValue));
+		  bw.close();
+		  }catch(IOException e){}
+	  }
+
+       public void returnRubricFile(){
+	  try{
+	      String key = this.className+this.classNum;
+	      File file = new File("./Classes/"+key+"/"+key+"Rubric.txt");
+	      BufferedReader br = new BufferedReader (new FileReader (file));
+              String line;
+	      Rubric test = new Rubric();
+	      test.HWValue = 0;
+	      test.quizValue = 0;
+	      test.labValue = 0;
+	      int i = 0;
+              while ((line = br.readLine ()) != null)
+		  {
+		      StringTokenizer st = new StringTokenizer (line); 
+		      while (st.hasMoreTokens ())
+		        {
+			    if(i ==0)
+				test.HWValue = Integer.valueOf(st.nextToken());
+			    if(i==1)
+			      test.quizValue = Integer.valueOf(st.nextToken());
+			    if(i==2)
+			      test.labValue = Integer.valueOf(st.nextToken());
+			        }
+		      i++;
+		  }
+	      this.R = test;
+	      System.out.println(test.HWValue);
+	      System.out.println(test.quizValue);
+	      System.out.println(test.labValue);
+	  }catch(IOException e){}
+       }
+      /*
 		 Purpose: create a standard file to save the gradebook to for each class. This will be done by using the className and classNum to create a standard file name.
 		 This standard file name will be className+ClassNum+.txt and an example would be CISC1600.txt where CISC is the class name and 1600 is the class number.
 		 Each of these files will be stored within a subdirectory called "Classes".
@@ -215,7 +267,7 @@ public class GradeBook1{
 			  try
 			  {
 				  String key = this.className + this.classNum;	//used to standardize file format
-				  File file = new File ("./Classes/" + key + "grades.txt");	//accesses file of standard format within a subdirectory
+				  File file = new File ("./Classes/" + key + "/"+key+"grades.txt");	//accesses file of standard format within a subdirectory
 				  if (!file.exists ())
 					  file.createNewFile ();
 				  
@@ -247,7 +299,7 @@ public class GradeBook1{
       public void createAssignmentsFile(){
 		  try{
 		  String key = this.className+this.classNum;
-		  File file = new File("./Classes/"+key+"Assignments.txt");
+		  File file = new File("./Classes/"+key+"/"+key+"Assignments.txt");
 		  if(!file.exists())
 			  file.createNewFile();
 		  FileWriter fw = new FileWriter(file);
@@ -267,7 +319,7 @@ public class GradeBook1{
       public void returnAssignmentsFile(){
 	  try{
 	      String key = this.className+this.classNum;
-	      File file = new File("./Classes/"+key+"Assignments.txt");
+	      File file = new File("./Classes/"+key+"/"+key+"Assignments.txt");
 	      Vector<Integer>indexes = new Vector<Integer>();
 	      BufferedReader br = new BufferedReader (new FileReader (file));
               String line;
@@ -745,6 +797,8 @@ public class GradeBook1{
     c1.returnStudentsFile();
     c1.createAssignmentsFile();
     c1.returnAssignmentsFile();
+    c1.createRubricFile();
+    c1.returnRubricFile();
     System.out.println(c1.values);
     }   
 }
