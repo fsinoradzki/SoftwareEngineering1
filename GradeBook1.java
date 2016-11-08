@@ -613,7 +613,15 @@ public class GradeBook1{
 	  System.out.println("The lowest lab grade for Student #"); 
 	  
       }
-    
+      //Locks the class if it is unlocked
+		//Unlocks the class if it is locked
+		public void lockOrUnlock(){
+			if(this.locked == false)
+				locked = true;
+			else
+				locked = false;
+		}
+      
   }
     public static void main (String[]args)
     {	  
