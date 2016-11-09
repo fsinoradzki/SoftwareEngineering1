@@ -2,13 +2,62 @@ import java.io.*;
 import java.util.*;
 
 public class GradeBook1{
-    //private Vector<String> classList; 
 
+    public static class ClassList{
+	private Vector<Class> list; 
+	
+	public void addClasses(Vector<Class> item){
+	    this.list = item;
+	}
+	
+	public void loadClassFile(){
+	    try{
+		File file = new File("./Classes/ClassList.txt");
+		Vector<Class>semester = new Vector<Class>();
+		BufferedReader br = new BufferedReader (new FileReader (file));
+		String line;
+		while ((line = br.readLine ()) != null)
+		    {
+			StringTokenizer st = new StringTokenizer (line); 
+			while (st.hasMoreTokens ())
+			    {
+				int number = Integer.valueOf(st.nextToken());
+				String name = st.nextToken();
+				if (!st.hasMoreTokens ()){
+				    Class sample = new Class(name,number);
+				    semester.addElement (sample);
+				}
+			    }
+		    }	      
+		this.list = semester;
+		for (int i =0;i<list.size();i++){
+		    System.out.println(list.get(i).className);
+		    System.out.println(list.get(i).classNum);
+		}
+	    }catch(IOException e){}
+	}
+	public void createClassFile(){
+	    try{
+		File file = new File("./Classes/ClassList.txt");
+		if(!file.exists())
+		    file.createNewFile();
+		FileWriter fw = new FileWriter(file);
+		BufferedWriter bw = new BufferedWriter(fw);
+		for(int i =0;i<list.size();i++){
+		    bw.write(String.valueOf(list.get(i).classNum));
+		    bw.write(" ");
+		    bw.write(list.get(i).className);
+		    bw.write("\n");
+		}
+		bw.close();
+	    }catch(IOException e){}
+	}
+	
+    }
     
-    
-  public static class Student{
-    private String name;	//Student name
-    private int student_id;	//Student ID
+    public static class Student{
+	private String name;	//Student name
+	private int student_id;	//Student ID
 
     //Constructor for Student
     public Student (String Sname, int ID)
@@ -679,6 +728,7 @@ public class GradeBook1{
 		}
       
   }
+    
     public static void main (String[]args)
     {	  
 	File file = new File ("./Classes/grades.txt");
@@ -800,5 +850,15 @@ public class GradeBook1{
     c1.createRubricFile();
     c1.returnRubricFile();
     System.out.println(c1.values);
+    Vector<Class> list = new Vector<Class>();
+    ClassList semester = new ClassList();
+    ClassList testSemester = new ClassList();
+    list.addElement(c1);
+    list.addElement(c2);
+    //  semester.addClass(c1);
+    //semester.addClass(c2);
+    semester.addClasses(list);
+    semester.createClassFile();
+    testSemester.loadClassFile();
     }   
 }
