@@ -245,17 +245,69 @@ public class Layout extends JFrame {
         //   setVisible(true);
     }
     
+    
+     public static class ClassList{
+	private Vector<Class> list; 
 	
+	public void addClasses(Vector<Class> item){
+	    this.list = item;
+	}
+	
+	public void loadClassFile(){
+	    try{
+		File file = new File("./Classes/ClassList.txt");
+		Vector<Class>semester = new Vector<Class>();
+		BufferedReader br = new BufferedReader (new FileReader (file));
+		String line;
+		while ((line = br.readLine ()) != null)
+		    {
+			StringTokenizer st = new StringTokenizer (line); 
+			while (st.hasMoreTokens ())
+			    {
+				int number = Integer.valueOf(st.nextToken());
+				String name = st.nextToken();
+				if (!st.hasMoreTokens ()){
+				    Class sample = new Class(name,number);
+				    semester.addElement (sample);
+				}
+			    }
+		    }	      
+		this.list = semester;
+		for (int i =0;i<list.size();i++){
+		    System.out.println(list.get(i).className);
+		    System.out.println(list.get(i).classNum);
+		}
+	    }catch(IOException e){}
+	}
+	public void createClassFile(){
+	    try{
+		File file = new File("./Classes/ClassList.txt");
+		if(!file.exists())
+		    file.createNewFile();
+		FileWriter fw = new FileWriter(file);
+		BufferedWriter bw = new BufferedWriter(fw);
+		for(int i =0;i<list.size();i++){
+		    bw.write(String.valueOf(list.get(i).classNum));
+		    bw.write(" ");
+		    bw.write(list.get(i).className);
+		    bw.write("\n");
+		}
+		bw.close();
+	    }catch(IOException e){}
+	}
+	
+    }
+    
     public static class Student{
 	private String name;	//Student name
 	private int student_id;	//Student ID
-	
-	    //Constructor for Student
-	    public Student (String Sname, int ID)
-	    {
-		name = Sname;
-		student_id = ID;
-	    }
+
+    //Constructor for Student
+    public Student (String Sname, int ID)
+    {
+      name = Sname;
+      student_id = ID;
+    }
 
 
     //Returns the student's name
@@ -350,61 +402,67 @@ public class Layout extends JFrame {
       classNum = number;
       R = new Rubric ();
       locked = false;
+      String key = this.className+this.classNum;
+      File mydir = new File("./Classes/"+key);
+      if(!mydir.exists())
+	  mydir.mkdir();
     }
 
-	  /*
-		Purpose: Class constructor using input from a file 
-		@param file: gives the input file from which the class gradebook will be generated
-		@param HWs: # of homeworks for the semester
-		@param Quizzes: # of quizzes for the semester
-		@param labs: # of labs for the semester
-		@param name: the name of the class
-		@param number: number of the class
-		@post condition: a class' gradebook has been generated from file input
-		@returns: this function returns the gradebook of the class calling the function 
-		*/
-      public Class (File file, Vector<Student> pupils, Vector<Integer> indexes, int HWs, int Quizzes, int Labs, String name,int number)
+      public Class(String name,int number)
 		  {
-			  try
+		      System.out.println("Entered CLASS");
+		      className = name;
+		      classNum = number;
+		      this.returnStudentsFile();
+		      this.returnAssignmentsFile();
+		      this.returnRubricFile();
+		      numHWs =0;
+		      numLabs = 0;
+		      numQuizzes =0;
+		      for(int i=0;i<this.values.size()-1;i++){
+			  if(this.values.get(i)==0)
+			      numHWs++;
+			  if(this.values.get(i)==1)
+			      numQuizzes++;
+			  if(this.values.get(i)==2)
+			      numLabs++;
+		      }
+       		      locked = false;
+		      try
 			  {
-				  Vector < Vector < Integer >> matrix = new Vector < Vector < Integer >> ();  //vector of vectors
-              BufferedReader br = new BufferedReader (new FileReader (file));
-              String line;
-              while ((line = br.readLine ()) != null)
-              {
-                 StringTokenizer st = new StringTokenizer (line);
-                 int num = 0;
-                 Vector < Integer > test = new Vector < Integer > ();   //vector used for input
-                 test.clear ();
-                 while (st.hasMoreTokens ())
-                 {
-                    int value1 = Integer.parseInt (st.nextToken ());
-                    test.addElement (value1);
-                    if (!st.hasMoreTokens ())
-                       matrix.addElement (test);   //inserts entire test vector into the main vector
-                 }
-              }
-              gradebook = matrix;
-				  
+			      String key = this.className+this.classNum;
+			      File mydir = new File("./Classes/"+key);
+			      File file = new File("./Classes/"+key+"/"+key+"grades.txt");
+			      Vector < Vector < Integer >> matrix = new Vector < Vector < Integer >> ();  //vector of vectors
+			      BufferedReader br = new BufferedReader (new FileReader (file));
+			      String line;
+			      while ((line = br.readLine ()) != null)
+				  {
+				      StringTokenizer st = new StringTokenizer (line);
+				      int num = 0;
+				      Vector < Integer > test = new Vector < Integer > ();   //vector used for input
+				      test.clear ();
+				      while (st.hasMoreTokens ())
+					  {
+					      int value1 = Integer.parseInt (st.nextToken ());
+					      test.addElement (value1);
+					      if (!st.hasMoreTokens ())
+						  matrix.addElement (test);   //inserts entire test vector into the main vector
+					  }
+				  }
+			      gradebook = matrix;
+			      
 			  }
-			  catch (IOException e)
+		      catch (IOException e)
 			  {
 			  }
-			  students = new Vector<Student>(pupils);
-			  values = new Vector<Integer>(indexes);
-			  numHWs = HWs;
-			  numQuizzes = Quizzes;
-			  numLabs = Labs;
-			  className = name;
-			  classNum = number;
-			  R = new Rubric ();
-			  locked = false;
+		      
     }
 
 	  public void createStudentsFile(){
 		  try{
 		  String key = this.className+this.classNum;
-		  File file = new File("./Classes/"+key+"Students.txt");
+		  File file = new File("./Classes/"+key+"/"+key+"Students.txt");
 		  if(!file.exists())
 			  file.createNewFile();
 		  FileWriter fw = new FileWriter(file);
@@ -422,7 +480,7 @@ public class Layout extends JFrame {
       public void returnStudentsFile(){
 	  try{
 	      String key = this.className+this.classNum;
-	      File file = new File("./Classes/"+key+"Students.txt");
+	      File file = new File("./Classes/"+key+"/"+key+"Students.txt");
 	      Vector<Student>pupils = new Vector<Student>();
 	      BufferedReader br = new BufferedReader (new FileReader (file));
               String line;
@@ -445,9 +503,56 @@ public class Layout extends JFrame {
 	      }
 	  }catch(IOException e){}
       }
-      
 
-	  /*
+      public void createRubricFile(){
+		  try{
+		  String key = this.className+this.classNum;
+		  File file = new File("./Classes/"+key+"/"+key+"Rubric.txt");
+		  if(!file.exists())
+			  file.createNewFile();
+		  FileWriter fw = new FileWriter(file);
+		  BufferedWriter bw = new BufferedWriter(fw);
+		  bw.write(String.valueOf(R.HWValue));
+		  bw.write("\n");
+		  bw.write(String.valueOf(R.quizValue));
+		  bw.write("\n");
+		  bw.write(String.valueOf(R.labValue));
+		  bw.close();
+		  }catch(IOException e){}
+	  }
+
+       public void returnRubricFile(){
+	  try{
+	      String key = this.className+this.classNum;
+	      File file = new File("./Classes/"+key+"/"+key+"Rubric.txt");
+	      BufferedReader br = new BufferedReader (new FileReader (file));
+              String line;
+	      Rubric test = new Rubric();
+	      test.HWValue = 0;
+	      test.quizValue = 0;
+	      test.labValue = 0;
+	      int i = 0;
+              while ((line = br.readLine ()) != null)
+		  {
+		      StringTokenizer st = new StringTokenizer (line); 
+		      while (st.hasMoreTokens ())
+		        {
+			    if(i ==0)
+				test.HWValue = Integer.valueOf(st.nextToken());
+			    if(i==1)
+			      test.quizValue = Integer.valueOf(st.nextToken());
+			    if(i==2)
+			      test.labValue = Integer.valueOf(st.nextToken());
+			        }
+		      i++;
+		  }
+	      this.R = test;
+	      System.out.println(test.HWValue);
+	      System.out.println(test.quizValue);
+	      System.out.println(test.labValue);
+	  }catch(IOException e){}
+       }
+      /*
 		 Purpose: create a standard file to save the gradebook to for each class. This will be done by using the className and classNum to create a standard file name.
 		 This standard file name will be className+ClassNum+.txt and an example would be CISC1600.txt where CISC is the class name and 1600 is the class number.
 		 Each of these files will be stored within a subdirectory called "Classes".
@@ -458,7 +563,7 @@ public class Layout extends JFrame {
 			  try
 			  {
 				  String key = this.className + this.classNum;	//used to standardize file format
-				  File file = new File ("./Classes/" + key + "grades.txt");	//accesses file of standard format within a subdirectory
+				  File file = new File ("./Classes/" + key + "/"+key+"grades.txt");	//accesses file of standard format within a subdirectory
 				  if (!file.exists ())
 					  file.createNewFile ();
 				  
@@ -490,7 +595,7 @@ public class Layout extends JFrame {
       public void createAssignmentsFile(){
 		  try{
 		  String key = this.className+this.classNum;
-		  File file = new File("./Classes/"+key+"Assignments.txt");
+		  File file = new File("./Classes/"+key+"/"+key+"Assignments.txt");
 		  if(!file.exists())
 			  file.createNewFile();
 		  FileWriter fw = new FileWriter(file);
@@ -510,7 +615,7 @@ public class Layout extends JFrame {
       public void returnAssignmentsFile(){
 	  try{
 	      String key = this.className+this.classNum;
-	      File file = new File("./Classes/"+key+"Assignments.txt");
+	      File file = new File("./Classes/"+key+"/"+key+"Assignments.txt");
 	      Vector<Integer>indexes = new Vector<Integer>();
 	      BufferedReader br = new BufferedReader (new FileReader (file));
               String line;
@@ -857,17 +962,18 @@ public class Layout extends JFrame {
 	  
       }
       //Locks the class if it is unlocked
-      //Unlocks the class if it is locked
-      public void lockOrUnlock(){
-	  if(this.locked == false)
-	      locked = true;
-	  else
-	      locked = false;
-      }
+		//Unlocks the class if it is locked
+		public void lockOrUnlock(){
+			if(this.locked == false)
+				locked = true;
+			else
+				locked = false;
+		}
+      
+      
+      
   }
-	
-	
-	
+    
     public static void main(String[] args) {
 	
 	File file = new File("./Classes/grades.txt");
@@ -923,7 +1029,9 @@ public class Layout extends JFrame {
 	indexes.addElement(0);
 	indexes.addElement(0);
 	
-	Class c2 = new Class(file, pupils,indexes, HWs, Quizzes, Labs, name, number);
+	String testName = "Math";
+	int testNumber = 1100;
+	Class c2 = new Class(testName, testNumber);
 	c2.createFile();
 	
 	Vector <String> columnNames = new Vector<String>();
