@@ -2,7 +2,10 @@ import java.io.*;
 import java.util.*;
 
 public class GradeBook1{
-  
+    //private Vector<String> classList; 
+
+    
+    
   public static class Student{
     private String name;	//Student name
     private int student_id;	//Student ID
@@ -107,60 +110,61 @@ public class GradeBook1{
       classNum = number;
       R = new Rubric ();
       locked = false;
+      String key = this.className+this.classNum;
+      File mydir = new File("./Classes/"+key);
+      if(!mydir.exists())
+	  mydir.mkdir();
     }
 
-	  /*
-		Purpose: Class constructor using input from a file 
-		@param file: gives the input file from which the class gradebook will be generated
-		@param HWs: # of homeworks for the semester
-		@param Quizzes: # of quizzes for the semester
-		@param labs: # of labs for the semester
-		@param name: the name of the class
-		@param number: number of the class
-		@post condition: a class' gradebook has been generated from file input
-		@returns: this function returns the gradebook of the class calling the function 
-		*/
-      public Class (File file, Vector<Student> pupils, Vector<Integer> indexes, int HWs, int Quizzes, int Labs, String name,int number)
+      public Class(String name,int number)
 		  {
-		      students = new Vector<Student>(pupils);
-		      values = new Vector<Integer>(indexes);
-		      numHWs = HWs;
-		      numQuizzes = Quizzes;
-		      numLabs = Labs;
+		      System.out.println("Entered CLASS");
 		      className = name;
 		      classNum = number;
-		      R = new Rubric ();
-		      locked = false;
+		      this.returnStudentsFile();
+		      this.returnAssignmentsFile();
+		      this.returnRubricFile();
+		      numHWs =0;
+		      numLabs = 0;
+		      numQuizzes =0;
+		      for(int i=0;i<this.values.size()-1;i++){
+			  if(this.values.get(i)==0)
+			      numHWs++;
+			  if(this.values.get(i)==1)
+			      numQuizzes++;
+			  if(this.values.get(i)==2)
+			      numLabs++;
+		      }
+       		      locked = false;
 		      try
 			  {
 			      String key = this.className+this.classNum;
 			      File mydir = new File("./Classes/"+key);
-			      if(!mydir.exists())
-				  mydir.mkdir();
-				  Vector < Vector < Integer >> matrix = new Vector < Vector < Integer >> ();  //vector of vectors
-              BufferedReader br = new BufferedReader (new FileReader (file));
-              String line;
-              while ((line = br.readLine ()) != null)
-              {
-                 StringTokenizer st = new StringTokenizer (line);
-                 int num = 0;
-                 Vector < Integer > test = new Vector < Integer > ();   //vector used for input
-                 test.clear ();
-                 while (st.hasMoreTokens ())
-                 {
-                    int value1 = Integer.parseInt (st.nextToken ());
-                    test.addElement (value1);
-                    if (!st.hasMoreTokens ())
-                       matrix.addElement (test);   //inserts entire test vector into the main vector
-                 }
-              }
-              gradebook = matrix;
-				  
+			      File file = new File("./Classes/"+key+"/"+key+"grades.txt");
+			      Vector < Vector < Integer >> matrix = new Vector < Vector < Integer >> ();  //vector of vectors
+			      BufferedReader br = new BufferedReader (new FileReader (file));
+			      String line;
+			      while ((line = br.readLine ()) != null)
+				  {
+				      StringTokenizer st = new StringTokenizer (line);
+				      int num = 0;
+				      Vector < Integer > test = new Vector < Integer > ();   //vector used for input
+				      test.clear ();
+				      while (st.hasMoreTokens ())
+					  {
+					      int value1 = Integer.parseInt (st.nextToken ());
+					      test.addElement (value1);
+					      if (!st.hasMoreTokens ())
+						  matrix.addElement (test);   //inserts entire test vector into the main vector
+					  }
+				  }
+			      gradebook = matrix;
+			      
 			  }
-			  catch (IOException e)
+		      catch (IOException e)
 			  {
 			  }
-			 
+		      
     }
 
 	  public void createStudentsFile(){
@@ -731,19 +735,15 @@ public class GradeBook1{
     int Labs = 0;
     String name = "SoftEng";
     int number = 2;
+    String testName = "Math";
+    int testNumber = 1100;
 
-    Class c2 = new Class (file,pupils,indexes, HWs, Quizzes, Labs, name, number);
-    // c2.createFile(output);
+    //Class c2 = new Class (file,pupils,indexes, HWs, Quizzes, Labs, name, number);
+    Class c2 = new Class(testName, testNumber);
     c2.createFile ();
-	 System.out.println("After creating gradebook from file: ");
+    System.out.println("After creating gradebook from file: ");
     c2.printGradebook ();
-    Class c3 = new Class (standard,pupils,indexes, HWs, Quizzes, Labs, name, number);
-	 if(c3.checkFile())
-		 System.out.println("The File exists");
-	 System.out.println("After pulling from a standard file:");
-	 c3.printGradebook();
-
-	 Class c1 = new Class (SandG,pupils,indexes, HWs, Quizzes, Labs, name, number);
+    Class c1 = new Class (SandG,pupils,indexes, HWs, Quizzes, Labs, name, number);
     System.out.println ("After creating c1: ");
     c1.printGradebook ();
     System.out.println ("Ben's grades:");
