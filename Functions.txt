@@ -1,3 +1,11 @@
+Login
+	creates all the elements of the GUI
+	adds all the elements to the panel
+	checks if passwd is correct
+Layout
+	saveGradesButton: where saving grades code should go
+	create layout for everything so it doesnt look stupid 
+
 Classes:
 	ClassList: acts as a vector of Classes
 	Class: contains all the class information
@@ -67,4 +75,12 @@ Class:
 	printHighestLab" "
 	printLowestLab" "
 	lockOrUnlock(): used to lock or unlock class from editing 
+FILES:
+	/Classes/
+		classList.txt : contains a vector of classes to be saves
+		*CLASSKEY*/
+			" "Students.txt
+			" "grades.txt
+			" "Assignments.txt
+			" "Rubric.txt 
 
