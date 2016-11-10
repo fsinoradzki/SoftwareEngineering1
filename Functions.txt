@@ -1,0 +1,70 @@
+Classes:
+	ClassList: acts as a vector of Classes
+	Class: contains all the class information
+	Student: contains student ID and name
+	Rubric: contans rubric information
+
+ClassList
+	Vector<Class> list
+	addClasses(Vector<Class> item): pushes classlist item onto class List
+	loadClassFile(): loads the list of classes from the standard file
+	createClassFile():  saves a list of class to a standard file
+Student
+	String name
+	int student_id 
+	Student(Sname, int ID): Student constructor
+ 	getName(): returns name of the student
+	getID(): returns iD of the student
+Rubric:
+	int HWValue
+	int quizValue
+	int labValue
+	Rubric(): default Rubric constructor with default values
+	Rubric(int HW, int quiz, int lab): constructor designating values to these integers
+	getHWValue(): returns the hw value
+	getLabValue(): returns the lab value
+	getQuizValue(): returns the quiz value
+	editRubricValues(int HW, int quiz, int lab): changes values of Rubric variables 
+Class:
+	Vector<Vector<Integer>> gradebook
+	Vector<Student> students
+	Vector<Integer> values
+	int numHWs
+	int numQuizzes
+	int numLabs
+	Rubric R
+	String className
+	int classNum
+	Boolean locked
+	Class(Vector<Vector<Integer>>SandG, Vector<Student>pupils, Vector<Integer>indexes, int HWs, int Quizzes, int Labs, String name, int number): used to create a new class type
+	Class(name, number): fills in a class from 4 standard files
+	createStudentsFile(): creates a standard file containing student name and ID based off of className, #
+	returnStudentsFile(): loads a standard file containing student information
+	createRubricFile(): creates standard rubric file containing rubric values
+	returnRubricFile(): loads a standard file containign rubric values
+	createFile(): creates the standard gradebook file "SAVES GRADES"
+	createAssignmentsFile(): creates a standard file containing different assignments
+	returnAssignmentsFile(): loads a standard file containing different Assignments
+	checkFile(): checks if a file exists, not really necessary
+	printGradebook(): prints gradebook to standard output
+	printStudentName(int ID): prints the name of a student based on their ID
+	getGradesForStudent(int ID): returns the different grades for a single student
+	getGradesForClass(int assignment): returns the grades for a specific assignment across a class
+	printHighestGradeForAssignment(int assignment): returns highest grade for an assignment
+	printLowestGradeForAssignment(int assignment): returns lowest grade for an assignment
+	getAverageForStudent(int ID): returns a student's average based on their ID
+	getStanDevForAssignment(int assignment): returns standard deviation for an assignment
+	getStanDevForStudent(int ID): returns standard deviation for a given student
+	getWeightAverageForStudent(int ID): returns a student's weighted average
+	getAssignmentType(int assignment): returns the type of the index
+	addStudent(Student kid): adds a new student
+	addAssignment(int type): adds an assignment based on its type
+	changeGrade(int newGrade, int ID, int assignment): changes a specific grade for a student/assignment
+	printHighestHWGradeForStudent(int ID): prints highest grade for a student
+	printlowestHWGradeForStudent(int ID): prints lowest grade for a student
+	printHighestQuiz" "
+	printLowestQuiz" "
+	printHighestLab" "
+	printLowestLab" "
+	lockOrUnlock(): used to lock or unlock class from editing 
+
