@@ -1034,15 +1034,48 @@ public class Layout extends JFrame {
 	Class c2 = new Class(testName, testNumber);
 	c2.createFile();
 	
-	Vector <String> columnNames = new Vector<String>();
+	/*Vector <String> columnNames = new Vector<String>();
+	columnNames.addElement("STUDENT NAME");
 	columnNames.addElement("STUDENT ID");
-	columnNames.addElement("HW1");
+	columnNames.addElement("Hw1");
 	columnNames.addElement("HW2");
 	columnNames.addElement("HW3");
 	columnNames.addElement("HW4");
-	JTable table = new JTable(c2.gradebook, columnNames); 
- 
-	
+	*/
+	//	String columnNames[]={"Student Name","Student ID", "HW1", "HW2","HW3","HW4"};
+
+	String columnNames[] = new String[c2.values.size()+2];
+	columnNames[0]="Student Name";
+	columnNames[1]="Student ID";
+	String title= " ";
+	int hwNum =0;
+	int quizNum=0;
+	int labNum=0;
+	for (int i=0;i<c2.values.size();i++){
+	    if(c2.values.get(i)==0){
+		hwNum++;
+		title = "HW "+hwNum;
+	    }
+	    if(c2.values.get(i)==1){
+		quizNum++;
+		title = "Quiz "+quizNum;
+	    }
+	    if(c2.values.get(i)==2){
+		labNum++;
+		title = "Lab "+labNum;
+	    }
+	    columnNames[i+2]=title;
+	}
+	    
+	Object[][]data = new Object[c2.students.size()][c2.values.size()+2];
+	for(int i =0;i<c2.students.size();i++){
+	    data[i][0]=c2.students.get(i).name;
+	    for(int k =1;k<=c2.gradebook.get(i).size();k++)
+		data[i][k] = c2.gradebook.get(i).get(k-1);
+	}
+	//JTable table = new JTable(c2.gradebook, columnNames); 
+	//JTable table = new JTable(testTable, columnNames); 
+	JTable table = new JTable(data,columnNames);
         LogIn GUI = new LogIn(table);
     }   
 }
