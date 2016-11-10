@@ -1033,16 +1033,6 @@ public class Layout extends JFrame {
 	int testNumber = 1100;
 	Class c2 = new Class(testName, testNumber);
 	c2.createFile();
-	
-	/*Vector <String> columnNames = new Vector<String>();
-	columnNames.addElement("STUDENT NAME");
-	columnNames.addElement("STUDENT ID");
-	columnNames.addElement("Hw1");
-	columnNames.addElement("HW2");
-	columnNames.addElement("HW3");
-	columnNames.addElement("HW4");
-	*/
-	//	String columnNames[]={"Student Name","Student ID", "HW1", "HW2","HW3","HW4"};
 
 	String columnNames[] = new String[c2.values.size()+2];
 	columnNames[0]="Student Name";
@@ -1077,6 +1067,7 @@ public class Layout extends JFrame {
 	//JTable table = new JTable(testTable, columnNames); 
 	JTable table = new JTable(data,columnNames);
         LogIn GUI = new LogIn(table);
+	
     }   
 }
 
