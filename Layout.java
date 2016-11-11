@@ -1167,6 +1167,10 @@ public class Layout extends JFrame {
 		labNum++;
 		title = "Lab "+labNum;
 	    }
+	    if(c2.values.get(i)==3)
+		title = "Participation";
+	    if(c2.values.get(i)==4)
+	       title = "Extra Credit";
 	    columnNames[i+2]=title;
 	}
 	    
