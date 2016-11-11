@@ -122,7 +122,6 @@ public class Layout extends JFrame {
 
 	    
             save.addActionListener((ActionEvent e) -> {
-		    //	    Vector<Student> test
 		    Student test = new Student("default",000);
 		    test.name = studentName.getText();
 		    test.student_id = Integer.valueOf(studentID.getText());
@@ -169,15 +168,45 @@ public class Layout extends JFrame {
     }
     
     public class EditRubric extends JFrame {
-        public EditRubric() { //will need to call variables needed for rubric
+        public EditRubric(Class c1) { //will need to call variables needed for rubric
             super("Edit Rubric");
             //all the elements
             JPanel editRubric = new JPanel(new BorderLayout());
             JPanel inputPanel = new JPanel(new GridLayout(0, 2, 10, 10));
             JPanel savePanel = new JPanel();
             JButton save = new JButton("Save");
+	    JLabel label1 = new JLabel("Homework Value:");
+            JTextField homework = new JTextField("", 10);
+            JLabel label2 = new JLabel("Quiz Value:");
+            JTextField quiz = new JTextField("", 10);
+	    JLabel label3 = new JLabel("Lab Value:");
+	    JTextField lab = new JTextField("", 10);
+	    JLabel label4 = new JLabel("Participation:");
+	    JTextField pG = new JTextField("", 10);
+	    JLabel label5 = new JLabel("Extra Credit:");
+	    JTextField ExC = new JTextField("", 10);
+            
+            inputPanel.add(label1);
+            inputPanel.add(homework);
+            inputPanel.add(label2);
+            inputPanel.add(quiz);
+            inputPanel.add(label3);
+	    inputPanel.add(lab);
+	    inputPanel.add(label4);
+	    inputPanel.add(pG);
+	    inputPanel.add(label5);
+	    inputPanel.add(ExC);
             
             save.addActionListener((ActionEvent e) -> {
+		    // test.student_id = Integer.valueOf(studentID.getText())
+		    int HW = Integer.valueOf(homework.getText());
+		    int QZ = Integer.valueOf(quiz.getText());
+		    int LAB = Integer.valueOf(lab.getText());
+		    int participation = Integer.valueOf(pG.getText());
+		    int extraC = Integer.valueOf(ExC.getText());
+		    c1.R.editRubricValues(HW, QZ, LAB, participation, extraC);
+		    c1.createRubricFile();
+		    //c1.editRubricValues(int HW, int quiz, int lab, int PV, int ECV)
                 //insert code to save student here
                 //___.getText can be used to access text in JTextFields
                 //it will return it as a string though, I am assuming you can convert string to int?
@@ -314,7 +343,7 @@ public class Layout extends JFrame {
         JButton editRubricButton = new JButton("Edit Rubric");
         rubricButtons.add(editRubricButton, SwingConstants.CENTER);
         editRubricButton.addActionListener((ActionEvent e) -> {
-            EditRubric editRubricPopUp = new EditRubric();
+            EditRubric editRubricPopUp = new EditRubric(c1);
             
             editRubricPopUp.setVisible(true);
             editRubricPopUp.setSize(250, 100);
@@ -680,6 +709,10 @@ public class Layout extends JFrame {
 		  bw.write(String.valueOf(R.quizValue));
 		  bw.write("\n");
 		  bw.write(String.valueOf(R.labValue));
+		  bw.write("\n");
+		  bw.write(String.valueOf(R.participationValue));
+		  bw.write("\n");
+		  bw.write(String.valueOf(R.extraCreditValue));
 		  bw.close();
 		  }catch(IOException e){}
 	  }
@@ -694,6 +727,8 @@ public class Layout extends JFrame {
 	      test.HWValue = 0;
 	      test.quizValue = 0;
 	      test.labValue = 0;
+	      test.participationValue = 0;
+	      test.extraCreditValue=0;
 	      int i = 0;
               while ((line = br.readLine ()) != null)
 		  {
@@ -705,8 +740,13 @@ public class Layout extends JFrame {
 			    if(i==1)
 			      test.quizValue = Integer.valueOf(st.nextToken());
 			    if(i==2)
-			      test.labValue = Integer.valueOf(st.nextToken());
+				test.labValue = Integer.valueOf(st.nextToken());
+			    if(i==3)
+				test.participationValue = Integer.valueOf(st.nextToken());
+			    if(i==4)
+				test.extraCreditValue = Integer.valueOf(st.nextToken());
 			        }
+		      
 		      i++;
 		  }
 	      this.R = test;
