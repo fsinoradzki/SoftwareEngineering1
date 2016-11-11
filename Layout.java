@@ -8,7 +8,7 @@ import java.io.*;
 
 public class Layout extends JFrame {
     public static class LogIn extends JFrame {
-        public LogIn(JTable table, Class c1) {
+        public LogIn(JTable table, Class c1, ClassList semester) {
             super("Authentication");
                         
             JButton loginButton = new JButton("Login");
@@ -33,7 +33,7 @@ public class Layout extends JFrame {
             loginButton.addActionListener((ActionEvent e) -> {
                 String passwordEntered = password.getText();
                 if(passwordEntered.equals(userPassword)) {
-                    Layout layout = new Layout(table, c1);
+                    Layout layout = new Layout(table, c1,semester);
                     layout.setVisible(true);
                     layout.setSize(1500, 1000);
                     layout.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -80,20 +80,8 @@ public class Layout extends JFrame {
           
             save.addActionListener((ActionEvent e) -> {
 		    int type = assignmentType.getSelectedIndex();
-		    /*		    if(choice == "Homework")
-			type = 0;
-		    else if(choice == "Quiz")
-			type = 1;
-		    else if(choice == "Lab")
-		    */		type = 2;
 		    c1.addAssignment(type);
 		    c1.createAssignmentsFile();
-                //insert code to add the new assignment here
-                //assignmentType.getSelectedIndex to return index of selected item
-                //0 = homework, 1 = quiz, 2 = lab
-                
-                //addAssignment(assignmentType.getSelectedIndex());
-
                 
                 dispose(); //this just shuts the window once everything is done
             });
@@ -141,13 +129,8 @@ public class Layout extends JFrame {
 		    c1.addStudent(test);
 		    c1.createStudentsFile();
 		    c1.createFile();
-                //insert code to save student here
-                //studentName.getText() -- returns studentName 
-                //studentID.getText() -- returns studentID
-                //format needs to be like: String whatever = what.getText();
-                //and I can set up an error message dialog for if the input isn't valid
-                
                 dispose();
+        
             });
             
             savePlus.addActionListener((ActionEvent e) -> {
@@ -169,7 +152,7 @@ public class Layout extends JFrame {
             
             
             getContentPane().add(addStudent);
-                    
+	   
         }
     }
     
@@ -211,12 +194,13 @@ public class Layout extends JFrame {
         }
     }
     
-    public Layout(JTable grades, Class c1) { //pretty much I think layout will have to call like every variable unless 
+    public Layout(JTable grades, Class c1,ClassList semester) { //pretty much I think layout will have to call like every variable unless 
                                    //there's another way to do things that I'm just missing? 
         super("Your Gradebook");
         
         //will be set equal to the actual class name variable at some point, used for titles in all panels
-        String title = "Class Name"; 
+        //String title = "Class Name";
+	String title = c1.className+c1.classNum;
 
         //panels for the split frame
         JPanel navPanel = new JPanel(new BorderLayout());
@@ -247,7 +231,13 @@ public class Layout extends JFrame {
         navPanel.add(navTitle, BorderLayout.NORTH);
         navPanel.add(navButtonPanel, BorderLayout.CENTER);
         navPanel.setBackground(Color.WHITE);
-        
+	for(int i =0;i<semester.list.size();i++){
+	    int number =semester.list.get(i).classNum;
+	    String name =semester.list.get(i).className;
+	    String key = name+number;
+	    JButton ClassButton = new JButton(key);
+	    navButtonPanel.add(ClassButton);
+	}
         
         //grades panel
         JPanel gradesPanel = new JPanel();
@@ -259,7 +249,7 @@ public class Layout extends JFrame {
         //save grades button
         JButton saveGradesButton = new JButton("Save Grades");
         saveGradesButton.addActionListener((ActionEvent e) -> {
-            //code to save grades here
+		c1.createFile();
         });
         
         //add Assignment Button
@@ -1130,6 +1120,7 @@ public class Layout extends JFrame {
 	pupils.addElement(p);
 	pupils.addElement(x);
 
+	
 	int HWs = 3;
 	int Quizzes = 0;
 	int Labs = 0;
@@ -1141,6 +1132,35 @@ public class Layout extends JFrame {
 	indexes.addElement(0);
 	indexes.addElement(0);
 	indexes.addElement(0);
+
+	Vector < Vector < Integer >> SandG = new Vector < Vector < Integer >> ();
+	Vector < Integer > test1 = new Vector < Integer > ();
+	Vector < Integer > test2 = new Vector < Integer > ();
+	Vector < Integer > test3 = new Vector < Integer > ();
+	Vector < Integer > test4 = new Vector < Integer > ();
+	
+	  //Creates the initial 2D Vector
+	test1.addElement (123);
+	test1.addElement (10);
+	test1.addElement (20);
+	test1.addElement (30);
+	SandG.addElement (test1);
+	test2.addElement (456);
+	test2.addElement (40);
+	test2.addElement (50);
+	test2.addElement (60);
+	SandG.addElement (test2);
+	test3.addElement (789);
+	test3.addElement (70);
+	test3.addElement (80);
+	test3.addElement (90);
+	SandG.addElement (test3);
+	test4.addElement (000);
+	test4.addElement (0);
+    test4.addElement (0);
+    test4.addElement (0);
+    SandG.addElement (test4);
+    
 	
 	String testName = "Math";
 	int testNumber = 1100;
@@ -1180,8 +1200,15 @@ public class Layout extends JFrame {
 	    for(int k =1;k<=c2.gradebook.get(i).size();k++)
 		data[i][k] = c2.gradebook.get(i).get(k-1);
 	}
+	Vector<Class> list = new Vector<Class>();
+	ClassList semester = new ClassList();
+	Class c1 = new Class (SandG,pupils,indexes, HWs, Quizzes, Labs, name, number);
+	list.addElement(c1);
+	list.addElement(c2);
+	semester.addClasses(list);
+	semester.createClassFile();
 	JTable table = new JTable(data,columnNames);
-        LogIn GUI = new LogIn(table,c2);
+        LogIn GUI = new LogIn(table,c2,semester);
     }   
 }
 
