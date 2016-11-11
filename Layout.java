@@ -338,6 +338,49 @@ public class Layout extends JFrame {
     
     public static class ClassList{
 	private Vector<Class> list; 
+	Object [][]currClassData;
+	String[] columnNames;
+	//Class currClass;
+	
+	public void loadTable(Class currClass){
+	    System.out.println(currClass.classNum);
+	    String columns[] = new String[currClass.values.size()+2];
+	    columns[0]="Student Name";
+	    columns[1]="Student ID";
+	    String title= " ";
+	    int hwNum =0;
+	    int quizNum=0;
+	    int labNum=0;
+	    for (int i=0;i<currClass.values.size();i++){
+	    if(currClass.values.get(i)==0){
+		hwNum++;
+		title = "HW "+hwNum;
+	    }
+	    if(currClass.values.get(i)==1){
+		quizNum++;
+		title = "Quiz "+quizNum;
+	    }
+	    if(currClass.values.get(i)==2){
+		labNum++;
+		title = "Lab "+labNum;
+	    }
+	    if(currClass.values.get(i)==3)
+		title = "Participation";
+	    if(currClass.values.get(i)==4)
+		title = "Extra Credit";
+	    columns[i+2]=title;
+	    }
+	    
+	    Object[][]data = new Object[currClass.students.size()][currClass.values.size()+2];
+	    for(int i =0;i<currClass.students.size();i++){
+		data[i][0]=currClass.students.get(i).name;
+		for(int k =1;k<=currClass.gradebook.get(i).size();k++)
+		    data[i][k] = currClass.gradebook.get(i).get(k-1);
+	    }
+	    columnNames = columns; 
+	    currClassData = data;
+	}
+
 	
 	public void addClasses(Vector<Class> item){
 	    this.list = item;
@@ -1107,108 +1150,27 @@ public class Layout extends JFrame {
     
     public static void main(String[] args) {
 
-	File file = new File("./Classes/grades.txt");
-     
-	Student f = new Student ("Frank", 123);
-	Student b = new Student ("Ben", 456);
-	Student p = new Student ("Phoebe", 789);
-	Student x = new Student ("Dummy", 000);
-	
-	Vector<Student>pupils = new Vector<Student>();
-	pupils.addElement(f);
-	pupils.addElement(b);
-	pupils.addElement(p);
-	pupils.addElement(x);
-
-	
-	int HWs = 3;
-	int Quizzes = 0;
-	int Labs = 0;
 	String name = "SoftEng";
 	int number = 2;
-
-	Vector<Integer>indexes = new Vector<Integer>();
-	indexes.addElement(-1);
-	indexes.addElement(0);
-	indexes.addElement(0);
-	indexes.addElement(0);
-
-	Vector < Vector < Integer >> SandG = new Vector < Vector < Integer >> ();
-	Vector < Integer > test1 = new Vector < Integer > ();
-	Vector < Integer > test2 = new Vector < Integer > ();
-	Vector < Integer > test3 = new Vector < Integer > ();
-	Vector < Integer > test4 = new Vector < Integer > ();
-	
-	  //Creates the initial 2D Vector
-	test1.addElement (123);
-	test1.addElement (10);
-	test1.addElement (20);
-	test1.addElement (30);
-	SandG.addElement (test1);
-	test2.addElement (456);
-	test2.addElement (40);
-	test2.addElement (50);
-	test2.addElement (60);
-	SandG.addElement (test2);
-	test3.addElement (789);
-	test3.addElement (70);
-	test3.addElement (80);
-	test3.addElement (90);
-	SandG.addElement (test3);
-	test4.addElement (000);
-	test4.addElement (0);
-    test4.addElement (0);
-    test4.addElement (0);
-    SandG.addElement (test4);
-    
 	
 	String testName = "Math";
 	int testNumber = 1100;
 	Class c2 = new Class(testName, testNumber);
 	c2.createFile();
 
-	String columnNames[] = new String[c2.values.size()+2];
-	columnNames[0]="Student Name";
-	columnNames[1]="Student ID";
-	String title= " ";
-	int hwNum =0;
-	int quizNum=0;
-	int labNum=0;
-	for (int i=0;i<c2.values.size();i++){
-	    if(c2.values.get(i)==0){
-		hwNum++;
-		title = "HW "+hwNum;
-	    }
-	    if(c2.values.get(i)==1){
-		quizNum++;
-		title = "Quiz "+quizNum;
-	    }
-	    if(c2.values.get(i)==2){
-		labNum++;
-		title = "Lab "+labNum;
-	    }
-	    if(c2.values.get(i)==3)
-		title = "Participation";
-	    if(c2.values.get(i)==4)
-	       title = "Extra Credit";
-	    columnNames[i+2]=title;
-	}
-	    
-	Object[][]data = new Object[c2.students.size()][c2.values.size()+2];
-	for(int i =0;i<c2.students.size();i++){
-	    data[i][0]=c2.students.get(i).name;
-	    for(int k =1;k<=c2.gradebook.get(i).size();k++)
-		data[i][k] = c2.gradebook.get(i).get(k-1);
-	}
 	Vector<Class> list = new Vector<Class>();
 	ClassList semester = new ClassList();
-	Class c1 = new Class (SandG,pupils,indexes, HWs, Quizzes, Labs, name, number);
+	Class c1 = new Class(name,number);
 	list.addElement(c1);
 	list.addElement(c2);
 	semester.addClasses(list);
 	semester.createClassFile();
-	JTable table = new JTable(data,columnNames);
-        LogIn GUI = new LogIn(table,c2,semester);
+	Class currClass = c2;
+	semester.loadTable(currClass);
+	Object[][]data = semester.currClassData;
+	String columns[] = semester.columnNames;
+	JTable table = new JTable(data,columns);
+        LogIn GUI = new LogIn(table,currClass,semester);
     }   
 }
 
