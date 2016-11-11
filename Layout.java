@@ -55,7 +55,7 @@ public class Layout extends JFrame {
     }
     
     public class AddAssignment extends JFrame {
-        public AddAssignment() { //this will need to call variables needed for assignment
+        public AddAssignment(Class c1) { //this will need to call variables needed for assignment
             super("New Assignment");
             JPanel addAssignment = new JPanel();
             addAssignment.setLayout(new BorderLayout());
@@ -79,6 +79,15 @@ public class Layout extends JFrame {
             addAssignment.add(savePanel, BorderLayout.SOUTH);
           
             save.addActionListener((ActionEvent e) -> {
+		    int type = assignmentType.getSelectedIndex();
+		    /*		    if(choice == "Homework")
+			type = 0;
+		    else if(choice == "Quiz")
+			type = 1;
+		    else if(choice == "Lab")
+		    */		type = 2;
+		    c1.addAssignment(type);
+		    c1.createAssignmentsFile();
                 //insert code to add the new assignment here
                 //assignmentType.getSelectedIndex to return index of selected item
                 //0 = homework, 1 = quiz, 2 = lab
@@ -256,7 +265,7 @@ public class Layout extends JFrame {
         //add Assignment Button
         JButton addAssignmentButton = new JButton ("Add Assignment");
         addAssignmentButton.addActionListener((ActionEvent e) -> {
-            AddAssignment assignmentPopUp = new AddAssignment();
+            AddAssignment assignmentPopUp = new AddAssignment(c1);
             assignmentPopUp.setVisible(true);
             assignmentPopUp.setLocation(500, 500);
             assignmentPopUp.setSize(350, 110);
