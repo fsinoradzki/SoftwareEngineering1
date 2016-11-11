@@ -8,7 +8,7 @@ import java.io.*;
 
 public class Layout extends JFrame {
     public static class LogIn extends JFrame {
-        public LogIn(JTable table) {
+        public LogIn(JTable table, Class c1) {
             super("Authentication");
                         
             JButton loginButton = new JButton("Login");
@@ -22,32 +22,36 @@ public class Layout extends JFrame {
             
             getContentPane().add(loginPanel);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setVisible(true);
-            //actionLogin(loginButton, password, table);    
+            setVisible(true);    
             setSize(300, 200);
             setLocation(500, 280);
             
-            loginPanel.getRootPane().setDefaultButton(loginButton);
-            //loginPanel.setLayout(null);
+            String userPassword = "12345";
             
-            loginButton.addActionListener(new ActionListener(){
-                public void actionPerformed(ActionEvent e) {
-                    String passwordEntered = password.getText();
-                    if(passwordEntered.equals("12345")) {
-                        Layout layout = new Layout(table);
-                        layout.setVisible(true);
-                        layout.setSize(1500, 1000);
-                        layout.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                        dispose();
-                    }
-                    else {
-                        JOptionPane.showMessageDialog(null, "Wrong Passwrd");
-                        password.setText("");
-                        password.requestFocus();              
-                    }
+            loginPanel.getRootPane().setDefaultButton(loginButton);
+            
+            loginButton.addActionListener((ActionEvent e) -> {
+                String passwordEntered = password.getText();
+                if(passwordEntered.equals(userPassword)) {
+                    Layout layout = new Layout(table, c1);
+                    layout.setVisible(true);
+                    layout.setSize(1500, 1000);
+                    layout.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    dispose();
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "Wrong Passwrd");
+                    password.setText("");
+                    password.requestFocus();
                 }
             });
         }
+    }
+    
+    public class AddClass extends JFrame {
+        public AddClass() {
+            super("Add Class");
+        }    
     }
     
     public class AddAssignment extends JFrame {
@@ -59,7 +63,7 @@ public class Layout extends JFrame {
             //all the elements 
             JButton save = new JButton("Save");
             JLabel label1 = new JLabel("Assignment Type:", SwingConstants.CENTER);
-            String[] types = {"Homework", "Test", "Midterm", "Final", "Project"};
+            String[] types = {"Homework", "Quiz", "Lab"}; 
             JComboBox<String> assignmentType = new JComboBox<String>(types);
             
             JPanel inputPanel = new JPanel();
@@ -74,15 +78,15 @@ public class Layout extends JFrame {
             addAssignment.add(inputPanel, BorderLayout.CENTER);
             addAssignment.add(savePanel, BorderLayout.SOUTH);
           
-            save.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    //insert code to add the new assignment here
-                    //not sure how to get the value currently selected in the combo box
-                    //also, let me know if the combo box won't work, I just added dummy assignment types to it for now
-                    //but I was hoping whatever is in the rubric for the class can be added to it? 
-                    
-                    dispose(); //this just shuts the window once everything is done
-                }
+            save.addActionListener((ActionEvent e) -> {
+                //insert code to add the new assignment here
+                //assignmentType.getSelectedIndex to return index of selected item
+                //0 = homework, 1 = quiz, 2 = lab
+                
+                //addAssignment(assignmentType.getSelectedIndex());
+
+                
+                dispose(); //this just shuts the window once everything is done
             });
             
             getContentPane().add(addAssignment);
@@ -91,13 +95,14 @@ public class Layout extends JFrame {
     }
     
     public class AddStudent extends JFrame {
-        public AddStudent() { //this will need to call variables needed for student
+        public AddStudent(Class c1) { //this will need to call variables needed for student
             super("New Student");
             JPanel addStudent = new JPanel();
             addStudent.setLayout(new BorderLayout());
             
             //all the elements
             JButton save = new JButton("Save");
+            JButton savePlus = new JButton("Save & Add Another");
             JLabel label1 = new JLabel("Student Name:");
             JTextField studentName = new JTextField("", 25);
             JLabel label2 = new JLabel("Student ID:");
@@ -113,20 +118,40 @@ public class Layout extends JFrame {
             inputPanel.add(studentID);
             
             savePanel.add(save, SwingConstants.CENTER);
+            savePanel.add(savePlus);
             
             addStudent.add(inputPanel, BorderLayout.CENTER);
             addStudent.add(savePanel, BorderLayout.SOUTH);
-            
-            save.addActionListener(new ActionListener() { 
-                public void actionPerformed(ActionEvent e) {
-                    //insert code to save student here
-                    //___.getText can be used to access text in JTextFields
-                    //it will return it as a string though, I am assuming you can convert string to int?
-                    //and I can set up an error message dialog for if the input isn't valid
-                    
-                    dispose();
-                }
+
+	    
+            save.addActionListener((ActionEvent e) -> {
+		    //	    Vector<Student> test
+		    Student test = new Student("default",000);
+		    test.name = studentName.getText();
+		    test.student_id = Integer.valueOf(studentID.getText());
+		    c1.addStudent(test);
+		    c1.createStudentsFile();
+		    c1.createFile();
+                //insert code to save student here
+                //studentName.getText() -- returns studentName 
+                //studentID.getText() -- returns studentID
+                //format needs to be like: String whatever = what.getText();
+                //and I can set up an error message dialog for if the input isn't valid
+                
+                dispose();
             });
+            
+            savePlus.addActionListener((ActionEvent e) -> {
+                //insert code to save student here
+                
+                AddStudent studentPopUp = new AddStudent(c1);
+                studentPopUp.setVisible(true);
+                studentPopUp.setLocation(500, 500);
+                studentPopUp.setSize(350, 150);
+                
+                dispose();
+            });            
+            
             
             getContentPane().add(addStudent);
                     
@@ -145,94 +170,155 @@ public class Layout extends JFrame {
         }
     }
     
-    public Layout(JTable grades) { //pretty much I think layout will have to call like every variable unless 
+    public class EditRubric extends JFrame {
+        public EditRubric() { //will need to call variables needed for rubric
+            super("Edit Rubric");
+            //all the elements
+            JPanel editRubric = new JPanel(new BorderLayout());
+            JPanel inputPanel = new JPanel(new GridLayout(0, 2, 10, 10));
+            JPanel savePanel = new JPanel();
+            JButton save = new JButton("Save");
+            
+            save.addActionListener((ActionEvent e) -> {
+                //insert code to save student here
+                //___.getText can be used to access text in JTextFields
+                //it will return it as a string though, I am assuming you can convert string to int?
+                //and I can set up an error message dialog for if the input isn't valid
+                
+                dispose();
+            });
+            
+            savePanel.add(save);
+            editRubric.add(inputPanel);
+            editRubric.add(savePanel, BorderLayout.SOUTH);
+            
+            getContentPane().add(editRubric);
+        }
+    }
+    
+    public Layout(JTable grades, Class c1) { //pretty much I think layout will have to call like every variable unless 
                                    //there's another way to do things that I'm just missing? 
         super("Your Gradebook");
+        
+        //will be set equal to the actual class name variable at some point, used for titles in all panels
+        String title = "Class Name"; 
 
         //panels for the split frame
-        JPanel navPanel = new JPanel();
+        JPanel navPanel = new JPanel(new BorderLayout());
         
         //creating the tabbedpane
         JTabbedPane tabbedPane = new JTabbedPane();  
         
         //creating the split pane
-        //JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, navPanel, tabsPanel);
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, navPanel, tabbedPane);
         splitPane.setOneTouchExpandable(false);
         splitPane.setDividerLocation(300);
         splitPane.setBackground(Color.WHITE);
         
         //navigation panel
-        JLabel navTitle = new JLabel("NAVIGATION");
+        JLabel navTitle = new JLabel("NAVIGATION", SwingConstants.CENTER);
         navTitle.setFont(new Font("Arial", Font.BOLD, 18));
-        navPanel.add(navTitle);
+        
+        JPanel navButtonPanel = new JPanel();
+        JButton addNewClassButton = new JButton("Add New Class");
+        addNewClassButton.addActionListener((ActionEvent e) -> {
+            AddClass addClassPopUp = new AddClass();
+            addClassPopUp.setVisible(true);
+            addClassPopUp.setLocation(500, 500);
+            addClassPopUp.setSize(350, 150);
+        });
+        navButtonPanel.add(addNewClassButton);
+        
+        navPanel.add(navTitle, BorderLayout.NORTH);
+        navPanel.add(navButtonPanel, BorderLayout.CENTER);
         navPanel.setBackground(Color.WHITE);
+        
         
         //grades panel
         JPanel gradesPanel = new JPanel();
-        gradesPanel.setLayout(new BorderLayout());       
+        gradesPanel.setLayout(new BorderLayout()); 
         
         //panel for buttons under grades
         JPanel gradesButtons = new JPanel();
         
         //save grades button
         JButton saveGradesButton = new JButton("Save Grades");
-        saveGradesButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                //code to save grades here
-            }
+        saveGradesButton.addActionListener((ActionEvent e) -> {
+            //code to save grades here
         });
         
         //add Assignment Button
         JButton addAssignmentButton = new JButton ("Add Assignment");
-        addAssignmentButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                AddAssignment assignmentPopUp = new AddAssignment();
-                assignmentPopUp.setVisible(true);
-                assignmentPopUp.setLocation(500, 500);
-                assignmentPopUp.setSize(350, 110);
-            }
+        addAssignmentButton.addActionListener((ActionEvent e) -> {
+            AddAssignment assignmentPopUp = new AddAssignment();
+            assignmentPopUp.setVisible(true);
+            assignmentPopUp.setLocation(500, 500);
+            assignmentPopUp.setSize(350, 110);
+            
+            revalidate();
         });
         
         //add Student Button
         JButton addStudentButton = new JButton ("Add Student");
-        addStudentButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                AddStudent studentPopUp = new AddStudent();
-                studentPopUp.setVisible(true);
-                studentPopUp.setLocation(500, 500);
-                studentPopUp.setSize(350, 150);
-            }
+        addStudentButton.addActionListener((ActionEvent e) -> {
+            AddStudent studentPopUp = new AddStudent(c1);
+            studentPopUp.setVisible(true);
+            studentPopUp.setLocation(500, 500);
+            studentPopUp.setSize(350, 150);
         });
         
         //final Grades Button
         JButton finalGradesButton = new JButton ("Compute Final Grades");
-        finalGradesButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                FinalGrades finalGradesPopUp = new FinalGrades();
-                finalGradesPopUp.setVisible(true);
-                finalGradesPopUp.setSize(250,100);
-                finalGradesPopUp.setLocation(500,500);
-            }
+        finalGradesButton.addActionListener((ActionEvent e) -> {
+            FinalGrades finalGradesPopUp = new FinalGrades();
+            finalGradesPopUp.setVisible(true);
+            finalGradesPopUp.setSize(250,100);
+            finalGradesPopUp.setLocation(500,500);
         });
+        
         gradesButtons.add(saveGradesButton);
         gradesButtons.add(addAssignmentButton);
         gradesButtons.add(addStudentButton);
         gradesButtons.add(finalGradesButton);
         gradesButtons.setBackground(Color.WHITE);
-        //scroll pane for grades table
+        
+        //scroll pane for grades table & table formatting
         JScrollPane gradeScrollPane = new JScrollPane(grades);
-        String title = "Class Name";
-        gradeScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), title, TitledBorder.LEFT, TitledBorder.TOP));
+        gradeScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), title + " Grades", TitledBorder.LEFT, TitledBorder.TOP));
+        grades.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        grades.getColumnModel().getColumn(0).setPreferredWidth(200);
+        grades.getColumnModel().getColumn(1).setPreferredWidth(100);
         gradeScrollPane.setBackground(Color.WHITE);
         gradesPanel.add(gradeScrollPane, BorderLayout.CENTER);
         gradesPanel.add(gradesButtons, BorderLayout.SOUTH);
         tabbedPane.add(gradesPanel, "Grades");
 
         //rubric panel
-        JPanel rubricPanel = new JPanel();
+        JPanel rubricPanel = new JPanel(new BorderLayout());
         rubricPanel.setBackground(Color.CYAN);
         tabbedPane.add(new JScrollPane(rubricPanel), "Rubric");
+        
+        //content panel, displays rubric 
+        JPanel rubricContent = new JPanel(new GridLayout(0, 2, 10, 10));
+        rubricContent.setBackground(Color.WHITE);
+        rubricContent.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), title + " Rubric", TitledBorder.LEFT, TitledBorder.TOP));
+        
+        //button panel for rubric
+        JPanel rubricButtons = new JPanel();
+        rubricButtons.setBackground(Color.WHITE);
+        JButton editRubricButton = new JButton("Edit Rubric");
+        rubricButtons.add(editRubricButton, SwingConstants.CENTER);
+        editRubricButton.addActionListener((ActionEvent e) -> {
+            EditRubric editRubricPopUp = new EditRubric();
+            
+            editRubricPopUp.setVisible(true);
+            editRubricPopUp.setSize(250, 100);
+            editRubricPopUp.setLocation(500, 500);
+        });
+        
+        rubricPanel.add(rubricContent, BorderLayout.CENTER);
+        rubricPanel.add(rubricButtons, BorderLayout.SOUTH);
+        
         
         //stats panel
         JPanel statsPanel = new JPanel();
@@ -242,11 +328,10 @@ public class Layout extends JFrame {
         getContentPane().add(splitPane, BorderLayout.CENTER);
         setSize(1500, 1000);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //   setVisible(true);
     }
     
     
-     public static class ClassList{
+    public static class ClassList{
 	private Vector<Class> list; 
 	
 	public void addClasses(Vector<Class> item){
@@ -326,24 +411,29 @@ public class Layout extends JFrame {
   public static class Rubric
   {
     private int HWValue;	//Value of a homework assignment for a class
-    private int quizValue;	//Value of a quiz for a class
-    private int labValue;	//Value of a lab assignment for a class
-
+      private int quizValue;	//Value of a quiz for a class
+      private int labValue;	//Value of a lab assignment for a class
+      private int participationValue;	//Value of participation for a class
+      private int extraCreditValue;	//Value of extra credit for a class
+      
     //Default constructor
     public Rubric ()
     {
       HWValue = 10;
       quizValue = 100;
       labValue = 50;
+      participationValue=50;
+      extraCreditValue=100;
     }
 
-    //Constructor with values
-    public Rubric (int HW, int quiz, int lab)
-    {
-      HWValue = HW;
-      quizValue = quiz;
-      labValue = lab;
-    }
+      //Constructor with values
+      public Rubric(int HW, int quiz, int lab, int PV, int ECV){
+	  HWValue = HW;
+	  quizValue = quiz;
+	  labValue = lab;
+	  participationValue=PV;
+	  extraCreditValue=ECV;}   //Constructor with values
+ 
 
     //Returns value for a homework assignment
     public int getHWValue ()
@@ -363,13 +453,21 @@ public class Layout extends JFrame {
       return labValue;
     }
 
-    //Call this to change the values for each type of assignment
-    public void editRubricValues (int HW, int quiz, int lab)
-    {
-      HWValue = HW;
-      quizValue = quiz;
-      labValue = lab;
-    }
+      //Returns participation value
+      public int getParticipationValue(){
+	  return participationValue;}
+      
+      //Returns extra credit value
+      public int getExtraCreditValue(){
+	  return extraCreditValue;}
+      
+      //Call this to change the values for each type of assignment
+      public void editRubricValues(int HW, int quiz, int lab, int PV, int ECV){
+	  HWValue = HW;
+	  quizValue = quiz;
+	  labValue = lab;
+	  participationValue=PV;
+	  extraCreditValue=ECV;}
   }
 
 
@@ -388,6 +486,23 @@ public class Layout extends JFrame {
     private int classNum;
       Boolean locked;          //boolean value for locking class 
 
+
+      //Default constructor
+      public Class()
+      {
+	  gradebook = new Vector<Vector<Integer>>();
+	  students = new Vector<Student>();
+	  values = new Vector<Integer>();
+	  this.addAssignment(-1);
+	  this.addAssignment(3);
+	  this.addAssignment(4);
+	  numHWs = 0;
+	  numQuizzes = 0;
+	  numLabs = 0;
+	  R = new Rubric();
+	  locked = false;
+      }
+      
     //Simple Constructor
       public Class (Vector < Vector < Integer >> SandG,Vector<Student> pupils,Vector<Integer> indexes, int HWs, int Quizzes,
 		  int Labs, String name, int number)
@@ -786,25 +901,33 @@ public class Layout extends JFrame {
       return av;
     }
 
-    //Returns the weighted average for the student (using the amount of different assignments)
-    public double getWeightedAverageForStudent (int ID)
-    {
-      int total = 0;
-		double divisor = 0;
-      double av=0;
-
-		//gets the total points lost 
-      for (int i = 1; i < (gradebook.get (ID)).size (); i++)
-			total += (gradebook.get (ID)).get (i);
-		//returns number of homeworks, quizzes, and labs
-		//multiplies each by the respective rubric value and adds them all up
-		//if there are 3 homeworks, no quizzes, no labs then on a default class
-		// it would be: (3*10)+(0*100)+(0*50)
-		divisor = (numHWs*R.getHWValue())+(numQuizzes*R.getQuizValue())+(numLabs*R.getLabValue());
-		av = ((divisor-total)/divisor)*100;
-
-      return av;
-    }
+      //Returns the weighted average for the student (using the amount of different assignments)
+      public double getWeightedAverageForStudent(int ID){
+	  int total=0;
+	  double divisor=0;
+	  double av=0;
+	  
+	  //Gets the total points lost. Ignores extra credit, since it's not points lost.
+	  for(int i=1;i<(gradebook.get(ID)).size();i++){
+	      if(i != 2)
+		  total += (gradebook.get(ID)).get(i);
+	  }
+	  
+	  //Adds the actual extra credit points
+	  total += R.getExtraCreditValue() - (gradebook.get(ID)).get(2);
+	  
+	  //Gets the number of homeworks, quizzes, and labs, multiplies each by the respective rubric value
+	  //And adds them all up. And also Participation and Extra Credit 
+	  //If there are 3 homeworks, no quizzes, and no labs, then on a default class 
+	  //it would be: (3*10) + (0*100) + (0*50) + (PV) + (ECV)
+	  divisor = (numHWs*R.getHWValue())+(numQuizzes*R.getQuizValue())+(numLabs*R.getLabValue()+R.getParticipationValue());
+	  //In the above example, this would be ((30-totalPointsLost)/30)*100 for your actual grade
+	  av = ((divisor-total)/divisor)*100;
+	  
+	  return av;
+      }
+      
+      
       //gets type of assignment given an index
       public int getAssignmentType(int assignment){
 	  int type = 0;
@@ -812,14 +935,18 @@ public class Layout extends JFrame {
 	      type=1;
 	  else if (values.get(assignment)==2)
 	      type =2;
+	  else if(values.get(assignment) == 3)
+	      type = 3;
+	  else if(values.get(assignment) == 4)
+	      type = 4;
 	  
 	  return type;
       }
+      
       //adds new student. Initializes their grades to 0.
       public void addStudent(Student kid){
 	  //adds the student object to the Students vector
 	  students.addElement(kid);
-
 	  //creates the vector to add to gradebook. Sets the first value fo the student's ID
 	  //All other values are intiialized to 0 
 	  Vector<Integer> grades = new Vector<Integer>();
@@ -827,11 +954,12 @@ public class Layout extends JFrame {
 	  for (int i = 1;i<gradebook.get(0).size();i++)
 	      grades.addElement(0);
 	  gradebook.addElement(grades);
+	  
       }
       
       //adds a new assignment based on the assignment type. Initializes all enw values to 0.
       public void addAssignment(int type){
-	  if (type < 0 && type >2)
+	  if (type < -1 && type >4)
 	      System.out.println("Not a valid assignment type.");
 	  else {
 	      System.out.println(type);
@@ -970,42 +1098,12 @@ public class Layout extends JFrame {
 				locked = false;
 		}
       
-      
-      
   }
     
     public static void main(String[] args) {
-	
+
 	File file = new File("./Classes/grades.txt");
-	//Vector < Vector < Integer >> SandG = new Vector < Vector < Integer >> ();
-	/*
-	Vector < Integer > test1 = new Vector < Integer > ();
-	Vector < Integer > test2 = new Vector < Integer > ();
-	Vector < Integer > test3 = new Vector < Integer > ();
-	Vector < Integer > test4 = new Vector < Integer > ();
-	
-	//Creates the initial 2D Vector
-	test1.addElement (123);
-	test1.addElement (10);
-	test1.addElement (20);
-	test1.addElement (30);
-	SandG.addElement (test1);
-	test2.addElement (456);
-	test2.addElement (40);
-	test2.addElement (50);
-	test2.addElement (60);
-	SandG.addElement (test2);
-	test3.addElement (789);
-	test3.addElement (70);
-	test3.addElement (80);
-	test3.addElement (90);
-	SandG.addElement (test3);
-	test4.addElement (000);
-	test4.addElement (0);
-	test4.addElement (0);
-	test4.addElement (0);
-	SandG.addElement (test4);
-	*/
+     
 	Student f = new Student ("Frank", 123);
 	Student b = new Student ("Ben", 456);
 	Student p = new Student ("Phoebe", 789);
@@ -1063,11 +1161,8 @@ public class Layout extends JFrame {
 	    for(int k =1;k<=c2.gradebook.get(i).size();k++)
 		data[i][k] = c2.gradebook.get(i).get(k-1);
 	}
-	//JTable table = new JTable(c2.gradebook, columnNames); 
-	//JTable table = new JTable(testTable, columnNames); 
 	JTable table = new JTable(data,columnNames);
-        LogIn GUI = new LogIn(table);
-	
+        LogIn GUI = new LogIn(table,c2);
     }   
 }
 

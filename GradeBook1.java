@@ -83,24 +83,29 @@ public class GradeBook1{
   public static class Rubric
   {
     private int HWValue;	//Value of a homework assignment for a class
-    private int quizValue;	//Value of a quiz for a class
-    private int labValue;	//Value of a lab assignment for a class
-
+      private int quizValue;	//Value of a quiz for a class
+      private int labValue;	//Value of a lab assignment for a class
+      private int participationValue;	//Value of participation for a class
+      private int extraCreditValue;	//Value of extra credit for a class
+      
     //Default constructor
     public Rubric ()
     {
       HWValue = 10;
       quizValue = 100;
       labValue = 50;
+      participationValue=50;
+      extraCreditValue=100;
     }
 
-    //Constructor with values
-    public Rubric (int HW, int quiz, int lab)
-    {
-      HWValue = HW;
-      quizValue = quiz;
-      labValue = lab;
-    }
+      //Constructor with values
+      public Rubric(int HW, int quiz, int lab, int PV, int ECV){
+	  HWValue = HW;
+	  quizValue = quiz;
+	  labValue = lab;
+	  participationValue=PV;
+	  extraCreditValue=ECV;}   //Constructor with values
+ 
 
     //Returns value for a homework assignment
     public int getHWValue ()
@@ -120,13 +125,21 @@ public class GradeBook1{
       return labValue;
     }
 
-    //Call this to change the values for each type of assignment
-    public void editRubricValues (int HW, int quiz, int lab)
-    {
-      HWValue = HW;
-      quizValue = quiz;
-      labValue = lab;
-    }
+      //Returns participation value
+      public int getParticipationValue(){
+	  return participationValue;}
+      
+      //Returns extra credit value
+      public int getExtraCreditValue(){
+	  return extraCreditValue;}
+      
+      //Call this to change the values for each type of assignment
+      public void editRubricValues(int HW, int quiz, int lab, int PV, int ECV){
+	  HWValue = HW;
+	  quizValue = quiz;
+	  labValue = lab;
+	  participationValue=PV;
+	  extraCreditValue=ECV;}
   }
 
 
@@ -145,6 +158,23 @@ public class GradeBook1{
     private int classNum;
       Boolean locked;          //boolean value for locking class 
 
+
+      //Default constructor
+      public Class()
+      {
+	  gradebook = new Vector<Vector<Integer>>();
+	  students = new Vector<Student>();
+	  values = new Vector<Integer>();
+	  this.addAssignment(-1);
+	  this.addAssignment(3);
+	  this.addAssignment(4);
+	  numHWs = 0;
+	  numQuizzes = 0;
+	  numLabs = 0;
+	  R = new Rubric();
+	  locked = false;
+      }
+      
     //Simple Constructor
       public Class (Vector < Vector < Integer >> SandG,Vector<Student> pupils,Vector<Integer> indexes, int HWs, int Quizzes,
 		  int Labs, String name, int number)
@@ -543,25 +573,33 @@ public class GradeBook1{
       return av;
     }
 
-    //Returns the weighted average for the student (using the amount of different assignments)
-    public double getWeightedAverageForStudent (int ID)
-    {
-      int total = 0;
-		double divisor = 0;
-      double av=0;
-
-		//gets the total points lost 
-      for (int i = 1; i < (gradebook.get (ID)).size (); i++)
-			total += (gradebook.get (ID)).get (i);
-		//returns number of homeworks, quizzes, and labs
-		//multiplies each by the respective rubric value and adds them all up
-		//if there are 3 homeworks, no quizzes, no labs then on a default class
-		// it would be: (3*10)+(0*100)+(0*50)
-		divisor = (numHWs*R.getHWValue())+(numQuizzes*R.getQuizValue())+(numLabs*R.getLabValue());
-		av = ((divisor-total)/divisor)*100;
-
-      return av;
-    }
+      //Returns the weighted average for the student (using the amount of different assignments)
+      public double getWeightedAverageForStudent(int ID){
+	  int total=0;
+	  double divisor=0;
+	  double av=0;
+	  
+	  //Gets the total points lost. Ignores extra credit, since it's not points lost.
+	  for(int i=1;i<(gradebook.get(ID)).size();i++){
+	      if(i != 2)
+		  total += (gradebook.get(ID)).get(i);
+	  }
+	  
+	  //Adds the actual extra credit points
+	  total += R.getExtraCreditValue() - (gradebook.get(ID)).get(2);
+	  
+	  //Gets the number of homeworks, quizzes, and labs, multiplies each by the respective rubric value
+	  //And adds them all up. And also Participation and Extra Credit 
+	  //If there are 3 homeworks, no quizzes, and no labs, then on a default class 
+	  //it would be: (3*10) + (0*100) + (0*50) + (PV) + (ECV)
+	  divisor = (numHWs*R.getHWValue())+(numQuizzes*R.getQuizValue())+(numLabs*R.getLabValue()+R.getParticipationValue());
+	  //In the above example, this would be ((30-totalPointsLost)/30)*100 for your actual grade
+	  av = ((divisor-total)/divisor)*100;
+	  
+	  return av;
+      }
+      
+      
       //gets type of assignment given an index
       public int getAssignmentType(int assignment){
 	  int type = 0;
@@ -569,9 +607,14 @@ public class GradeBook1{
 	      type=1;
 	  else if (values.get(assignment)==2)
 	      type =2;
+	  else if(values.get(assignment) == 3)
+	      type = 3;
+	  else if(values.get(assignment) == 4)
+	      type = 4;
 	  
 	  return type;
       }
+      
       //adds new student. Initializes their grades to 0.
       public void addStudent(Student kid){
 	  //adds the student object to the Students vector
@@ -588,7 +631,7 @@ public class GradeBook1{
       
       //adds a new assignment based on the assignment type. Initializes all enw values to 0.
       public void addAssignment(int type){
-	  if (type < 0 && type >2)
+	  if (type < -1 && type >4)
 	      System.out.println("Not a valid assignment type.");
 	  else {
 	      System.out.println(type);
