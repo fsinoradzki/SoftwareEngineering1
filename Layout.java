@@ -143,13 +143,19 @@ public class Layout extends JFrame {
             
             savePlus.addActionListener((ActionEvent e) -> {
                 //insert code to save student here
-                
-                AddStudent studentPopUp = new AddStudent(c1);
-                studentPopUp.setVisible(true);
-                studentPopUp.setLocation(500, 500);
-                studentPopUp.setSize(350, 150);
-                
-                dispose();
+
+		    Student test = new Student("default",000);
+		    test.name = studentName.getText();
+		    test.student_id = Integer.valueOf(studentID.getText());
+		    c1.addStudent(test);
+		    c1.createStudentsFile();
+		    c1.createFile();
+		    AddStudent studentPopUp = new AddStudent(c1);
+		    studentPopUp.setVisible(true);
+		    studentPopUp.setLocation(500, 500);
+		    studentPopUp.setSize(350, 150);
+		    
+		    dispose();
             });            
             
             
