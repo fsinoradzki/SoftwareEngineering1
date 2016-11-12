@@ -122,8 +122,9 @@ public class Layout extends JFrame {
 		    c1.addAssignment(type);
 		    c1.createAssignmentsFile();
                 
-                dispose(); //this just shuts the window once everything is done
-            });
+               	    dispose(); //this just shuts the window once everything is done
+		    
+           });
             
             getContentPane().add(addAssignment);
         }
@@ -167,7 +168,8 @@ public class Layout extends JFrame {
 		    c1.addStudent(test);
 		    c1.createStudentsFile();
 		    c1.createFile();
-                dispose();
+	
+                    dispose();
         
             });
             
@@ -185,6 +187,7 @@ public class Layout extends JFrame {
 		    studentPopUp.setLocation(500, 500);
 		    studentPopUp.setSize(350, 150);
 		    
+
 		    dispose();
             });            
             
@@ -209,21 +212,28 @@ public class Layout extends JFrame {
     public class EditRubric extends JFrame {
         public EditRubric(Class c1) { //will need to call variables needed for rubric
             super("Edit Rubric");
+	    
+	    String HWValue = Integer.toString(c1.R.getHWValue());
+	    String QuizValue = Integer.toString(c1.R.getQuizValue());
+	    String LabValue = Integer.toString(c1.R.getLabValue());
+            String ECValue = Integer.toString(c1.R.getExtraCreditValue());
+	    String ParticValue = Integer.toString(c1.R.getParticipationValue());
+	
             //all the elements
             JPanel editRubric = new JPanel(new BorderLayout());
             JPanel inputPanel = new JPanel(new GridLayout(0, 2, 10, 10));
             JPanel savePanel = new JPanel();
             JButton save = new JButton("Save");
 	    JLabel label1 = new JLabel("Homework Value:", SwingConstants.CENTER);
-            JTextField homework = new JTextField("", 10);
+            JTextField homework = new JTextField(HWValue, 10);
             JLabel label2 = new JLabel("Quiz Value:", SwingConstants.CENTER);
-            JTextField quiz = new JTextField("", 10);
+            JTextField quiz = new JTextField(QuizValue, 10);
 	    JLabel label3 = new JLabel("Lab Value:", SwingConstants.CENTER);
-	    JTextField lab = new JTextField("", 10);
+	    JTextField lab = new JTextField(LabValue, 10);
 	    JLabel label4 = new JLabel("Participation:", SwingConstants.CENTER);
-	    JTextField pG = new JTextField("", 10);
+	    JTextField pG = new JTextField(ParticValue, 10);
 	    JLabel label5 = new JLabel("Extra Credit:", SwingConstants.CENTER);
-	    JTextField ExC = new JTextField("", 10);
+	    JTextField ExC = new JTextField(ECValue, 10);
             
             inputPanel.add(label1);
             inputPanel.add(homework);
@@ -327,8 +337,6 @@ public class Layout extends JFrame {
             assignmentPopUp.setVisible(true);
             assignmentPopUp.setLocation(500, 500);
             assignmentPopUp.setSize(350, 110);
-            
-            revalidate();
         });
         
         //add Student Button
@@ -337,7 +345,7 @@ public class Layout extends JFrame {
             AddStudent studentPopUp = new AddStudent(c1);
             studentPopUp.setVisible(true);
             studentPopUp.setLocation(500, 500);
-            studentPopUp.setSize(350, 150);
+            studentPopUp.setSize(350, 150);	   
         });
         
         //final Grades Button
@@ -368,15 +376,26 @@ public class Layout extends JFrame {
 
         //rubric panel
         JPanel rubricPanel = new JPanel(new BorderLayout());
-        rubricPanel.setBackground(Color.CYAN);
         tabbedPane.add(new JScrollPane(rubricPanel), "Rubric");
         
         //content panel, displays rubric 
-        JPanel rubricContent = new JPanel(new GridLayout(0, 2, 10, 10));
+        JPanel rubricContent = new JPanel(new GridLayout(0, 1, 10, 10));
         rubricContent.setBackground(Color.WHITE);
         rubricContent.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), title + " Rubric", TitledBorder.LEFT, TitledBorder.TOP));
-        
-        //button panel for rubric
+	
+	//labels for rubric panel 
+	JLabel HWLabel = new JLabel("Homework Value: " + c1.R.getHWValue());
+	JLabel QuizLabel = new JLabel("Quiz Layout: " + c1.R.getQuizValue());    
+	JLabel LabLabel = new JLabel ("Lab Value: " + c1.R.getLabValue());
+	JLabel ParticLabel = new JLabel ("Participation Value: " + c1.R.getParticipationValue());
+	JLabel ECLabel = new JLabel ("Extra Credit Value: " + c1.R.getExtraCreditValue());    
+	rubricContent.add(HWLabel);
+	rubricContent.add(QuizLabel);
+	rubricContent.add(LabLabel);
+	rubricContent.add(ParticLabel);
+	rubricContent.add(ECLabel);
+ 
+       //button panel for rubric
         JPanel rubricButtons = new JPanel();
         rubricButtons.setBackground(Color.WHITE);
         JButton editRubricButton = new JButton("Edit Rubric");
@@ -388,7 +407,7 @@ public class Layout extends JFrame {
             editRubricPopUp.setSize(310, 250);
             editRubricPopUp.setLocation(500, 500);
         });
-        
+	
         rubricPanel.add(rubricContent, BorderLayout.CENTER);
         rubricPanel.add(rubricButtons, BorderLayout.SOUTH);
         
@@ -1252,4 +1271,7 @@ public class Layout extends JFrame {
         LogIn GUI = new LogIn(table,currClass,semester);
     }   
 }
+
+
+
 
