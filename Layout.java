@@ -49,8 +49,47 @@ public class Layout extends JFrame {
     }
     
     public class AddClass extends JFrame {
-        public AddClass() {
+        public AddClass(Class c1) {
             super("Add Class");
+	    JPanel addClass = new JPanel();
+            addClass.setLayout(new BorderLayout());
+            
+            //all the elements
+            JButton save = new JButton("Continue");
+            JLabel label1 = new JLabel("Class Name:", SwingConstants.CENTER);
+            JTextField className = new JTextField("", 15);
+            JLabel label2 = new JLabel("Class Number:", SwingConstants.CENTER);
+            JTextField classNum = new JTextField("", 15);
+            
+            JPanel inputPanel = new JPanel();
+            inputPanel.setLayout(new GridLayout(0, 2, 10, 10));
+            JPanel savePanel = new JPanel();
+            
+            inputPanel.add(label1);
+            inputPanel.add(className);
+            inputPanel.add(label2);
+            inputPanel.add(classNum);
+            
+            savePanel.add(save);
+            
+            addClass.add(inputPanel, BorderLayout.CENTER);
+            addClass.add(savePanel, BorderLayout.SOUTH);
+            
+            save.addActionListener((ActionEvent e) -> {
+            	//insert code to add the new class here
+                //className.getText() returns class name
+                //classNum.getText() returns class number
+                
+		//calls the new student pop up once the class has been saved
+                AddStudent studentPopUp = new AddStudent(c1);
+                studentPopUp.setVisible(true);
+		studentPopUp.setLocation(500, 500);
+		studentPopUp.setSize(350, 150);
+                
+                dispose(); //this just shuts the window once everything is done
+            });
+            
+            getContentPane().add(addClass);
         }    
     }
     
@@ -175,15 +214,15 @@ public class Layout extends JFrame {
             JPanel inputPanel = new JPanel(new GridLayout(0, 2, 10, 10));
             JPanel savePanel = new JPanel();
             JButton save = new JButton("Save");
-	    JLabel label1 = new JLabel("Homework Value:");
+	    JLabel label1 = new JLabel("Homework Value:", SwingConstants.CENTER);
             JTextField homework = new JTextField("", 10);
-            JLabel label2 = new JLabel("Quiz Value:");
+            JLabel label2 = new JLabel("Quiz Value:", SwingConstants.CENTER);
             JTextField quiz = new JTextField("", 10);
-	    JLabel label3 = new JLabel("Lab Value:");
+	    JLabel label3 = new JLabel("Lab Value:", SwingConstants.CENTER);
 	    JTextField lab = new JTextField("", 10);
-	    JLabel label4 = new JLabel("Participation:");
+	    JLabel label4 = new JLabel("Participation:", SwingConstants.CENTER);
 	    JTextField pG = new JTextField("", 10);
-	    JLabel label5 = new JLabel("Extra Credit:");
+	    JLabel label5 = new JLabel("Extra Credit:", SwingConstants.CENTER);
 	    JTextField ExC = new JTextField("", 10);
             
             inputPanel.add(label1);
@@ -223,7 +262,7 @@ public class Layout extends JFrame {
         }
     }
     
-    public Layout(JTable grades, Class c1,ClassList semester) { //pretty much I think layout will have to call like every variable unless 
+    public Layout(JTable grades, Class c1, ClassList semester) { //pretty much I think layout will have to call like every variable unless 
                                    //there's another way to do things that I'm just missing? 
         super("Your Gradebook");
         
@@ -250,7 +289,7 @@ public class Layout extends JFrame {
         JPanel navButtonPanel = new JPanel();
         JButton addNewClassButton = new JButton("Add New Class");
         addNewClassButton.addActionListener((ActionEvent e) -> {
-            AddClass addClassPopUp = new AddClass();
+            AddClass addClassPopUp = new AddClass(c1);
             addClassPopUp.setVisible(true);
             addClassPopUp.setLocation(500, 500);
             addClassPopUp.setSize(350, 150);
@@ -346,7 +385,7 @@ public class Layout extends JFrame {
             EditRubric editRubricPopUp = new EditRubric(c1);
             
             editRubricPopUp.setVisible(true);
-            editRubricPopUp.setSize(250, 100);
+            editRubricPopUp.setSize(310, 250);
             editRubricPopUp.setLocation(500, 500);
         });
         
