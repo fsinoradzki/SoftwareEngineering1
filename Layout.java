@@ -162,7 +162,7 @@ public class Layout extends JFrame {
 
 	    
             save.addActionListener((ActionEvent e) -> {
-		    if (studentID.getText().matches("\\d")) {
+		    if (studentID.getText().matches("[0-9]+") && studentID.getText().length()>2) {
 		    	Student test = new Student("default",000);
 		    	test.name = studentName.getText();
 		   	test.student_id = Integer.valueOf(studentID.getText());
@@ -181,7 +181,7 @@ public class Layout extends JFrame {
             savePlus.addActionListener((ActionEvent e) -> {
                     //insert code to save student here
                 
-		    if(studentID.getText().matches("\\d")) {
+		    if(studentID.getText().matches("[0-9]+") && studentID.getText().length()>2) {
 		    	Student test = new Student("default",000);
 		    	test.name = studentName.getText();
 		    	test.student_id = Integer.valueOf(studentID.getText());
