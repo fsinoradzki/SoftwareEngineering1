@@ -162,38 +162,46 @@ public class Layout extends JFrame {
 
 	    
             save.addActionListener((ActionEvent e) -> {
-		    Student test = new Student("default",000);
-		    test.name = studentName.getText();
-		    test.student_id = Integer.valueOf(studentID.getText());
-		    c1.addStudent(test);
-		    c1.createStudentsFile();
-		    c1.createFile();
+		    if (studentID.getText().matches("\\d")) {
+		    	Student test = new Student("default",000);
+		    	test.name = studentName.getText();
+		   	test.student_id = Integer.valueOf(studentID.getText());
+		    	c1.addStudent(test);
+		    	c1.createStudentsFile();
+		    	c1.createFile();
 	
-                    dispose();
-        
+                    	dispose(); 
+		    }
+		    else {
+			JOptionPane.showMessageDialog(null, "Invalid Student ID");
+			studentID.requestFocus();
+		    }
             });
             
             savePlus.addActionListener((ActionEvent e) -> {
-                //insert code to save student here
+                    //insert code to save student here
+                
+		    if(studentID.getText().matches("\\d")) {
+		    	Student test = new Student("default",000);
+		    	test.name = studentName.getText();
+		    	test.student_id = Integer.valueOf(studentID.getText());
+		    	c1.addStudent(test);
+		    	c1.createStudentsFile();
+		    	c1.createFile();
+		    	AddStudent studentPopUp = new AddStudent(c1);
+		  	studentPopUp.setVisible(true);
+		    	studentPopUp.setLocation(500, 500);
+		    	studentPopUp.setSize(350, 150);
 
-		    Student test = new Student("default",000);
-		    test.name = studentName.getText();
-		    test.student_id = Integer.valueOf(studentID.getText());
-		    c1.addStudent(test);
-		    c1.createStudentsFile();
-		    c1.createFile();
-		    AddStudent studentPopUp = new AddStudent(c1);
-		    studentPopUp.setVisible(true);
-		    studentPopUp.setLocation(500, 500);
-		    studentPopUp.setSize(350, 150);
-		    
-
-		    dispose();
+		    	dispose();
+		    }
+		    else {
+			JOptionPane.showMessageDialog(null, "Invalid Student ID");
+			studentID.requestFocus();
+		    }
             });            
-            
-            
-            getContentPane().add(addStudent);
-	   
+                     
+            getContentPane().add(addStudent); 
         }
     }
     
@@ -315,6 +323,10 @@ public class Layout extends JFrame {
 	    String key = name+number;
 	    JButton ClassButton = new JButton(key);
 	    navButtonPanel.add(ClassButton);
+	    ClassButton.addActionListener((ActionEvent e) -> {
+		//whatever code is needed to make the new class show its data instead of the old one goes here 
+		//In theory just recreating layout with the new class and disposing the old layout should work	
+	    });
 	}
         
         //grades panel
@@ -346,6 +358,7 @@ public class Layout extends JFrame {
             studentPopUp.setVisible(true);
             studentPopUp.setLocation(500, 500);
             studentPopUp.setSize(350, 150);	   
+	    grades.updateUI();
         });
         
         //final Grades Button
@@ -1271,7 +1284,3 @@ public class Layout extends JFrame {
         LogIn GUI = new LogIn(table,currClass,semester);
     }   
 }
-
-
-
-
