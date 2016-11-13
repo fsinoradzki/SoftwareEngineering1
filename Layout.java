@@ -8,7 +8,7 @@ import java.io.*;
 
 public class Layout extends JFrame {
     public static class LogIn extends JFrame {
-        public LogIn(JTable table, Class c1, ClassList semester) {
+        public LogIn(JTable table, ClassList semester) {
             super("Authentication");
                         
             JButton loginButton = new JButton("Login");
@@ -33,10 +33,11 @@ public class Layout extends JFrame {
             loginButton.addActionListener((ActionEvent e) -> {
                 String passwordEntered = password.getText();
                 if(passwordEntered.equals(userPassword)) {
-                    Layout layout = new Layout(table, c1,semester);
+                    Layout layout = new Layout(table,semester);
                     layout.setVisible(true);
                     layout.setSize(1500, 1000);
                     layout.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		    
                     dispose();
                 }
                 else {
@@ -49,7 +50,7 @@ public class Layout extends JFrame {
     }
     
     public class AddClass extends JFrame {
-        public AddClass(Class c1) {
+        public AddClass(ClassList semester, Class c1) {
             super("Add Class");
 	    JPanel addClass = new JPanel();
             addClass.setLayout(new BorderLayout());
@@ -76,15 +77,22 @@ public class Layout extends JFrame {
             addClass.add(savePanel, BorderLayout.SOUTH);
             
             save.addActionListener((ActionEvent e) -> {
-            	//insert code to add the new class here
-                //className.getText() returns class name
-                //classNum.getText() returns class number
-                
+		    String name = className.getText();
+		    int number =Integer.valueOf(classNum.getText());
+		    Class c3 = new Class();
+		    c3.className= name;
+		    c3.classNum = number;
+		    c3.createFile();
+		    c3.createStudentsFile();
+		    c3.createRubricFile();
+		    c3.createAssignmentsFile();
+		    semester.list.addElement(c3);
+		    semester.createClassFile();
 		//calls the new student pop up once the class has been saved
-                AddStudent studentPopUp = new AddStudent(c1);
-                studentPopUp.setVisible(true);
-		studentPopUp.setLocation(500, 500);
-		studentPopUp.setSize(350, 150);
+		    AddStudent studentPopUp = new AddStudent(c3);
+		    studentPopUp.setVisible(true);
+		    studentPopUp.setLocation(500, 500);
+		    studentPopUp.setSize(350, 150);
                 
                 dispose(); //this just shuts the window once everything is done
             });
@@ -263,11 +271,6 @@ public class Layout extends JFrame {
 		    int extraC = Integer.valueOf(ExC.getText());
 		    c1.R.editRubricValues(HW, QZ, LAB, participation, extraC);
 		    c1.createRubricFile();
-		    //c1.editRubricValues(int HW, int quiz, int lab, int PV, int ECV)
-                //insert code to save student here
-                //___.getText can be used to access text in JTextFields
-                //it will return it as a string though, I am assuming you can convert string to int?
-                //and I can set up an error message dialog for if the input isn't valid
                 
                 dispose();
             });
@@ -280,10 +283,10 @@ public class Layout extends JFrame {
         }
     }
     
-    public Layout(JTable grades, Class c1, ClassList semester) { //pretty much I think layout will have to call like every variable unless 
+    public Layout(JTable grades, ClassList semester) { //pretty much I think layout will have to call like every variable unless 
                                    //there's another way to do things that I'm just missing? 
         super("Your Gradebook");
-        
+        Class c1 = semester.lastEdited;
         //will be set equal to the actual class name variable at some point, used for titles in all panels
         //String title = "Class Name";
 	String title = c1.className+c1.classNum;
@@ -307,7 +310,7 @@ public class Layout extends JFrame {
         JPanel navButtonPanel = new JPanel();
         JButton addNewClassButton = new JButton("Add New Class");
         addNewClassButton.addActionListener((ActionEvent e) -> {
-            AddClass addClassPopUp = new AddClass(c1);
+		AddClass addClassPopUp = new AddClass(semester, c1);
             addClassPopUp.setVisible(true);
             addClassPopUp.setLocation(500, 500);
             addClassPopUp.setSize(350, 150);
@@ -324,6 +327,18 @@ public class Layout extends JFrame {
 	    JButton ClassButton = new JButton(key);
 	    navButtonPanel.add(ClassButton);
 	    ClassButton.addActionListener((ActionEvent e) -> {
+		    Class last = new Class(name, number);
+		    semester.lastEdited = last;
+		    semester.saveLast();
+		    semester.loadTable(last);
+		    Object[][]data = semester.currClassData;
+		    String columns[] = semester.columnNames;
+		    JTable table = new JTable(data, columns);
+		    Layout test = new Layout(table, semester);
+		    test.setVisible(true);
+                    test.setSize(1500, 1000);
+                    test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		    
 		//whatever code is needed to make the new class show its data instead of the old one goes here 
 		//In theory just recreating layout with the new class and disposing the old layout should work	
 	    });
@@ -331,7 +346,7 @@ public class Layout extends JFrame {
         
         //grades panel
         JPanel gradesPanel = new JPanel();
-        gradesPanel.setLayout(new BorderLayout()); 
+        gradesPanel.setLayout(new BorderLayout());
         
         //panel for buttons under grades
         JPanel gradesButtons = new JPanel();
@@ -350,6 +365,7 @@ public class Layout extends JFrame {
             assignmentPopUp.setVisible(true);
             assignmentPopUp.setLocation(500, 500);
             assignmentPopUp.setSize(350, 110);
+	    //grades.fireTableChanged();
         });
         
         //add Student Button
@@ -359,7 +375,7 @@ public class Layout extends JFrame {
             studentPopUp.setVisible(true);
             studentPopUp.setLocation(500, 500);
             studentPopUp.setSize(350, 150);	   
-	    grades.updateUI();
+	    //grades.updateUI();
         });
         
         //final Grades Button
@@ -441,6 +457,7 @@ public class Layout extends JFrame {
 	private Vector<Class> list; 
 	Object [][]currClassData;
 	String[] columnNames;
+	Class lastEdited;
 	//Class currClass;
 	
 	public void loadTable(Class currClass){
@@ -482,6 +499,39 @@ public class Layout extends JFrame {
 	    currClassData = data;
 	}
 
+	public void saveLast(){
+	    try{
+		File file = new File("./Classes/lastEdit.txt");
+		if(!file.exists())
+		    file.createNewFile();
+		FileWriter fw = new FileWriter(file);
+		BufferedWriter bw = new BufferedWriter(fw);
+		bw.write(String.valueOf(this.lastEdited.classNum));
+		bw.write(" ");
+		bw.write(this.lastEdited.className);
+		bw.write("\n");
+		bw.close();
+	    }catch(IOException e){}
+	}
+	public void loadLast(){
+	    try{
+		File file = new File("./Classes/lastEdit.txt");
+    		BufferedReader br = new BufferedReader (new FileReader (file));
+		String line;
+		while ((line = br.readLine ()) != null)
+		    {
+			StringTokenizer st = new StringTokenizer (line); 
+			while (st.hasMoreTokens ())
+			    {
+				int number = Integer.valueOf(st.nextToken());
+				String name = st.nextToken();
+				Class test = new Class(name,number);
+				this.lastEdited = test;
+				
+			    }
+		    }	      
+	    }catch (IOException e){}
+    }
 	
 	public void addClasses(Vector<Class> item){
 	    this.list = item;
@@ -838,6 +888,9 @@ public class Layout extends JFrame {
 			  try
 			  {
 				  String key = this.className + this.classNum;	//used to standardize file format
+				  File mydir = new File("./Classes/"+key);
+				  if(!mydir.exists())
+				      mydir.mkdir();
 				  File file = new File ("./Classes/" + key + "/"+key+"grades.txt");	//accesses file of standard format within a subdirectory
 				  if (!file.exists ())
 					  file.createNewFile ();
@@ -1298,15 +1351,17 @@ public class Layout extends JFrame {
 	Vector<Class> list = new Vector<Class>();
 	ClassList semester = new ClassList();
 	Class c1 = new Class(name,number);
-	list.addElement(c1);
-	list.addElement(c2);
-	semester.addClasses(list);
-	semester.createClassFile();
-	Class currClass = c2;
+	//list.addElement(c1);
+	//list.addElement(c2);
+	//semester.addClasses(list);
+	//semester.createClassFile();
+	semester.loadClassFile();
+	semester.loadLast();
+	Class currClass = semester.lastEdited;
 	semester.loadTable(currClass);
 	Object[][]data = semester.currClassData;
 	String columns[] = semester.columnNames;
 	JTable table = new JTable(data,columns);
-        LogIn GUI = new LogIn(table,currClass,semester);
+        LogIn GUI = new LogIn(table,semester);
     }   
 }
