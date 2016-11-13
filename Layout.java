@@ -874,7 +874,10 @@ public class Layout extends JFrame {
 			BufferedWriter bw = new BufferedWriter(fw);
 			for(int i=0; i<grades.getRowCount(); i++) {
 				for(int j=1; j<grades.getColumnCount(); j++) {
+				    if(grades.getModel().getValueAt(i,j)!=null) 
 					bw.write(grades.getModel().getValueAt(i, j) + " ");
+				    else
+					bw.write("0 ");
 					System.out.println(grades.getModel().getValueAt(i, j) + " ");
 				}
 				bw.write("\n");
