@@ -339,7 +339,8 @@ public class Layout extends JFrame {
         //save grades button
         JButton saveGradesButton = new JButton("Save Grades");
         saveGradesButton.addActionListener((ActionEvent e) -> {
-		c1.createFile();
+		c1.createFile(grades);
+		JOptionPane.showMessageDialog(null, "Grades Saved");
         });
         
         //add Assignment Button
@@ -860,7 +861,29 @@ public class Layout extends JFrame {
 			  catch (IOException e)
 			  {
 			  }
-		  }
+		}
+
+	public void createFile(JTable grades) {
+		System.out.println("Saveing Grades?");
+		try {
+			String key = this.className + this.classNum;
+			File file = new File ("./Classes/" + key + "/" + key + "grades.txt");
+			if (!file.exists())
+				file.createNewFile();
+			FileWriter fw = new FileWriter(file);
+			BufferedWriter bw = new BufferedWriter(fw);
+			for(int i=0; i<grades.getRowCount(); i++) {
+				for(int j=1; j<grades.getColumnCount(); j++) {
+					bw.write(grades.getModel().getValueAt(i, j) + " ");
+					System.out.println(grades.getModel().getValueAt(i, j) + " ");
+				}
+				bw.write("\n");
+			}
+			bw.close();
+		}
+		catch(IOException e) {
+		}
+	}
 
       /*
 	Purpose: create or modify a standard file containing a vector of integers representing assignment types
