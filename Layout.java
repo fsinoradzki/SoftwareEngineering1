@@ -864,7 +864,7 @@ public class Layout extends JFrame {
 		}
 
 	public void createFile(JTable grades) {
-		System.out.println("Saveing Grades?");
+		System.out.println("Saving Grades?");
 		try {
 			String key = this.className + this.classNum;
 			File file = new File ("./Classes/" + key + "/" + key + "grades.txt");
