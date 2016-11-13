@@ -93,7 +93,7 @@ public class Layout extends JFrame {
 		    studentPopUp.setVisible(true);
 		    studentPopUp.setLocation(500, 500);
 		    studentPopUp.setSize(350, 150);
-                
+		    
                 dispose(); //this just shuts the window once everything is done
             });
             
@@ -177,7 +177,7 @@ public class Layout extends JFrame {
 		    	c1.addStudent(test);
 		    	c1.createStudentsFile();
 		    	c1.createFile();
-	
+			
                     	dispose(); 
 		    }
 		    else {
@@ -339,9 +339,10 @@ public class Layout extends JFrame {
                     test.setSize(1500, 1000);
                     test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		    
-		//whatever code is needed to make the new class show its data instead of the old one goes here 
-		//In theory just recreating layout with the new class and disposing the old layout should work	
-	    });
+		    dispose();
+		    //whatever code is needed to make the new class show its data instead of the old one goes here 
+		    //In theory just recreating layout with the new class and disposing the old layout should work	
+		});
 	}
         
         //grades panel
@@ -365,7 +366,8 @@ public class Layout extends JFrame {
             assignmentPopUp.setVisible(true);
             assignmentPopUp.setLocation(500, 500);
             assignmentPopUp.setSize(350, 110);
-	    //grades.fireTableChanged();
+	    
+	    //dispose();
         });
         
         //add Student Button
@@ -374,7 +376,8 @@ public class Layout extends JFrame {
             AddStudent studentPopUp = new AddStudent(c1);
             studentPopUp.setVisible(true);
             studentPopUp.setLocation(500, 500);
-            studentPopUp.setSize(350, 150);	   
+            studentPopUp.setSize(350, 150);
+	    //dispose();
 	    //grades.updateUI();
         });
         
