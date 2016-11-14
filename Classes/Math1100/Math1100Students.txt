@@ -1,14 +1,17 @@
-117 John
-432 Marcus
-423 Nathan
-751 Lara
-115 Reggie
-120 Mikey
-118 Kenny
-750 Bruce
-77777 Wayne
-111 Mike
-118 Gary
-545 KGG
-565 GKK
-433 Greg
+117 John Spartan
+432 Marcus Ares
+423 Nathan HotDogs
+751 Lara Croftworks
+115 Reggie deRobot
+120 Mikey Wazowski
+118 Kenny Bruce
+750 Bruce Wayne
+77777 Wayne Brady
+111 Mike Ike
+118 Gary Gladstone
+545 KGG FLF
+565 GKK MNM
+433 Greg Gladstone
+718 Bill Gill
+321 Andy ToyStory
+111 Test Tester

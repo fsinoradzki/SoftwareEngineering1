@@ -158,18 +158,22 @@ public class Layout extends JFrame {
             //all the elements
             JButton save = new JButton("Save");
             JButton savePlus = new JButton("Save & Add Another");
-            JLabel label1 = new JLabel("Student Name:");
-            JTextField studentName = new JTextField("", 25);
-            JLabel label2 = new JLabel("Student ID:");
-            JTextField studentID = new JTextField("", 10);
+            JLabel label1 = new JLabel("First Name:");
+            JTextField firstName = new JTextField("", 25);
+            JLabel label2 = new JLabel("Last Name:");
+            JTextField lastName = new JTextField("", 25);
+	    JLabel label3 = new JLabel("Student ID:");
+	    JTextField studentID = new JTextField("", 10);
 
             JPanel inputPanel = new JPanel();
             inputPanel.setLayout(new GridLayout(0, 2, 10, 10));
             JPanel savePanel = new JPanel();
             
             inputPanel.add(label1);
-            inputPanel.add(studentName);
-            inputPanel.add(label2);
+            inputPanel.add(firstName);
+	    inputPanel.add(label2);
+	    inputPanel.add(lastName);
+            inputPanel.add(label3);
             inputPanel.add(studentID);
             
             savePanel.add(save, SwingConstants.CENTER);
@@ -181,8 +185,9 @@ public class Layout extends JFrame {
 	    
             save.addActionListener((ActionEvent e) -> {
 		    if (studentID.getText().matches("[0-9]+") && studentID.getText().length()>2) {
-		    	Student test = new Student("default",000);
-		    	test.name = studentName.getText();
+		    	Student test = new Student("john","Doe",000);
+		    	test.fName = firstName.getText();
+			test.lName = lastName.getText();
 		   	test.student_id = Integer.valueOf(studentID.getText());
 		    	semester.lastEdited.addStudent(test);
 		    	semester.lastEdited.createStudentsFile();
@@ -208,8 +213,9 @@ public class Layout extends JFrame {
                     //insert code to save student here
                 
 		    if(studentID.getText().matches("[0-9]+") && studentID.getText().length()>2) {
-		    	Student test = new Student("default",000);
-		    	test.name = studentName.getText();
+		    	Student test = new Student("John","Doe",000);
+		    	test.fName = firstName.getText();
+			test.lName = lastName.getText();
 		    	test.student_id = Integer.valueOf(studentID.getText());
 		    	semester.lastEdited.addStudent(test);
 		    	semester.lastEdited.createStudentsFile();
@@ -483,9 +489,10 @@ public class Layout extends JFrame {
 	
 	public void loadTable(Class currClass){
 	    System.out.println(currClass.classNum);
-	    String columns[] = new String[currClass.values.size()+2];
-	    columns[0]="Student Name";
-	    columns[1]="Student ID";
+	    String columns[] = new String[currClass.values.size()+3];
+	    columns[0]="First Name";
+	    columns[1]="Last Name";
+	    columns[2]="Student ID";
 	    String title= " ";
 	    int hwNum =0;
 	    int quizNum=0;
@@ -507,14 +514,19 @@ public class Layout extends JFrame {
 		title = "Participation";
 	    if(currClass.values.get(i)==4)
 		title = "Extra Credit";
-	    columns[i+2]=title;
+	    columns[i+3]=title;
 	    }
 	    
-	    Object[][]data = new Object[currClass.students.size()][currClass.values.size()+2];
+	    Object[][]data = new Object[currClass.students.size()][currClass.values.size()+3];
+	    System.out.println(currClass.values.size()+2);
+	    System.out.println(currClass.gradebook.get(0).size()+1);
 	    for(int i =0;i<currClass.students.size();i++){
-		data[i][0]=currClass.students.get(i).name;
-		for(int k =1;k<=currClass.gradebook.get(i).size();k++)
-		    data[i][k] = currClass.gradebook.get(i).get(k-1);
+		data[i][0]=currClass.students.get(i).fName;
+		data[i][1]=currClass.students.get(i).lName;
+		for(int k =2;k<=currClass.gradebook.get(i).size()+1;k++){
+		    System.out.println(k);
+		    data[i][k] = currClass.gradebook.get(i).get(k-2);
+		}
 	    }
 	    columnNames = columns; 
 	    currClassData = data;
@@ -604,22 +616,27 @@ public class Layout extends JFrame {
     }
     
     public static class Student{
-	private String name;	//Student name
+	private String fName;	//Student name
+	private String lName;
 	private int student_id;	//Student ID
 
     //Constructor for Student
-    public Student (String Sname, int ID)
+	public Student (String first_name, String last_name, int ID)
     {
-      name = Sname;
+      fName = first_name;
+      lName = last_name;
       student_id = ID;
     }
 
 
     //Returns the student's name
-    public String getName ()
+    public String getFirstName ()
     {
-      return name;
+      return fName;
     }
+	public String getLastName(){
+	    return lName;
+	}
 
     //Returns the student's ID
     public int getID ()
@@ -711,9 +728,12 @@ public class Layout extends JFrame {
       public Class()
       {
 	  gradebook = new Vector<Vector<Integer>>();
+	  Student testy = new Student("Testy","McTesterson",-1);
+	  Vector<Integer> grades = new Vector<Integer>();
+	  grades.addElement(-1);
+	  gradebook.addElement(grades);
 	  students = new Vector<Student>();
 	  values = new Vector<Integer>();
-	  this.addAssignment(-1);
 	  this.addAssignment(3);
 	  this.addAssignment(4);
 	  numHWs = 0;
@@ -807,7 +827,9 @@ public class Layout extends JFrame {
 		  for(int i =0;i<students.size();i++){
 			  bw.write(String.valueOf(students.get(i).getID()));
 			  bw.write(" ");
-			  bw.write(students.get(i).getName());
+			  bw.write(students.get(i).getFirstName());
+			  bw.write(" ");
+			  bw.write(students.get(i).getLastName());
 			  bw.write("\n");
 		  }
 		  bw.close();
@@ -824,25 +846,23 @@ public class Layout extends JFrame {
               while ((line = br.readLine ()) != null)
 		  {
 		      StringTokenizer st = new StringTokenizer (line);
-		      Student test = new Student("JohnDoe", 999); 
+		      Student test = new Student("John","Doe", 999); 
 		      while (st.hasMoreTokens ())
 			  {
 			      test.student_id = Integer.valueOf(st.nextToken());
-			      test.name = st.nextToken();
+			      test.fName = st.nextToken();
+			      test.lName = st.nextToken();
 			      if (!st.hasMoreTokens ())
 				  pupils.addElement (test); 
 			  }
 		  }	      
 	      this.students = pupils;
-	      for (int i =0;i<students.size();i++){
-		  System.out.println(students.get(i).name);
-		  System.out.println(students.get(i).student_id);
-	      }
+	      
 	  }catch(IOException e){}
       }
-
+      
       public void createRubricFile(){
-		  try{
+	  try{
 		  String key = this.className+this.classNum;
 		  File file = new File("./Classes/"+key+"/"+key+"Rubric.txt");
 		  if(!file.exists())
@@ -949,7 +969,7 @@ public class Layout extends JFrame {
 			FileWriter fw = new FileWriter(file);
 			BufferedWriter bw = new BufferedWriter(fw);
 			for(int i=0; i<grades.getRowCount(); i++) {
-				for(int j=1; j<grades.getColumnCount(); j++) {
+				for(int j=2; j<grades.getColumnCount()+2; j++) {
 				    if(grades.getModel().getValueAt(i,j)!=null) 
 					bw.write(grades.getModel().getValueAt(i, j) + " ");
 				    else
@@ -1029,13 +1049,22 @@ public class Layout extends JFrame {
 			  System.out.println (gradebook);
 		  }
 
-	  public String printStudentName(int ID){
+	  public String printStudentFirstName(int ID){
 		  int position = 0;
 		  for(int i =0;i<students.size();i++)
 			  if(students.get(i).getID()==ID)
 				  position = i;
-		  return students.get(position).getName();
+		  return students.get(position).getFirstName();
 	  }
+      //If the ID is not found, returns the first student's name
+      public String printStudentLastName(int ID){
+	  int position = 0;
+	  for(int i=1;i<students.size();i++)
+	      if(students.get(i).getID() == ID)
+		  position = i;
+					
+	  return students.get(position).getLastName();
+      }
 
     //Prints out all grades for a specific student
     public void getGradesForStudent (int ID)
@@ -1161,32 +1190,40 @@ public class Layout extends JFrame {
 
       return av;
     }
-
       //Returns the weighted average for the student (using the amount of different assignments)
       public double getWeightedAverageForStudent(int ID){
 	  int total=0;
 	  double divisor=0;
 	  double av=0;
 	  
-	  //Gets the total points lost. Ignores extra credit, since it's not points lost.
+	  //Gets the total points lost.
 	  for(int i=1;i<(gradebook.get(ID)).size();i++){
 	      if(i != 2)
 		  total += (gradebook.get(ID)).get(i);
 	  }
 	  
-	  //Adds the actual extra credit points
-	  total += R.getExtraCreditValue() - (gradebook.get(ID)).get(2);
-	  
 	  //Gets the number of homeworks, quizzes, and labs, multiplies each by the respective rubric value
-	  //And adds them all up. And also Participation and Extra Credit 
-	  //If there are 3 homeworks, no quizzes, and no labs, then on a default class 
-	  //it would be: (3*10) + (0*100) + (0*50) + (PV) + (ECV)
-	  divisor = (numHWs*R.getHWValue())+(numQuizzes*R.getQuizValue())+(numLabs*R.getLabValue()+R.getParticipationValue());
+	  //And adds them all up. If there are 3 homeworks, no quizzes, and no labs, then on a default class 
+	  //it would be: (3*10) + (0*100) + (0*50) + (participation value)
+	  divisor = (numHWs*R.getHWValue())+(numQuizzes*R.getQuizValue())+(numLabs*R.getLabValue())+R.getParticipationValue();
 	  //In the above example, this would be ((30-totalPointsLost)/30)*100 for your actual grade
+	  
+	  //Gets the average before extra credit, prints whether or not that value is valid
 	  av = ((divisor-total)/divisor)*100;
+	  isGradeValid(av);
+	  //			System.out.println(divisor);
+	  //			System.out.println(total);
+	  //			System.out.println("Av before EC = " + av);
+	  
+	  //Gets the average with extra credit in mind. Returns that value.
+	  av = ((divisor+(gradebook.get(ID)).get(2)-total)/divisor)*100;
+	  //System.out.println(divisor);
+	  //			System.out.println((gradebook.get(ID)).get(2));
+	  //			System.out.println(total);
+	  //			System.out.println("Av after EC = " + av);
 	  
 	  return av;
-      }	
+      }
       
       //gets type of assignment given an index
       public int getAssignmentType(int assignment){
@@ -1211,10 +1248,13 @@ public class Layout extends JFrame {
 	  //All other values are intiialized to 0 
 	  Vector<Integer> grades = new Vector<Integer>();
 	  grades.addElement(kid.getID());
-	  if(gradebook.get(0).size()>2)
-	      for (int i = 1;i<gradebook.get(0).size();i++)
-		  grades.addElement(0);
-	  gradebook.addElement(grades);
+	  for (int i = 1;i<gradebook.get(0).size();i++)
+	      grades.addElement(0);
+	  
+	  if(gradebook.size() == 1 && gradebook.get(0).get(0) == -1)
+	      gradebook.get(0).set(0,grades.get(0));
+	  else
+	      gradebook.addElement(grades);
 	  
       }
       
@@ -1365,6 +1405,7 @@ public class Layout extends JFrame {
 	  else
 	      System.out.println("The average is valid!");
       }
+    
       
   }
     
