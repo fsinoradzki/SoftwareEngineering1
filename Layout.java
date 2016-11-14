@@ -89,6 +89,7 @@ public class Layout extends JFrame {
 		    semester.list.addElement(c3);
 		    semester.createClassFile();
 		//calls the new student pop up once the class has been saved
+		    semester.lastEdited = c3;
 		    AddStudent studentPopUp = new AddStudent(semester);
 		    studentPopUp.setVisible(true);
 		    studentPopUp.setLocation(500, 500);
@@ -157,19 +158,24 @@ public class Layout extends JFrame {
             //all the elements
             JButton save = new JButton("Save");
             JButton savePlus = new JButton("Save & Add Another");
-            JLabel label1 = new JLabel("Student Name:");
-            JTextField studentName = new JTextField("", 25);
-            JLabel label2 = new JLabel("Student ID:");
-            JTextField studentID = new JTextField("", 10);
-
+            JLabel label1 = new JLabel("Student First Name:");
+            JTextField studentFirstName = new JTextField("", 25);
+            JLabel label2 = new JLabel("Student Last Name:");
+            JTextField studentLastName = new JTextField("", 25);
+	    JLabel label3 = new JLabel("StudentID:");
+	    JTextField studentID = new JTextField("",10);
+	    
             JPanel inputPanel = new JPanel();
             inputPanel.setLayout(new GridLayout(0, 2, 10, 10));
             JPanel savePanel = new JPanel();
             
             inputPanel.add(label1);
-            inputPanel.add(studentName);
+            inputPanel.add(studentFirstName);
             inputPanel.add(label2);
-            inputPanel.add(studentID);
+            inputPanel.add(studentLastName);
+	    inputPanel.add(label3);
+	    inputPanel.add(studentID);
+	    
             
             savePanel.add(save, SwingConstants.CENTER);
             savePanel.add(savePlus);
@@ -180,8 +186,9 @@ public class Layout extends JFrame {
 	    
             save.addActionListener((ActionEvent e) -> {
 		    if (studentID.getText().matches("[0-9]+") && studentID.getText().length()>2) {
-		    	Student test = new Student("default",000);
-		    	test.name = studentName.getText();
+		    	Student test = new Student("John","Doe",000);
+		    	test.fname = studentFirstName.getText();
+			test.lname= studentLastName.getText();
 		   	test.student_id = Integer.valueOf(studentID.getText());
 		    	semester.lastEdited.addStudent(test);
 		    	semester.lastEdited.createStudentsFile();
@@ -207,8 +214,9 @@ public class Layout extends JFrame {
                     //insert code to save student here
                 
 		    if(studentID.getText().matches("[0-9]+") && studentID.getText().length()>2) {
-		    	Student test = new Student("default",000);
-		    	test.name = studentName.getText();
+		    	Student test = new Student("John","Doe",000);
+		    	test.fname = studentFirstName.getText();
+			test.lname = studentLastName.getText();
 		    	test.student_id = Integer.valueOf(studentID.getText());
 		    	semester.lastEdited.addStudent(test);
 		    	semester.lastEdited.createStudentsFile();
@@ -482,9 +490,10 @@ public class Layout extends JFrame {
 	
 	public void loadTable(Class currClass){
 	    System.out.println(currClass.classNum);
-	    String columns[] = new String[currClass.values.size()+2];
-	    columns[0]="Student Name";
-	    columns[1]="Student ID";
+	    String columns[] = new String[currClass.values.size()+3];
+	    columns[0]="Student Fist Name";
+	    columns[1]="Student Last Name";
+	    columns[2]="Student ID";
 	    String title= " ";
 	    int hwNum =0;
 	    int quizNum=0;
@@ -506,14 +515,15 @@ public class Layout extends JFrame {
 		title = "Participation";
 	    if(currClass.values.get(i)==4)
 		title = "Extra Credit";
-	    columns[i+2]=title;
+	    columns[i+3]=title;
 	    }
 	    
 	    Object[][]data = new Object[currClass.students.size()][currClass.values.size()+2];
 	    for(int i =0;i<currClass.students.size();i++){
-		data[i][0]=currClass.students.get(i).name;
-		for(int k =1;k<=currClass.gradebook.get(i).size();k++)
-		    data[i][k] = currClass.gradebook.get(i).get(k-1);
+		data[i][0]=currClass.students.get(i).fname;
+		data[i][1]=currClass.students.get(i).lname;
+		for(int k =2;k<=currClass.gradebook.get(i).size()+1;k++)
+		    data[i][k] = currClass.gradebook.get(i).get(k-2);
 	    }
 	    columnNames = columns; 
 	    currClassData = data;
@@ -603,22 +613,29 @@ public class Layout extends JFrame {
     }
     
     public static class Student{
-	private String name;	//Student name
+	private String fname;//Student name
+	private String lname;
 	private int student_id;	//Student ID
 
     //Constructor for Student
-    public Student (String Sname, int ID)
+	public Student (String first_name,String last_name,  int ID)
     {
-      name = Sname;
-      student_id = ID;
+	fname = first_name;
+	lname = last_name;
+	student_id = ID;
     }
 
 
     //Returns the student's name
-    public String getName ()
+    public String getFirstName ()
     {
-      return name;
+      return fname;
     }
+
+	//Returns the student's last name
+	public String getLastName(){
+	    return lname;
+	}
 
     //Returns the student's ID
     public int getID ()
@@ -720,6 +737,8 @@ public class Layout extends JFrame {
 	  numLabs = 0;
 	  R = new Rubric();
 	  locked = false;
+	  className = "default";
+	  classNum = 000;
       }
       
     //Simple Constructor
@@ -744,7 +763,6 @@ public class Layout extends JFrame {
 
       public Class(String name,int number)
 		  {
-		      System.out.println("Entered CLASS");
 		      className = name;
 		      classNum = number;
 		      this.returnStudentsFile();
@@ -804,7 +822,9 @@ public class Layout extends JFrame {
 		  for(int i =0;i<students.size();i++){
 			  bw.write(String.valueOf(students.get(i).getID()));
 			  bw.write(" ");
-			  bw.write(students.get(i).getName());
+			  bw.write(students.get(i).getFirstName());
+			  bw.write(" ");
+			  bw.write(students.get(i).getLastName());
 			  bw.write("\n");
 		  }
 		  bw.close();
@@ -821,27 +841,25 @@ public class Layout extends JFrame {
               while ((line = br.readLine ()) != null)
 		  {
 		      StringTokenizer st = new StringTokenizer (line);
-		      Student test = new Student("JohnDoe", 999); 
+		      Student test = new Student("John","Doe", 999); 
 		      while (st.hasMoreTokens ())
 			  {
 			      test.student_id = Integer.valueOf(st.nextToken());
-			      test.name = st.nextToken();
+			      test.fname = st.nextToken();
+			      test.lname=st.nextToken();
 			      if (!st.hasMoreTokens ())
 				  pupils.addElement (test); 
 			  }
 		  }	      
 	      this.students = pupils;
-	      for (int i =0;i<students.size();i++){
-		  System.out.println(students.get(i).name);
-		  System.out.println(students.get(i).student_id);
-	      }
-	  }catch(IOException e){}
+	  }
+	  catch(IOException e){}
       }
-
+      
       public void createRubricFile(){
 		  try{
-		  String key = this.className+this.classNum;
-		  File file = new File("./Classes/"+key+"/"+key+"Rubric.txt");
+		      String key = this.className+this.classNum;
+		      File file = new File("./Classes/"+key+"/"+key+"Rubric.txt");
 		  if(!file.exists())
 			  file.createNewFile();
 		  FileWriter fw = new FileWriter(file);
@@ -937,7 +955,6 @@ public class Layout extends JFrame {
 		}
 
 	public void createFile(JTable grades) {
-		System.out.println("Saving Grades?");
 		try {
 			String key = this.className + this.classNum;
 			File file = new File ("./Classes/" + key + "/" + key + "grades.txt");
@@ -946,7 +963,7 @@ public class Layout extends JFrame {
 			FileWriter fw = new FileWriter(file);
 			BufferedWriter bw = new BufferedWriter(fw);
 			for(int i=0; i<grades.getRowCount(); i++) {
-				for(int j=1; j<grades.getColumnCount(); j++) {
+				for(int j=2; j<grades.getColumnCount(); j++) {
 				    if(grades.getModel().getValueAt(i,j)!=null) 
 					bw.write(grades.getModel().getValueAt(i, j) + " ");
 				    else
@@ -1026,13 +1043,25 @@ public class Layout extends JFrame {
 			  System.out.println (gradebook);
 		  }
 
-	  public String printStudentName(int ID){
-		  int position = 0;
-		  for(int i =0;i<students.size();i++)
-			  if(students.get(i).getID()==ID)
-				  position = i;
-		  return students.get(position).getName();
-	  }
+      //If the ID is not found, returns the first student's name
+      public String printStudentFirstName(int ID){
+	  int position = 0;
+	  for(int i=1;i<students.size();i++)
+	      if(students.get(i).getID() == ID)
+		  position = i;
+	  return students.get(position).getFirstName();
+      }
+
+      	//Given a student ID, prints the corresponding student's last name
+    //If the ID is not found, returns the first student's name
+    public String printStudentLastName(int ID){
+	int position = 0;
+	for(int i=1;i<students.size();i++)
+	    if(students.get(i).getID() == ID)
+		position = i;
+	
+	return students.get(position).getLastName();
+    }
 
     //Prints out all grades for a specific student
     public void getGradesForStudent (int ID)
@@ -1183,8 +1212,7 @@ public class Layout extends JFrame {
 	  av = ((divisor-total)/divisor)*100;
 	  
 	  return av;
-      }
-      
+      }	
       
       //gets type of assignment given an index
       public int getAssignmentType(int assignment){
@@ -1209,8 +1237,9 @@ public class Layout extends JFrame {
 	  //All other values are intiialized to 0 
 	  Vector<Integer> grades = new Vector<Integer>();
 	  grades.addElement(kid.getID());
-	  for (int i = 1;i<gradebook.get(0).size();i++)
-	      grades.addElement(0);
+	  if(gradebook.get(0).size()>2)
+	      for (int i = 1;i<gradebook.get(0).size();i++)
+		  grades.addElement(0);
 	  gradebook.addElement(grades);
 	  
       }
@@ -1353,11 +1382,18 @@ public class Layout extends JFrame {
 			if(this.locked == false)
 				locked = true;
 			else
-				locked = false;
+			    locked = false;
 		}
-      
-  }
+      //Checks to see if the grade is valid
+    public void isGradeValid(double av){
+	if (av > 100 || av < 0)
+	    System.out.println("The average is invalid");
+	else
+	    System.out.println("The average is valid!");
+    }
     
+}
+
     public static void main(String[] args) {
 
 	String name = "SoftEng";
