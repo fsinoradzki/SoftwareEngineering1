@@ -1,13 +1,14 @@
-117 John Spartan
-432 Marcus Sera
-423 Nathan HotDogs
-751 Lara Croftworks
-115 Reggie deRobot
-120 Mikey Wazowki
-118 Kenny G
-750 Bruce Wayne
-77777 Wayne Brady
-111 Mike Sully
-118 Gary Gladstone
-545 KGG GGB
-565 GKK FFL
+117 John
+432 Marcus
+423 Nathan
+751 Lara
+115 Reggie
+120 Mikey
+118 Kenny
+750 Bruce
+77777 Wayne
+111 Mike
+118 Gary
+545 KGG
+565 GKK
+433 Greg
