@@ -968,8 +968,10 @@ public class Layout extends JFrame {
 				file.createNewFile();
 			FileWriter fw = new FileWriter(file);
 			BufferedWriter bw = new BufferedWriter(fw);
+			System.out.println("rowCount == "+grades.getRowCount());
+			System.out.println("colCount == "+grades.getColumnCount());
 			for(int i=0; i<grades.getRowCount(); i++) {
-				for(int j=2; j<grades.getColumnCount()+2; j++) {
+				for(int j=2; j<grades.getColumnCount(); j++) {
 				    if(grades.getModel().getValueAt(i,j)!=null) 
 					bw.write(grades.getModel().getValueAt(i, j) + " ");
 				    else
