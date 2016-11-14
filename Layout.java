@@ -89,7 +89,7 @@ public class Layout extends JFrame {
 		    semester.list.addElement(c3);
 		    semester.createClassFile();
 		//calls the new student pop up once the class has been saved
-		    AddStudent studentPopUp = new AddStudent(c3);
+		    AddStudent studentPopUp = new AddStudent(semester);
 		    studentPopUp.setVisible(true);
 		    studentPopUp.setLocation(500, 500);
 		    studentPopUp.setSize(350, 150);
@@ -102,7 +102,7 @@ public class Layout extends JFrame {
     }
     
     public class AddAssignment extends JFrame {
-        public AddAssignment(Class c1) { //this will need to call variables needed for assignment
+        public AddAssignment(ClassList semester) { //this will need to call variables needed for assignment
             super("New Assignment");
             JPanel addAssignment = new JPanel();
             addAssignment.setLayout(new BorderLayout());
@@ -127,20 +127,29 @@ public class Layout extends JFrame {
           
             save.addActionListener((ActionEvent e) -> {
 		    int type = assignmentType.getSelectedIndex();
-		    c1.addAssignment(type);
-		    c1.createAssignmentsFile();
-                
+		    semester.lastEdited.addAssignment(type);
+		    semester.lastEdited.createAssignmentsFile();
+		    semester.saveLast();
+		    semester.loadTable(semester.lastEdited);
+		    Object[][]data = semester.currClassData;
+		    String columns[] = semester.columnNames;
+		    JTable table = new JTable(data, columns);
+		    Layout test = new Layout(table, semester);
+		    test.setVisible(true);
+		    test.setSize(1500, 1000);
+		    test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                	    dispose(); //this just shuts the window once everything is done
 		    
            });
-            
             getContentPane().add(addAssignment);
+	   
+
         }
         
     }
     
     public class AddStudent extends JFrame {
-        public AddStudent(Class c1) { //this will need to call variables needed for student
+        public AddStudent(ClassList semester) { //this will need to call variables needed for student
             super("New Student");
             JPanel addStudent = new JPanel();
             addStudent.setLayout(new BorderLayout());
@@ -174,11 +183,19 @@ public class Layout extends JFrame {
 		    	Student test = new Student("default",000);
 		    	test.name = studentName.getText();
 		   	test.student_id = Integer.valueOf(studentID.getText());
-		    	c1.addStudent(test);
-		    	c1.createStudentsFile();
-		    	c1.createFile();
-			
-                    	dispose(); 
+		    	semester.lastEdited.addStudent(test);
+		    	semester.lastEdited.createStudentsFile();
+		    	semester.lastEdited.createFile();
+			semester.saveLast();
+			 semester.loadTable(semester.lastEdited);
+			 Object[][]data = semester.currClassData;
+			 String columns[] = semester.columnNames;
+			 JTable table = new JTable(data, columns);
+			 Layout update = new Layout(table, semester);
+			 update.setVisible(true);
+			 update.setSize(1500, 1000);
+			 update.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			 dispose(); 
 		    }
 		    else {
 			JOptionPane.showMessageDialog(null, "Invalid Student ID");
@@ -193,10 +210,10 @@ public class Layout extends JFrame {
 		    	Student test = new Student("default",000);
 		    	test.name = studentName.getText();
 		    	test.student_id = Integer.valueOf(studentID.getText());
-		    	c1.addStudent(test);
-		    	c1.createStudentsFile();
-		    	c1.createFile();
-		    	AddStudent studentPopUp = new AddStudent(c1);
+		    	semester.lastEdited.addStudent(test);
+		    	semester.lastEdited.createStudentsFile();
+			semester.lastEdited.createFile();
+		    	AddStudent studentPopUp = new AddStudent(semester);
 		  	studentPopUp.setVisible(true);
 		    	studentPopUp.setLocation(500, 500);
 		    	studentPopUp.setSize(350, 150);
@@ -362,7 +379,7 @@ public class Layout extends JFrame {
         //add Assignment Button
         JButton addAssignmentButton = new JButton ("Add Assignment");
         addAssignmentButton.addActionListener((ActionEvent e) -> {
-            AddAssignment assignmentPopUp = new AddAssignment(c1);
+            AddAssignment assignmentPopUp = new AddAssignment(semester);
             assignmentPopUp.setVisible(true);
             assignmentPopUp.setLocation(500, 500);
             assignmentPopUp.setSize(350, 110);
@@ -373,7 +390,7 @@ public class Layout extends JFrame {
         //add Student Button
         JButton addStudentButton = new JButton ("Add Student");
         addStudentButton.addActionListener((ActionEvent e) -> {
-            AddStudent studentPopUp = new AddStudent(c1);
+            AddStudent studentPopUp = new AddStudent(semester);
             studentPopUp.setVisible(true);
             studentPopUp.setLocation(500, 500);
             studentPopUp.setSize(350, 150);
