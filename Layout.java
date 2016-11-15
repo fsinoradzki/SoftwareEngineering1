@@ -1,3 +1,8 @@
+/*
+  Authors: Ben Barriage, Phoebe Nezamis, Frank Sinoradzki
+  Date: 11/14/16
+  Purpose: Gradebook Functionality with working GUI
+ */
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -210,8 +215,6 @@ public class Layout extends JFrame {
             });
             
             savePlus.addActionListener((ActionEvent e) -> {
-                    //insert code to save student here
-                
 		    if(studentID.getText().matches("[0-9]+") && studentID.getText().length()>2) {
 		    	Student test = new Student("John","Doe",000);
 		    	test.fName = firstName.getText();
@@ -364,8 +367,6 @@ public class Layout extends JFrame {
                     test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		    
 		    dispose();
-		    //whatever code is needed to make the new class show its data instead of the old one goes here 
-		    //In theory just recreating layout with the new class and disposing the old layout should work	
 		});
 	}
         
@@ -402,7 +403,6 @@ public class Layout extends JFrame {
             studentPopUp.setLocation(500, 500);
             studentPopUp.setSize(350, 150);
 	    //dispose();
-	    //grades.updateUI();
         });
         
         //final Grades Button
@@ -480,23 +480,27 @@ public class Layout extends JFrame {
     }
     
     
-    public static class ClassList{
-	private Vector<Class> list; 
-	Object [][]currClassData;
-	String[] columnNames;
-	Class lastEdited;
-	//Class currClass;
-	
+    public static class ClassList{ //overarching class composed of Classes
+	private Vector<Class> list; //contains all the classes of the program
+	Object [][]currClassData; //used for table display, specifically data
+	String[] columnNames; //used for table display, specifically reading
+	Class lastEdited; //keeps track of which class was most recently edited
+
+	/*
+	  Purpose: dynamically load contents of a class for display in a layout
+	  @param currClass: the class to be displayed in the layout
+	  @precondition: a class has been chosen for display
+	  @postcondition: a class' data and assignment types have been passed to the program
+	 */
 	public void loadTable(Class currClass){
-	    System.out.println(currClass.classNum);
-	    String columns[] = new String[currClass.values.size()+3];
+	    String columns[] = new String[currClass.values.size()+3]; //accounts for the First, last, and studentID spaces   
 	    columns[0]="First Name";
 	    columns[1]="Last Name";
 	    columns[2]="Student ID";
-	    String title= " ";
-	    int hwNum =0;
-	    int quizNum=0;
-	    int labNum=0;
+	    String title= " "; //will be used for display of an assignment type
+	    int hwNum =0; //keeps track of how many hw have been created
+	    int quizNum=0; //keeps track of how many quizzes have been created
+	    int labNum=0; //keeps track of how many labs have been created
 	    for (int i=0;i<currClass.values.size();i++){
 	    if(currClass.values.get(i)==0){
 		hwNum++;
@@ -514,99 +518,119 @@ public class Layout extends JFrame {
 		title = "Participation";
 	    if(currClass.values.get(i)==4)
 		title = "Extra Credit";
-	    columns[i+3]=title;
+	    columns[i+3]=title; //adds the title of each assignment to the columns for proper type display
 	    }
 	    
-	    Object[][]data = new Object[currClass.students.size()][currClass.values.size()+3];
-	    System.out.println(currClass.values.size()+2);
-	    System.out.println(currClass.gradebook.get(0).size()+1);
+	    Object[][]data = new Object[currClass.students.size()][currClass.values.size()+3]; //accounts for number of students and grades with +3 added to account for first/last names and iD
 	    for(int i =0;i<currClass.students.size();i++){
-		data[i][0]=currClass.students.get(i).fName;
-		data[i][1]=currClass.students.get(i).lName;
-		for(int k =2;k<=currClass.gradebook.get(i).size()+1;k++){
-		    System.out.println(k);
-		    data[i][k] = currClass.gradebook.get(i).get(k-2);
+		data[i][0]=currClass.students.get(i).fName; //fills first name of each student for the class
+		data[i][1]=currClass.students.get(i).lName; //fills last name of each student for the class
+		for(int k =2;k<=currClass.gradebook.get(i).size()+1;k++){ //fills remainder of data table with grades from the class' gradebook 
+		    data[i][k] = currClass.gradebook.get(i).get(k-2); 
 		}
 	    }
+	    //passes all column names and data to the current class
 	    columnNames = columns; 
 	    currClassData = data;
 	}
 
+	/*
+	  Purpose: Keep track of last edited file for use when reopening program, so user sees most recent data submitted
+	  @precondition: lastEdit.txt may or may not exist, either way it does not hold the true last edited class name and number
+	  @postcondition: lastEdit.txt has been created and saved, it holds the name and number of the last edited class
+	 */
 	public void saveLast(){
 	    try{
-		File file = new File("./Classes/lastEdit.txt");
+		File file = new File("./Classes/lastEdit.txt"); //opens lastEdit.txt for editing 
 		if(!file.exists())
-		    file.createNewFile();
+		    file.createNewFile(); //creates file if it does not already exist, should only happen when running program for first time
 		FileWriter fw = new FileWriter(file);
 		BufferedWriter bw = new BufferedWriter(fw);
-		bw.write(String.valueOf(this.lastEdited.classNum));
+		bw.write(String.valueOf(this.lastEdited.classNum)); //grabs classNumber from the last Edited class and writes it to file 
 		bw.write(" ");
-		bw.write(this.lastEdited.className);
+		bw.write(this.lastEdited.className); //grabs className from the last Edited class and writes it to a file 
 		bw.write("\n");
 		bw.close();
 	    }catch(IOException e){}
 	}
+
+	/*
+	  Purpose: retrieves last edited file from lastEdit.txt in order to ensure user sees most recently changed data 
+	  @precondition: lastEdit.txt exists for retrieval
+	  @postcondition: className and classNum have been retrieved from the lastEdit.txt file 
+	 */
 	public void loadLast(){
 	    try{
 		File file = new File("./Classes/lastEdit.txt");
     		BufferedReader br = new BufferedReader (new FileReader (file));
 		String line;
-		while ((line = br.readLine ()) != null)
+		while ((line = br.readLine ()) != null) //checks whether a line still holds content 
 		    {
 			StringTokenizer st = new StringTokenizer (line); 
 			while (st.hasMoreTokens ())
 			    {
-				int number = Integer.valueOf(st.nextToken());
-				String name = st.nextToken();
-				Class test = new Class(name,number);
-				this.lastEdited = test;
+				int number = Integer.valueOf(st.nextToken()); //stores the class Number in the classList
+				String name = st.nextToken(); //stores the class Name in the classList
+				Class test = new Class(name,number);//runs constructor on a class with the lastEdited className, classNumber 
+				this.lastEdited = test; //selects chosen class as the last Edited class in the classList
 				
 			    }
 		    }	      
 	    }catch (IOException e){}
-    }
-	
+	}
+	/*
+	  Purpose: convert a list of classes into a classList
+	  @precondition: a list of classes has been passed to the function 
+	  @postcondition: the classList has been updated with the new list of classes
+	 */
 	public void addClasses(Vector<Class> item){
 	    this.list = item;
 	}
-	
+
+	/*
+	  Purpose: load all classes from ClassList.txt into the main program to be edited and displayed
+	  @precondition: a classList file has been created containing current classes
+	  @postcondition: the classes for the program have been loaded from the ClassList.txt
+	 */
 	public void loadClassFile(){
 	    try{
-		File file = new File("./Classes/ClassList.txt");
-		Vector<Class>semester = new Vector<Class>();
+		File file = new File("./Classes/ClassList.txt"); //file used for loading classes from 
+		Vector<Class>semester = new Vector<Class>(); //created to store classes as they are loaded from the file 
 		BufferedReader br = new BufferedReader (new FileReader (file));
 		String line;
-		while ((line = br.readLine ()) != null)
+		while ((line = br.readLine ()) != null) //checks whether file is empty 
 		    {
 			StringTokenizer st = new StringTokenizer (line); 
-			while (st.hasMoreTokens ())
+			while (st.hasMoreTokens ()) //if a line still has content it will continue
 			    {
-				int number = Integer.valueOf(st.nextToken());
-				String name = st.nextToken();
-				if (!st.hasMoreTokens ()){
+				int number = Integer.valueOf(st.nextToken()); //grabs number of the class from a file 
+				String name = st.nextToken(); //grabs name of the class from a file 
+				if (!st.hasMoreTokens ()){ //once a line is done, it will create a class with a constructor consisting of class name and class number 
 				    Class sample = new Class(name,number);
-				    semester.addElement (sample);
+				    semester.addElement (sample);//adds class to a list which will be assigned to the classList's list variable 
 				}
 			    }
 		    }	      
-		this.list = semester;
-		for (int i =0;i<list.size();i++){
-		    System.out.println(list.get(i).className);
-		    System.out.println(list.get(i).classNum);
-		}
+		this.list = semester; //assigns new classList to the class List
 	    }catch(IOException e){}
 	}
+
+	/*
+	  Purpose: creates a classList file storing all classNames and classNums 
+	  @precondition: classes have been loaded into a classList to be saved
+	  @postcondition: classes have been saved into a file from a classList 
+	 */
 	public void createClassFile(){
 	    try{
 		File file = new File("./Classes/ClassList.txt");
-		if(!file.exists())
+		if(!file.exists()) //if the file has not been created yet, it will be created. Will really only be used for first time use 
 		    file.createNewFile();
 		FileWriter fw = new FileWriter(file);
 		BufferedWriter bw = new BufferedWriter(fw);
-		for(int i =0;i<list.size();i++){
-		    bw.write(String.valueOf(list.get(i).classNum));
+		for(int i =0;i<list.size();i++){ //runs through all classes in the class List 
+		    bw.write(String.valueOf(list.get(i).classNum)); //stores the classNum as a string in the file 
 		    bw.write(" ");
-		    bw.write(list.get(i).className);
+		    bw.write(list.get(i).className); //stores the className into the file 
 		    bw.write("\n");
 		}
 		bw.close();
@@ -616,349 +640,374 @@ public class Layout extends JFrame {
     }
     
     public static class Student{
-	private String fName;	//Student name
-	private String lName;
+	private String fName;	//Student first name
+	private String lName; //student last name
 	private int student_id;	//Student ID
 
-    //Constructor for Student
+	//Constructor for Student
 	public Student (String first_name, String last_name, int ID)
-    {
-      fName = first_name;
-      lName = last_name;
-      student_id = ID;
-    }
+	{
+	    fName = first_name;
+	    lName = last_name;
+	    student_id = ID;
+	}
+	
+	
+	//Returns the student's first name
+	public String getFirstName ()
+	{
+	    return fName;
+	}
 
-
-    //Returns the student's name
-    public String getFirstName ()
-    {
-      return fName;
-    }
+	//returns the student's last name
 	public String getLastName(){
 	    return lName;
 	}
 
-    //Returns the student's ID
-    public int getID ()
-    {
-      return student_id;
-    }
-  }
-
-  public static class Rubric
-  {
-    private int HWValue;	//Value of a homework assignment for a class
-      private int quizValue;	//Value of a quiz for a class
-      private int labValue;	//Value of a lab assignment for a class
-      private int participationValue;	//Value of participation for a class
-      private int extraCreditValue;	//Value of extra credit for a class
-      
-    //Default constructor
-    public Rubric ()
-    {
-      HWValue = 10;
-      quizValue = 100;
-      labValue = 50;
-      participationValue=50;
-      extraCreditValue=100;
+	//Returns the student's ID
+	public int getID ()
+	{
+	    return student_id;
+	}
     }
 
-      //Constructor with values
-      public Rubric(int HW, int quiz, int lab, int PV, int ECV){
-	  HWValue = HW;
-	  quizValue = quiz;
-	  labValue = lab;
-	  participationValue=PV;
-	  extraCreditValue=ECV;}   //Constructor with values
+    public static class Rubric
+    {
+	private int HWValue;	//Value of a homework assignment for a class
+	private int quizValue;	//Value of a quiz for a class
+	private int labValue;	//Value of a lab assignment for a class
+	private int participationValue;	//Value of participation for a class
+	private int extraCreditValue;	//Value of extra credit for a class
+	
+	//Default constructor
+	public Rubric ()
+	{
+	    HWValue = 10;
+	    quizValue = 100;
+	    labValue = 50;
+	    participationValue=50;
+	    extraCreditValue=100;
+	}
+	
+	//Constructor with values
+	public Rubric(int HW, int quiz, int lab, int PV, int ECV){
+	    HWValue = HW;
+	    quizValue = quiz;
+	    labValue = lab;
+	    participationValue=PV;
+	    extraCreditValue=ECV;}   //Constructor with values
  
-
-    //Returns value for a homework assignment
-    public int getHWValue ()
-    {
-      return HWValue;
-    }
-
-    //Returns value for a quiz
-    public int getQuizValue ()
-    {
-      return quizValue;
-    }
-
-    //Returns value for a lab
-    public int getLabValue ()
-    {
+	
+	//Returns value for a homework assignment
+	public int getHWValue ()
+	{
+	    return HWValue;
+	}
+	
+	//Returns value for a quiz
+	public int getQuizValue ()
+	{
+	    return quizValue;
+	}
+	
+	//Returns value for a lab
+	public int getLabValue ()
+	{
       return labValue;
+	}
+	
+	//Returns participation value
+	public int getParticipationValue(){
+	    return participationValue;}
+	
+	//Returns extra credit value
+	public int getExtraCreditValue(){
+	    return extraCreditValue;}
+	
+	//Call this to change the values for each type of assignment
+	public void editRubricValues(int HW, int quiz, int lab, int PV, int ECV){
+	    HWValue = HW;
+	    quizValue = quiz;
+	    labValue = lab;
+	    participationValue=PV;
+	    extraCreditValue=ECV;}
     }
-
-      //Returns participation value
-      public int getParticipationValue(){
-	  return participationValue;}
-      
-      //Returns extra credit value
-      public int getExtraCreditValue(){
-	  return extraCreditValue;}
-      
-      //Call this to change the values for each type of assignment
-      public void editRubricValues(int HW, int quiz, int lab, int PV, int ECV){
-	  HWValue = HW;
-	  quizValue = quiz;
-	  labValue = lab;
-	  participationValue=PV;
-	  extraCreditValue=ECV;}
-  }
-
-
-  public static class Class
-  {
-    private Vector < Vector < Integer >> gradebook;	//Vector matrix that stores the student ID as the first
-    //As the first element in every row. Every other
-    //cell is a grade
-      private Vector<Student>students;
-      private Vector<Integer> values;
-    private int numHWs;		//# of homework assignments
-    private int numQuizzes;	//# of quizzes
-    private int numLabs;	//# of lab assignments
-    private Rubric R;		//The rubric for the class
-    private String className;	//name of class
-    private int classNum;
-      Boolean locked;          //boolean value for locking class 
-
-
-      //Default constructor
-      public Class()
-      {
-	  gradebook = new Vector<Vector<Integer>>();
-	  Student testy = new Student("Testy","McTesterson",-1);
-	  Vector<Integer> grades = new Vector<Integer>();
-	  grades.addElement(-1);
-	  gradebook.addElement(grades);
-	  students = new Vector<Student>();
-	  values = new Vector<Integer>();
-	  this.addAssignment(3);
-	  this.addAssignment(4);
-	  numHWs = 0;
-	  numQuizzes = 0;
-	  numLabs = 0;
-	  R = new Rubric();
-	  locked = false;
-	  className = "default";
-	  classNum = 000;
-      }
-      
-    //Simple Constructor
-      public Class (Vector < Vector < Integer >> SandG,Vector<Student> pupils,Vector<Integer> indexes, int HWs, int Quizzes,
-		  int Labs, String name, int number)
+    
+    
+    public static class Class
     {
-      gradebook = new Vector < Vector < Integer >> (SandG);
-      students = new Vector <Student>(pupils);
-      values = new Vector<Integer>(indexes);
-      numHWs = HWs;
-      numQuizzes = Quizzes;
-      numLabs = Labs;
-      className = name;
-      classNum = number;
-      R = new Rubric ();
-      locked = false;
-      String key = this.className+this.classNum;
-      File mydir = new File("./Classes/"+key);
-      if(!mydir.exists())
-	  mydir.mkdir();
-    }
+	private Vector < Vector < Integer >> gradebook;	//Vector matrix that stores the student ID as the first
+	//As the first element in every row. Every other
+	//cell is a grade
+	private Vector<Student>students;
+	private Vector<Integer> values;
+	private int numHWs;		//# of homework assignments
+	private int numQuizzes;	//# of quizzes
+	private int numLabs;	//# of lab assignments
+	private Rubric R;		//The rubric for the class
+	private String className;	//name of class
+	private int classNum;
+	Boolean locked;          //boolean value for locking class 
+	
+	
+	//Default constructor
+	public Class()
+	{
+	    gradebook = new Vector<Vector<Integer>>();
+	    Student testy = new Student("Testy","McTesterson",-1); //default student to be replaced once an actual student has been added
+	    Vector<Integer> grades = new Vector<Integer>();
+	    grades.addElement(-1);
+	    gradebook.addElement(grades);
+	    students = new Vector<Student>();
+	    values = new Vector<Integer>();
+	    this.addAssignment(3);
+	    this.addAssignment(4);
+	    numHWs = 0;
+	    numQuizzes = 0;
+	    numLabs = 0;
+	    R = new Rubric();
+	    locked = false;
+	    className = "default";
+	    classNum = 000;
+	}
+	
+	//Simple Constructor used in initial testing 
+	public Class (Vector < Vector < Integer >> SandG,Vector<Student> pupils,Vector<Integer> indexes, int HWs, int Quizzes,
+		      int Labs, String name, int number)
+	{
+	    gradebook = new Vector < Vector < Integer >> (SandG);
+	    students = new Vector <Student>(pupils);
+	    values = new Vector<Integer>(indexes);
+	    numHWs = HWs;
+	    numQuizzes = Quizzes;
+	    numLabs = Labs;
+	    className = name;
+	    classNum = number;
+	    R = new Rubric ();
+	    locked = false;
+	    String key = this.className+this.classNum;
+	    File mydir = new File("./Classes/"+key);
+	    if(!mydir.exists()) //creates a directory for the class if it has not yet been created
+		mydir.mkdir();
+	}
+	
+	/*
+	  Purpose: constuct a class for display/editing from standard files associated with the class
+	  @param name: used when constructing the key used in file loading
+	  @param number: used when constructing the key used in file loading
+	  @precondition: a class name and number have been passed to be used by the constructor
+	  @postcondition: a class has been constructed from its loaded files 
+	 */
+	public Class(String name,int number)
+	{
+	    className = name; 
+	    classNum = number;
+	    this.returnStudentsFile(); //grabs student vector from a file for the class' Student vector
+	    this.returnAssignmentsFile(); //grabs Assignment type vector from a file for the class' Assignments vector
+	    this.returnRubricFile(); //grabs Rubric content from a file for the class' Rubric variable 
+	    numHWs =0; 
+	    numLabs = 0;
+	    numQuizzes =0;
+	    for(int i=0;i<this.values.size()-1;i++){ //used to keep track of each number of assignment type 
+		if(this.values.get(i)==0)
+		    numHWs++;
+		if(this.values.get(i)==1)
+		    numQuizzes++;
+		if(this.values.get(i)==2)
+		    numLabs++;
+	    }
+	    locked = false; //ensures the class can currently be edited 
+	    try
+		{
+		    String key = this.className+this.classNum; //used name and number to load from directoy and files for class 
+		    File mydir = new File("./Classes/"+key); 
+		    File file = new File("./Classes/"+key+"/"+key+"grades.txt");
+		    Vector < Vector < Integer >> matrix = new Vector < Vector < Integer >> ();  //vector of vectors
+		    BufferedReader br = new BufferedReader (new FileReader (file));
+		    String line;
+		    while ((line = br.readLine ()) != null) //continues to read file so long as it has content 
+			{
+			    StringTokenizer st = new StringTokenizer (line);
+			    int num = 0;
+			    Vector < Integer > test = new Vector < Integer > ();   //vector used for input
+			    test.clear ();
+			    while (st.hasMoreTokens ())
+				{
+				    int value1 = Integer.parseInt (st.nextToken ()); //grabs an int value for each parsed string token 
+				    test.addElement (value1); //adds each integer to a vector which will be inserted into the gradebook vector
+				    if (!st.hasMoreTokens ())
+					matrix.addElement (test);   //inserts entire test vector into the main vector
+				}
+			}
+		    gradebook = matrix; //changes class' gradebook to match that of the loaded grades from a file 
+		    
+		}
+	    catch (IOException e)
+		{
+		}
+	    
+	}
 
-      public Class(String name,int number)
-		  {
-		      System.out.println("Entered CLASS");
-		      className = name;
-		      classNum = number;
-		      this.returnStudentsFile();
-		      this.returnAssignmentsFile();
-		      this.returnRubricFile();
-		      numHWs =0;
-		      numLabs = 0;
-		      numQuizzes =0;
-		      for(int i=0;i<this.values.size()-1;i++){
-			  if(this.values.get(i)==0)
-			      numHWs++;
-			  if(this.values.get(i)==1)
-			      numQuizzes++;
-			  if(this.values.get(i)==2)
-			      numLabs++;
-		      }
-       		      locked = false;
-		      try
-			  {
-			      String key = this.className+this.classNum;
-			      File mydir = new File("./Classes/"+key);
-			      File file = new File("./Classes/"+key+"/"+key+"grades.txt");
-			      Vector < Vector < Integer >> matrix = new Vector < Vector < Integer >> ();  //vector of vectors
-			      BufferedReader br = new BufferedReader (new FileReader (file));
-			      String line;
-			      while ((line = br.readLine ()) != null)
-				  {
-				      StringTokenizer st = new StringTokenizer (line);
-				      int num = 0;
-				      Vector < Integer > test = new Vector < Integer > ();   //vector used for input
-				      test.clear ();
-				      while (st.hasMoreTokens ())
-					  {
-					      int value1 = Integer.parseInt (st.nextToken ());
-					      test.addElement (value1);
-					      if (!st.hasMoreTokens ())
-						  matrix.addElement (test);   //inserts entire test vector into the main vector
-					  }
-				  }
-			      gradebook = matrix;
-			      
-			  }
-		      catch (IOException e)
-			  {
-			  }
-		      
-    }
-
-	  public void createStudentsFile(){
-		  try{
-		  String key = this.className+this.classNum;
-		  File file = new File("./Classes/"+key+"/"+key+"Students.txt");
-		  if(!file.exists())
-			  file.createNewFile();
-		  FileWriter fw = new FileWriter(file);
-		  BufferedWriter bw = new BufferedWriter(fw);
-		  for(int i =0;i<students.size();i++){
-			  bw.write(String.valueOf(students.get(i).getID()));
-			  bw.write(" ");
-			  bw.write(students.get(i).getFirstName());
-			  bw.write(" ");
-			  bw.write(students.get(i).getLastName());
-			  bw.write("\n");
-		  }
-		  bw.close();
-		  }catch(IOException e){}
-	  }
-      
-      public void returnStudentsFile(){
+	/*
+	  Purpose: create standard students file for a class
+	  @precondition: a class has been filled with a student's vector to be saved 
+	  @postcondition: a class's students vector has been saved to a standard file 
+	 */
+	public void createStudentsFile(){
+	    try{
+		String key = this.className+this.classNum; //used to ensure standard file system based on className and classNum 
+		File file = new File("./Classes/"+key+"/"+key+"Students.txt");
+		if(!file.exists()) //used when the file has never been created before 
+		    file.createNewFile();
+		FileWriter fw = new FileWriter(file);
+		BufferedWriter bw = new BufferedWriter(fw);
+		for(int i =0;i<students.size();i++){
+		    bw.write(String.valueOf(students.get(i).getID())); //stores studentID first in file 
+		    bw.write(" ");
+		    bw.write(students.get(i).getFirstName()); //stores first Name of student for display in table 
+		    bw.write(" ");
+		    bw.write(students.get(i).getLastName()); //stores last Name of student for display in table 
+		    bw.write("\n");
+		}
+		bw.close();
+	    }catch(IOException e){}
+	}
+	/*
+	  Purpose: load students vector for a class from a standard file 
+	  @precondition: a students file exists for a chosen class
+	  @postcondition: a chosen class' students vector has been loaded from a standard file 
+	 */
+	public void returnStudentsFile(){
 	  try{
-	      String key = this.className+this.classNum;
+	      String key = this.className+this.classNum; //used to ensure standard file system 
 	      File file = new File("./Classes/"+key+"/"+key+"Students.txt");
-	      Vector<Student>pupils = new Vector<Student>();
+	      Vector<Student>pupils = new Vector<Student>(); //temp vector to store students 
 	      BufferedReader br = new BufferedReader (new FileReader (file));
               String line;
-              while ((line = br.readLine ()) != null)
-		  {
-		      StringTokenizer st = new StringTokenizer (line);
-		      Student test = new Student("John","Doe", 999); 
-		      while (st.hasMoreTokens ())
-			  {
-			      test.student_id = Integer.valueOf(st.nextToken());
-			      test.fName = st.nextToken();
-			      test.lName = st.nextToken();
-			      if (!st.hasMoreTokens ())
-				  pupils.addElement (test); 
-			  }
-		  }	      
-	      this.students = pupils;
-	      
-	  }catch(IOException e){}
-      }
-      
-      public void createRubricFile(){
-	  try{
-		  String key = this.className+this.classNum;
-		  File file = new File("./Classes/"+key+"/"+key+"Rubric.txt");
-		  if(!file.exists())
-			  file.createNewFile();
-		  FileWriter fw = new FileWriter(file);
-		  BufferedWriter bw = new BufferedWriter(fw);
-		  bw.write(String.valueOf(R.HWValue));
-		  bw.write("\n");
-		  bw.write(String.valueOf(R.quizValue));
-		  bw.write("\n");
-		  bw.write(String.valueOf(R.labValue));
-		  bw.write("\n");
-		  bw.write(String.valueOf(R.participationValue));
-		  bw.write("\n");
-		  bw.write(String.valueOf(R.extraCreditValue));
-		  bw.close();
-		  }catch(IOException e){}
-	  }
-
-       public void returnRubricFile(){
-	  try{
-	      String key = this.className+this.classNum;
-	      File file = new File("./Classes/"+key+"/"+key+"Rubric.txt");
-	      BufferedReader br = new BufferedReader (new FileReader (file));
-              String line;
-	      Rubric test = new Rubric();
-	      test.HWValue = 0;
-	      test.quizValue = 0;
-	      test.labValue = 0;
-	      test.participationValue = 0;
-	      test.extraCreditValue=0;
-	      int i = 0;
               while ((line = br.readLine ()) != null)
 		  {
 		      StringTokenizer st = new StringTokenizer (line); 
+		      Student test = new Student("John","Doe", 999); //creates generic student with information to be replaced 
 		      while (st.hasMoreTokens ())
-		        {
-			    if(i ==0)
-				test.HWValue = Integer.valueOf(st.nextToken());
-			    if(i==1)
-			      test.quizValue = Integer.valueOf(st.nextToken());
-			    if(i==2)
-				test.labValue = Integer.valueOf(st.nextToken());
-			    if(i==3)
-				test.participationValue = Integer.valueOf(st.nextToken());
-			    if(i==4)
-				test.extraCreditValue = Integer.valueOf(st.nextToken());
-			        }
-		      
-		      i++;
-		  }
-	      this.R = test;
-	      System.out.println(test.HWValue);
-	      System.out.println(test.quizValue);
-	      System.out.println(test.labValue);
+			  {
+			      test.student_id = Integer.valueOf(st.nextToken()); //stores first value as the student's ID 
+			      test.fName = st.nextToken(); //stores second String value as student's first name 
+			      test.lName = st.nextToken(); //stores last string value as student's last name 
+			      if (!st.hasMoreTokens ())
+				  pupils.addElement (test); //once a sting is done, a student is added to the student's vector
+			  }
+		  }	      
+	      this.students = pupils; //class' student vector is assigned the same values as the loaded temporary vector
+	      
 	  }catch(IOException e){}
-       }
-      /*
-		 Purpose: create a standard file to save the gradebook to for each class. This will be done by using the className and classNum to create a standard file name.
-		 This standard file name will be className+ClassNum+.txt and an example would be CISC1600.txt where CISC is the class name and 1600 is the class number.
-		 Each of these files will be stored within a subdirectory called "Classes".
-		 @post condition: at the end of the function, a .txt file will have been written containing the entire gradebook of the class. This file will have a unique standard name so that other classes do not conflict with it.
-		*/
-	  public void createFile ()
-		  {
-			  try
-			  {
-				  String key = this.className + this.classNum;	//used to standardize file format
-				  File mydir = new File("./Classes/"+key);
-				  if(!mydir.exists())
-				      mydir.mkdir();
-				  File file = new File ("./Classes/" + key + "/"+key+"grades.txt");	//accesses file of standard format within a subdirectory
-				  if (!file.exists ())
-					  file.createNewFile ();
-				  
-				  Vector < Vector < Integer >> matrix =new Vector < Vector < Integer >> ();
-				  matrix = this.gradebook;
-				  FileWriter fw = new FileWriter (file);
-				  BufferedWriter bw = new BufferedWriter (fw);
-				  for (int i = 0; i < matrix.size (); i++)
-				  {
-					  for (int k = 0; k < (matrix.get (i).size ()); k++)
-					  {
-						  bw.write (String.valueOf ((matrix.get (i)).get (k)));
-						  bw.write (" ");
-					  }
-					  bw.write ("\n");
-				  }
-				  bw.close ();
-				  
-			  }
-			  catch (IOException e)
-			  {
-			  }
-		}
+	}
+	
+	/*
+	  Purpose: create standard file to contain the current values for the Rubric types
+	  @precondition: a class has been created with a Rubric file, either default or edited
+	  @postcondition: a standard file has been created containing the rubric's current values 
+	*/
+	public void createRubricFile(){
+	  try{
+	      String key = this.className+this.classNum; //used to ensure standard file format 
+		  File file = new File("./Classes/"+key+"/"+key+"Rubric.txt");
+		  if(!file.exists()) //used for initial file creation 
+			  file.createNewFile();
+		  FileWriter fw = new FileWriter(file);
+		  BufferedWriter bw = new BufferedWriter(fw);
+		  bw.write(String.valueOf(R.HWValue)); //stores first value as the rubric's HW value 
+		  bw.write("\n");
+		  bw.write(String.valueOf(R.quizValue)); //stores second value as the rubric's quiz value
+		  bw.write("\n");
+		  bw.write(String.valueOf(R.labValue)); //stores third value as the rubric's lab value 
+		  bw.write("\n");
+		  bw.write(String.valueOf(R.participationValue));//stores fourth value as the rubric's participation value 
+		  bw.write("\n");
+		  bw.write(String.valueOf(R.extraCreditValue)); //stores last valye as the rubric's extraCredit value 
+		  bw.close();
+	  }catch(IOException e){}
+	}
 
+	/*
+	  Purpose: loads rubric type values from a standard file
+	  @precondition: a rubric file exists for a class in standard format 
+	  @postcondition: a class' rubric values will be loaded from a standard file 
+	 */
+	public void returnRubricFile(){
+	    try{
+		String key = this.className+this.classNum; //used to ensure standard file format is used 
+		File file = new File("./Classes/"+key+"/"+key+"Rubric.txt");
+		BufferedReader br = new BufferedReader (new FileReader (file));
+		String line;
+		Rubric test = new Rubric();
+		//the following are used to represent empty values for each type in the standard rubricFile 
+		test.HWValue = 0; 
+		test.quizValue = 0;
+		test.labValue = 0;
+		test.participationValue = 0;
+		test.extraCreditValue=0;
+		int i = 0;
+		while ((line = br.readLine ()) != null)
+		    {
+			StringTokenizer st = new StringTokenizer (line); 
+			while (st.hasMoreTokens ())
+			    {
+				if(i ==0)
+				    test.HWValue = Integer.valueOf(st.nextToken()); //first line value equal homework value
+				if(i==1)
+				    test.quizValue = Integer.valueOf(st.nextToken()); //second line value equals quiz value 
+				if(i==2)
+				    test.labValue = Integer.valueOf(st.nextToken()); //third line value equal lab value 
+				if(i==3)
+				    test.participationValue = Integer.valueOf(st.nextToken()); //fourth line value equals participation value 
+				if(i==4)
+				    test.extraCreditValue = Integer.valueOf(st.nextToken()); //fifth line value equals extraCredit value 
+			    }
+			i++;
+		    }
+		this.R = test; //passes temp rubric value to class' rubric content
+	    }catch(IOException e){}
+	}
+	
+	/*
+	  Purpose: create a standard file to save the gradebook to for each class. This will be done by using the className and classNum to create a standard file name.
+	  This standard file name will be className+ClassNum+.txt and an example would be CISC1600.txt where CISC is the class name and 1600 is the class number.
+	  Each of these files will be stored within a subdirectory called "Classes".
+	  @post condition: at the end of the function, a .txt file will have been written containing the entire gradebook of the class. This file will have a unique standard name so that other classes do not conflict with it.
+	*/
+	public void createFile ()
+	{
+	    try
+		{
+		    String key = this.className + this.classNum;	//used to standardize file format
+		    File mydir = new File("./Classes/"+key);
+		    if(!mydir.exists())
+			mydir.mkdir();
+		    File file = new File ("./Classes/" + key + "/"+key+"grades.txt");	//accesses file of standard format within a subdirectory
+		    if (!file.exists ())
+			file.createNewFile ();
+		    
+		    Vector < Vector < Integer >> matrix =new Vector < Vector < Integer >> ();
+		    matrix = this.gradebook;
+		    FileWriter fw = new FileWriter (file);
+		    BufferedWriter bw = new BufferedWriter (fw);
+		    for (int i = 0; i < matrix.size (); i++)
+			{
+			    for (int k = 0; k < (matrix.get (i).size ()); k++)
+				{
+				    bw.write (String.valueOf ((matrix.get (i)).get (k)));
+				    bw.write (" ");
+				}
+			    bw.write ("\n");
+			}
+		    bw.close ();
+				  
+		}
+			  catch (IOException e)
+			      {
+			  }
+	}
+	
 	public void createFile(JTable grades) {
 		System.out.println("Saving Grades?");
 		try {
