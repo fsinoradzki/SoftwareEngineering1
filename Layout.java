@@ -11,10 +11,11 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.util.*;
 import java.io.*;
+import java.text.DecimalFormat;
 
 public class Layout extends JFrame {
     public static class LogIn extends JFrame {
-        public LogIn(JTable table, ClassList semester) {
+        public LogIn() {
             super("Authentication");
                         
             JButton loginButton = new JButton("Login");
@@ -32,51 +33,69 @@ public class Layout extends JFrame {
             setSize(300, 200);
             setLocation(500, 280);
             
-           
-            
+	    String userPassword = "12345";
+	    
             loginPanel.getRootPane().setDefaultButton(loginButton);
             
             loginButton.addActionListener((ActionEvent e) -> {
-		    try{
-			File file = new File("Classes/password.txt");
-			if(!file.exists()){
-			    file.createNewFile();
-			    FileWriter fw = new FileWriter (file);
-			    BufferedWriter bw = new BufferedWriter (fw);
-			    bw.write(password.getText());
-			    bw.close();
-			    LogIn entry = new LogIn(table, semester); 
+                String passwordEntered = password.getText();
+                if(passwordEntered.equals(userPassword)) {     
+		    File file = new File("./Classes/ClassList.txt");
+			//if the file is empty, runs new class
+		        if (file.length() <= 1) {
+				System.out.println("Is it empty?");
+				ClassList semester = new ClassList();
+			    	Class c1 = new Class();
+				Vector<Class> temp = new Vector<Class>();
+				semester.list = temp;
+			    	AddClass firstClass = new AddClass(semester, c1);
+			        
+			    	firstClass.setVisible(true);
+			    	firstClass.setLocation(500, 500);
+		            	firstClass.setSize(350, 150);
+		
+ 		            	dispose();
+				}
+	                else {
+				
+				ClassList semester = new ClassList();
+				semester.loadClassFile();
+				semester.loadLast();
+	
+				Class currClass = semester.lastEdited;
+				semester.loadTable(currClass);
+				Object[][]data = semester.currClassData;
+				String columns[] = semester.columnNames;
+				
+				JTable table = new JTable(data, columns);
+	
+			    	Layout layout = new Layout(table,semester);
+			    	layout.setVisible(true);
+			    	layout.setSize(1500, 1000);
+			    	layout.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+            	            	dispose();
 			}
-			else {
-			    String passwordEntered = password.getText();
-			    Scanner sc = new Scanner(file);
-			    if(passwordEntered.equals(sc.nextLine())) {
-				Layout layout = new Layout(table,semester);
-				layout.setVisible(true);
-				layout.setSize(1500, 1000);
-				layout.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				dispose();
-			    }
-			    else {
-				JOptionPane.showMessageDialog(null, "Wrong Passwrd");
-				password.setText("");
-				password.requestFocus();
-			}
-			}
-		    }catch(IOException err){}
+		}               
+                else {
+                    JOptionPane.showMessageDialog(null, "Wrong Passwrd");
+                    password.setText("");
+                    password.requestFocus();
+                }
             });
         }
     }
     
-    public class AddClass extends JFrame {
+    public static class AddClass extends JFrame {
         public AddClass(ClassList semester, Class c1) {
             super("Add Class");
+	   
 	    JPanel addClass = new JPanel();
             addClass.setLayout(new BorderLayout());
-	    Color addClassColor = new Color(65, 169, 181);
             
             //all the elements
             JButton save = new JButton("Continue");
+	    Color addClassColor = new Color(65,169,181);
 	    save.setBackground(addClassColor);
             JLabel label1 = new JLabel("Class Name:", SwingConstants.CENTER);
             JTextField className = new JTextField("", 15);
@@ -132,14 +151,16 @@ public class Layout extends JFrame {
         }    
     }
     
-    public class AddAssignment extends JFrame {
+    public static class AddAssignment extends JFrame {
         public AddAssignment(ClassList semester) { //this will need to call variables needed for assignment
             super("New Assignment");
+	   
             JPanel addAssignment = new JPanel();
             addAssignment.setLayout(new BorderLayout());
-            Color addAssignmentColor = new Color(65, 169, 181);
+            
             //all the elements 
             JButton save = new JButton("Save");
+	    Color addAssignmentColor = new Color(65,169,181);
 	    save.setBackground(addAssignmentColor);
             JLabel label1 = new JLabel("Assignment Type:", SwingConstants.CENTER);
             String[] types = {"Homework", "Quiz", "Lab"}; 
@@ -180,16 +201,18 @@ public class Layout extends JFrame {
         
     }
     
-    public class AddStudent extends JFrame {
+    public static class AddStudent extends JFrame {
         public AddStudent(ClassList semester) { //this will need to call variables needed for student
             super("New Student");
+	    
             JPanel addStudent = new JPanel();
             addStudent.setLayout(new BorderLayout());
-            Color addStudentColor = new Color(65, 169, 181);
+            
             //all the elements
             JButton save = new JButton("Save");
-	    save.setBackground(addStudentColor);
             JButton savePlus = new JButton("Save & Add Another");
+	    Color addStudentColor = new Color(65,169,181);
+	    save.setBackground(addStudentColor);
 	    savePlus.setBackground(addStudentColor);
             JLabel label1 = new JLabel("First Name:");
             JTextField firstName = new JTextField("", 25);
@@ -275,12 +298,12 @@ public class Layout extends JFrame {
     }
     
     public class FinalGrades extends JFrame {
-        public FinalGrades() { //this will need to call any variables needed for final grade computation
+        public FinalGrades(Class c1) { //this will need to call any variables needed for final grade computation
             super("Final Grades");
 	    JPanel finalGrades = new JPanel(new BorderLayout());
 	    Color finalGradesColor = new Color(65, 169, 181);
 	    JPanel gradesButtons = new JPanel();
-	    JPanel gradesPanel = new JPanel();
+	    JPanel gradesPanel = new JPanel(new GridLayout(0, 2, 10, 5));
 
 	    JButton ok = new JButton("Okay");
 	    ok.setBackground(finalGradesColor);
@@ -292,19 +315,27 @@ public class Layout extends JFrame {
             JLabel label1 = new JLabel("Student Grades:", SwingConstants.CENTER);
 	    finalGrades.add(label1, BorderLayout.NORTH);
 
-	    //add grades to gradesPanel hre
+	    //add grades to gradesPanel here
+	    for(int i=0; i<c1.gradebook.size(); i++) {
+		double grade = c1.getWeightedAverageForStudent(i);	
+		DecimalFormat df = new DecimalFormat("#.##");	
+		grade = Double.valueOf(df.format(grade));
+		JLabel studentName = new JLabel(c1.students.get(i).getFirstName() + " " + c1.students.get(i).getLastName());
+		JLabel studentGrade = new JLabel(Double.toString(grade));
+	 	gradesPanel.add(studentName);
+		gradesPanel.add(studentGrade);
+	    }
 
             finalGrades.add(new JScrollPane(gradesPanel), BorderLayout.CENTER);
             finalGrades.add(gradesButtons, BorderLayout.SOUTH);
             
             getContentPane().add(finalGrades);
-        }
+}
     }
     
     public class EditRubric extends JFrame {
         public EditRubric(Class c1) { //will need to call variables needed for rubric
             super("Edit Rubric");
-	    Color editRubricColor = new Color(65, 169, 181);
 	    
 	    String HWValue = Integer.toString(c1.R.getHWValue());
 	    String QuizValue = Integer.toString(c1.R.getQuizValue());
@@ -313,9 +344,11 @@ public class Layout extends JFrame {
 	    String ParticValue = Integer.toString(c1.R.getParticipationValue());
 	
             //all the elements
+	    
             JPanel editRubric = new JPanel(new BorderLayout());
             JPanel inputPanel = new JPanel(new GridLayout(0, 2, 10, 10));
             JPanel savePanel = new JPanel();
+	    Color editRubricColor = new Color(65,169,181);
             JButton save = new JButton("Save");
 	    save.setBackground(editRubricColor);
 	    JLabel label1 = new JLabel("Homework Value:", SwingConstants.CENTER);
@@ -437,10 +470,11 @@ public class Layout extends JFrame {
         
         //panel for buttons under grades
         JPanel gradesButtons = new JPanel();
-	Color gradesButtonColor = new Color(190, 190, 190);
         
         //save grades button
+
         JButton saveGradesButton = new JButton("Save Grades");
+	Color gradesButtonColor = new Color(190,190,190);
 	saveGradesButton.setBackground(gradesButtonColor);
         saveGradesButton.addActionListener((ActionEvent e) -> {
 		if(c1.validTable(grades)==true){
@@ -478,10 +512,10 @@ public class Layout extends JFrame {
         JButton finalGradesButton = new JButton ("Compute Final Grades");
 	finalGradesButton.setBackground(gradesButtonColor);
         finalGradesButton.addActionListener((ActionEvent e) -> {
-            FinalGrades finalGradesPopUp = new FinalGrades();
+            FinalGrades finalGradesPopUp = new FinalGrades(c1);
             finalGradesPopUp.setVisible(true);
-            finalGradesPopUp.setSize(250, 250);
-            finalGradesPopUp.setLocation(500, 500);
+            finalGradesPopUp.setSize(300,250);
+            finalGradesPopUp.setLocation(500,500);
         });
         
         gradesButtons.add(saveGradesButton);
@@ -535,7 +569,7 @@ public class Layout extends JFrame {
        //button panel for rubric
         JPanel rubricButtons = new JPanel();
         rubricButtons.setBackground(Color.WHITE);
-	JButton editRubricButton = new JButton("Edit Rubric");
+        JButton editRubricButton = new JButton("Edit Rubric");
 	editRubricButton.setBackground(gradesButtonColor);
         rubricButtons.add(editRubricButton, SwingConstants.CENTER);
         editRubricButton.addActionListener((ActionEvent e) -> {
@@ -1609,7 +1643,7 @@ public class Layout extends JFrame {
     }
     
     public static void main(String[] args) {
-	
+	/*
 	ClassList semester = new ClassList();
 	semester.loadClassFile();
 	semester.loadLast();
@@ -1621,5 +1655,8 @@ public class Layout extends JFrame {
 	
 	JTable table = new JTable(data,columns);
         LogIn GUI = new LogIn(table,semester);
+	*/
+	
+	LogIn GUI = new LogIn();
     }   
 }
