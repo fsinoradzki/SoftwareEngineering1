@@ -32,24 +32,38 @@ public class Layout extends JFrame {
             setSize(300, 200);
             setLocation(500, 280);
             
-            String userPassword = "12345";
+           
             
             loginPanel.getRootPane().setDefaultButton(loginButton);
             
             loginButton.addActionListener((ActionEvent e) -> {
-                String passwordEntered = password.getText();
-                if(passwordEntered.equals(userPassword)) {
-			Layout layout = new Layout(table,semester);
-			layout.setVisible(true);
-			layout.setSize(1500, 1000);
-			layout.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                    dispose();
-                }
-                else {
-                    JOptionPane.showMessageDialog(null, "Wrong Passwrd");
-                    password.setText("");
-                    password.requestFocus();
-                }
+		    try{
+			File file = new File("Classes/password.txt");
+			if(!file.exists()){
+			    file.createNewFile();
+			    FileWriter fw = new FileWriter (file);
+			    BufferedWriter bw = new BufferedWriter (fw);
+			    bw.write(password.getText());
+			    bw.close();
+			    LogIn entry = new LogIn(table, semester); 
+			}
+			else {
+			    String passwordEntered = password.getText();
+			    Scanner sc = new Scanner(file);
+			    if(passwordEntered.equals(sc.nextLine())) {
+				Layout layout = new Layout(table,semester);
+				layout.setVisible(true);
+				layout.setSize(1500, 1000);
+				layout.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				dispose();
+			    }
+			    else {
+				JOptionPane.showMessageDialog(null, "Wrong Passwrd");
+				password.setText("");
+				password.requestFocus();
+			}
+			}
+		    }catch(IOException err){}
             });
         }
     }
