@@ -1521,10 +1521,15 @@ public class Layout extends JFrame {
 		    value = R.getParticipationValue();
 		else if(values.get(i-3)==4)
 		    value = R.getExtraCreditValue();
-		for(int k = 0;k<grades.getRowCount();k++);
-		    //		    if(grades.getModel().getValueAt(k,i)>value||grades.getModel().getValueAt(k,i)<0)
-		    //	return false;
-		    }
+		for(int k = 0;k<grades.getRowCount();k++){
+		    int test = Integer.parseInt(grades.getModel().getValueAt(k,i).toString());
+		    if(test>value ||test<0)
+			return false;
+		}
+		
+		//		    if(grades.getModel().getValueAt(k,i)>value||grades.getModel().getValueAt(k,i)<0)
+		//	return false;
+	    }
 	    return true;
 	    
 	}
