@@ -41,6 +41,7 @@ public class Layout extends JFrame {
                 if(passwordEntered.equals(userPassword)) {     
  			File file = new File("./Classes/ClassList.txt");
 			System.out.println(file.length());
+			//if the file is empty, runs new class
 		        if (file.length() <= 1) {
 				System.out.println("Is it empty?");
 				ClassList semester = new ClassList();
