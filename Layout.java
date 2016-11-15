@@ -73,9 +73,11 @@ public class Layout extends JFrame {
             super("Add Class");
 	    JPanel addClass = new JPanel();
             addClass.setLayout(new BorderLayout());
+	    Color addClassColor = new Color(65, 169, 181);
             
             //all the elements
             JButton save = new JButton("Continue");
+	    save.setBackground(addClassColor);
             JLabel label1 = new JLabel("Class Name:", SwingConstants.CENTER);
             JTextField className = new JTextField("", 15);
             JLabel label2 = new JLabel("Class Number:", SwingConstants.CENTER);
@@ -135,9 +137,10 @@ public class Layout extends JFrame {
             super("New Assignment");
             JPanel addAssignment = new JPanel();
             addAssignment.setLayout(new BorderLayout());
-            
+            Color addAssignmentColor = new Color(65, 169, 181);
             //all the elements 
             JButton save = new JButton("Save");
+	    save.setBackground(addAssignmentColor);
             JLabel label1 = new JLabel("Assignment Type:", SwingConstants.CENTER);
             String[] types = {"Homework", "Quiz", "Lab"}; 
             JComboBox<String> assignmentType = new JComboBox<String>(types);
@@ -182,10 +185,12 @@ public class Layout extends JFrame {
             super("New Student");
             JPanel addStudent = new JPanel();
             addStudent.setLayout(new BorderLayout());
-            
+            Color addStudentColor = new Color(65, 169, 181);
             //all the elements
             JButton save = new JButton("Save");
+	    save.setBackground(addStudentColor);
             JButton savePlus = new JButton("Save & Add Another");
+	    savePlus.setBackground(addStudentColor);
             JLabel label1 = new JLabel("First Name:");
             JTextField firstName = new JTextField("", 25);
             JLabel label2 = new JLabel("Last Name:");
@@ -271,11 +276,26 @@ public class Layout extends JFrame {
     
     public class FinalGrades extends JFrame {
         public FinalGrades() { //this will need to call any variables needed for final grade computation
-            JPanel finalGrades = new JPanel();
-            JButton ok = new JButton("Okay");
-            JLabel label1 = new JLabel("Student Grades...");
-            finalGrades.add(label1);
-            finalGrades.add(ok);
+            super("Final Grades");
+	    JPanel finalGrades = new JPanel(new BorderLayout());
+	    Color finalGradesColor = new Color(65, 169, 181);
+	    JPanel gradesButtons = new JPanel();
+	    JPanel gradesPanel = new JPanel();
+
+	    JButton ok = new JButton("Okay");
+	    ok.setBackground(finalGradesColor);
+	    gradesButtons.add(ok);
+	    ok.addActionListener((ActionEvent e) -> {
+		dispose();
+	    });		    
+
+            JLabel label1 = new JLabel("Student Grades:", SwingConstants.CENTER);
+	    finalGrades.add(label1, BorderLayout.NORTH);
+
+	    //add grades to gradesPanel hre
+
+            finalGrades.add(new JScrollPane(gradesPanel), BorderLayout.CENTER);
+            finalGrades.add(gradesButtons, BorderLayout.SOUTH);
             
             getContentPane().add(finalGrades);
         }
@@ -284,6 +304,7 @@ public class Layout extends JFrame {
     public class EditRubric extends JFrame {
         public EditRubric(Class c1) { //will need to call variables needed for rubric
             super("Edit Rubric");
+	    Color editRubricColor = new Color(65, 169, 181);
 	    
 	    String HWValue = Integer.toString(c1.R.getHWValue());
 	    String QuizValue = Integer.toString(c1.R.getQuizValue());
@@ -296,6 +317,7 @@ public class Layout extends JFrame {
             JPanel inputPanel = new JPanel(new GridLayout(0, 2, 10, 10));
             JPanel savePanel = new JPanel();
             JButton save = new JButton("Save");
+	    save.setBackground(editRubricColor);
 	    JLabel label1 = new JLabel("Homework Value:", SwingConstants.CENTER);
             JTextField homework = new JTextField(HWValue, 10);
             JLabel label2 = new JLabel("Quiz Value:", SwingConstants.CENTER);
@@ -415,9 +437,11 @@ public class Layout extends JFrame {
         
         //panel for buttons under grades
         JPanel gradesButtons = new JPanel();
+	Color gradesButtonColor = new Color(190, 190, 190);
         
         //save grades button
         JButton saveGradesButton = new JButton("Save Grades");
+	saveGradesButton.setBackground(gradesButtonColor);
         saveGradesButton.addActionListener((ActionEvent e) -> {
 		if(c1.validTable(grades)==true){
 		    c1.createFile(grades);   
@@ -429,6 +453,7 @@ public class Layout extends JFrame {
         
         //add Assignment Button
         JButton addAssignmentButton = new JButton ("Add Assignment");
+	addAssignmentButton.setBackground(gradesButtonColor);
         addAssignmentButton.addActionListener((ActionEvent e) -> {
             AddAssignment assignmentPopUp = new AddAssignment(semester);
             assignmentPopUp.setVisible(true);
@@ -440,6 +465,7 @@ public class Layout extends JFrame {
         
         //add Student Button
         JButton addStudentButton = new JButton ("Add Student");
+	addStudentButton.setBackground(gradesButtonColor);
         addStudentButton.addActionListener((ActionEvent e) -> {
             AddStudent studentPopUp = new AddStudent(semester);
             studentPopUp.setVisible(true);
@@ -450,11 +476,12 @@ public class Layout extends JFrame {
         
         //final Grades Button
         JButton finalGradesButton = new JButton ("Compute Final Grades");
+	finalGradesButton.setBackground(gradesButtonColor);
         finalGradesButton.addActionListener((ActionEvent e) -> {
             FinalGrades finalGradesPopUp = new FinalGrades();
             finalGradesPopUp.setVisible(true);
-            finalGradesPopUp.setSize(250,100);
-            finalGradesPopUp.setLocation(500,500);
+            finalGradesPopUp.setSize(250, 250);
+            finalGradesPopUp.setLocation(500, 500);
         });
         
         gradesButtons.add(saveGradesButton);
@@ -508,7 +535,8 @@ public class Layout extends JFrame {
        //button panel for rubric
         JPanel rubricButtons = new JPanel();
         rubricButtons.setBackground(Color.WHITE);
-        JButton editRubricButton = new JButton("Edit Rubric");
+	JButton editRubricButton = new JButton("Edit Rubric");
+	editRubricButton.setBackground(gradesButtonColor);
         rubricButtons.add(editRubricButton, SwingConstants.CENTER);
         editRubricButton.addActionListener((ActionEvent e) -> {
             EditRubric editRubricPopUp = new EditRubric(c1);
