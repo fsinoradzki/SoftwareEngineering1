@@ -328,7 +328,7 @@ public class Layout extends JFrame {
         //creating the split pane
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, navPanel, tabbedPane);
         splitPane.setOneTouchExpandable(false);
-        splitPane.setDividerLocation(300);
+        splitPane.setDividerLocation(250);
         splitPane.setBackground(Color.WHITE);
         
         //navigation panel
@@ -336,15 +336,22 @@ public class Layout extends JFrame {
         navTitle.setFont(new Font("Arial", Font.BOLD, 18));
         
         JPanel navButtonPanel = new JPanel();
+	navButtonPanel.setBackground(Color.WHITE);
+	navButtonPanel.setLayout(new BoxLayout(navButtonPanel, BoxLayout.PAGE_AXIS));
+	navButtonPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         JButton addNewClassButton = new JButton("Add New Class");
+	addNewClassButton.setBackground(new Color(141, 232, 156));
+	addNewClassButton.setOpaque(true);
+	addNewClassButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         addNewClassButton.addActionListener((ActionEvent e) -> {
-		AddClass addClassPopUp = new AddClass(semester, c1);
+	    AddClass addClassPopUp = new AddClass(semester, c1);
             addClassPopUp.setVisible(true);
             addClassPopUp.setLocation(500, 500);
             addClassPopUp.setSize(350, 150);
         });
         navButtonPanel.add(addNewClassButton);
-        
+	navButtonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+	        
         navPanel.add(navTitle, BorderLayout.NORTH);
         navPanel.add(navButtonPanel, BorderLayout.CENTER);
         navPanel.setBackground(Color.WHITE);
@@ -353,7 +360,10 @@ public class Layout extends JFrame {
 	    String name =semester.list.get(i).className;
 	    String key = name+number;
 	    JButton ClassButton = new JButton(key);
+	    ClassButton.setBackground(new Color(166, 221, 237));
+	    ClassButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 	    navButtonPanel.add(ClassButton);
+	    navButtonPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 	    ClassButton.addActionListener((ActionEvent e) -> {
 		    Class last = new Class(name, number);
 		    semester.lastEdited = last;
@@ -425,8 +435,10 @@ public class Layout extends JFrame {
         JScrollPane gradeScrollPane = new JScrollPane(grades);
         gradeScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), title + " Grades", TitledBorder.LEFT, TitledBorder.TOP));
         grades.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        grades.getColumnModel().getColumn(0).setPreferredWidth(200);
-        grades.getColumnModel().getColumn(1).setPreferredWidth(100);
+	for(int i=0; i<5; i++) 
+	    grades.getColumnModel().getColumn(i).setPreferredWidth(100);
+	for(int i=5; i<grades.getColumnCount(); i++)
+	    grades.getColumnModel().getColumn(i).setPreferredWidth(50);
         gradeScrollPane.setBackground(Color.WHITE);
         gradesPanel.add(gradeScrollPane, BorderLayout.CENTER);
         gradesPanel.add(gradesButtons, BorderLayout.SOUTH);
@@ -437,16 +449,24 @@ public class Layout extends JFrame {
         tabbedPane.add(new JScrollPane(rubricPanel), "Rubric");
         
         //content panel, displays rubric 
-        JPanel rubricContent = new JPanel(new GridLayout(0, 1, 10, 10));
+        JPanel rubricContent = new JPanel();
+	rubricContent.setLayout(new BoxLayout(rubricContent, BoxLayout.PAGE_AXIS));
         rubricContent.setBackground(Color.WHITE);
         rubricContent.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), title + " Rubric", TitledBorder.LEFT, TitledBorder.TOP));
 	
-	//labels for rubric panel 
+	//labels + formatting for rubric panel 
+	Font rubricFont = new Font("Arial", Font.PLAIN, 18);
 	JLabel HWLabel = new JLabel("Homework Value: " + c1.R.getHWValue());
+	HWLabel.setFont(rubricFont);
 	JLabel QuizLabel = new JLabel("Quiz Layout: " + c1.R.getQuizValue());    
+	QuizLabel.setFont(rubricFont);
 	JLabel LabLabel = new JLabel ("Lab Value: " + c1.R.getLabValue());
+	LabLabel.setFont(rubricFont);
 	JLabel ParticLabel = new JLabel ("Participation Value: " + c1.R.getParticipationValue());
-	JLabel ECLabel = new JLabel ("Extra Credit Value: " + c1.R.getExtraCreditValue());    
+	ParticLabel.setFont(rubricFont);
+	JLabel ECLabel = new JLabel ("Extra Credit Value: " + c1.R.getExtraCreditValue());
+	ECLabel.setFont(rubricFont);    
+		
 	rubricContent.add(HWLabel);
 	rubricContent.add(QuizLabel);
 	rubricContent.add(LabLabel);
