@@ -1466,9 +1466,30 @@ public class Layout extends JFrame {
 	  else
 	      System.out.println("The average is valid!");
       }
-    
-      
-  }
+	
+	public double getClassAverage(){
+	    double average = 0;
+	    double grade = 0;
+	    for(int i =0;i<students.size();i++){
+		grade = getWeightedAverageForStudent(i);
+		average +=grade;
+	    }
+	    return average/students.size();
+	}
+	
+	public double getClassStdDev(){
+	    double total = 0;
+	    double av = 0;
+	    double mean = getClassAverage();
+	    for(int i=0;i<students.size();i++)
+		av+=((getWeightedAverageForStudent(i)-mean)*(getWeightedAverageForStudent(i)-mean));
+
+	    total = av/students.size();
+	    total = Math.sqrt(total);
+	    return total;
+	}
+	
+    }
     
     public static void main(String[] args) {
 	
