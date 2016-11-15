@@ -39,11 +39,10 @@ public class Layout extends JFrame {
             loginButton.addActionListener((ActionEvent e) -> {
                 String passwordEntered = password.getText();
                 if(passwordEntered.equals(userPassword)) {
-                    Layout layout = new Layout(table,semester);
-                    layout.setVisible(true);
-                    layout.setSize(1500, 1000);
-                    layout.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		    
+			Layout layout = new Layout(table,semester);
+			layout.setVisible(true);
+			layout.setSize(1500, 1000);
+			layout.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                     dispose();
                 }
                 else {
@@ -1508,6 +1507,22 @@ public class Layout extends JFrame {
 	    return total;
 	}
 
+	public double getClassMax(){
+	    double high = 0;
+	    for(int i=0;i<students.size();i++)
+		if(getWeightedAverageForStudent(i)>high)
+		    high = getWeightedAverageForStudent(i);
+	    return high;
+	}
+
+	public double getClassMin(){
+	    double low = 100;
+	    for(int i =0;i<students.size();i++)
+		if(getWeightedAverageForStudent(i)<low)
+		    low =getWeightedAverageForStudent(i);
+	    return low;
+	}
+
 	public Boolean validTable(JTable grades){
 	    int value =0;
 	    for(int i=3;i<grades.getColumnCount();i++){
@@ -1526,12 +1541,8 @@ public class Layout extends JFrame {
 		    if(test>value ||test<0)
 			return false;
 		}
-		
-		//		    if(grades.getModel().getValueAt(k,i)>value||grades.getModel().getValueAt(k,i)<0)
-		//	return false;
 	    }
-	    return true;
-	    
+	    return true;  
 	}
 	
     }
