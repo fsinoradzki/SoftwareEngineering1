@@ -191,7 +191,7 @@ public class Layout extends JFrame {
 	    
             save.addActionListener((ActionEvent e) -> {
 		    if (studentID.getText().matches("[0-9]+") && studentID.getText().length()>2) {
-		    	Student test = new Student("john","Doe",000);
+		    	Student test = new Student("Test","McTesterson",000);
 		    	test.fName = firstName.getText();
 			test.lName = lastName.getText();
 		   	test.student_id = Integer.valueOf(studentID.getText());
@@ -217,7 +217,7 @@ public class Layout extends JFrame {
             
             savePlus.addActionListener((ActionEvent e) -> {
 		    if(studentID.getText().matches("[0-9]+") && studentID.getText().length()>2) {
-		    	Student test = new Student("John","Doe",000);
+		    	Student test = new Student("Testy","McTesterson",000);
 		    	test.fName = firstName.getText();
 			test.lName = lastName.getText();
 		    	test.student_id = Integer.valueOf(studentID.getText());
@@ -888,7 +888,7 @@ public class Layout extends JFrame {
               while ((line = br.readLine ()) != null)
 		  {
 		      StringTokenizer st = new StringTokenizer (line); 
-		      Student test = new Student("John","Doe", 999); //creates generic student with information to be replaced 
+		      Student test = new Student("Testy","McTesterson", 999); //creates generic student with information to be replaced 
 		      while (st.hasMoreTokens ())
 			  {
 			      test.student_id = Integer.valueOf(st.nextToken()); //stores first value as the student's ID 
@@ -1084,19 +1084,6 @@ public class Layout extends JFrame {
 		this.values = indexes; //class' values vector is now equal to the temporary int vector created earlier 
 	    }catch(IOException e){}
 	}
-
-      /*
-	Purpose: Used within the GUI for Class creation to check whether the class has an existing file in the standard format.
-	@return: if the file exists, the function returns true, otherwise it returns false
-      */
-      public boolean checkFile(){
-			  String key = this.className + this.classNum;
-			  File file = new File("./Classes/"+key+".txt");
-			  if(file.exists())
-				  return true;
-			  else
-				  return false;
-	  }
 	  
 	  //Prints the whole gradebook
 	  public void printGradebook ()
@@ -1318,7 +1305,6 @@ public class Layout extends JFrame {
 	  if (type < -1 && type >4)
 	      System.out.println("Not a valid assignment type.");
 	  else {
-	      System.out.println(type);
 	      values.addElement(type);
 	      if(type == 0)
 		  numHWs++;
@@ -1465,28 +1451,16 @@ public class Layout extends JFrame {
   }
     
     public static void main(String[] args) {
-
-	String name = "SoftEng";
-	int number = 2;
 	
-	String testName = "Math";
-	int testNumber = 1100;
-	Class c2 = new Class(testName, testNumber);
-	c2.createFile();
-
-	Vector<Class> list = new Vector<Class>();
 	ClassList semester = new ClassList();
-	Class c1 = new Class(name,number);
-	//list.addElement(c1);
-	//list.addElement(c2);
-	//semester.addClasses(list);
-	//semester.createClassFile();
 	semester.loadClassFile();
 	semester.loadLast();
+	
 	Class currClass = semester.lastEdited;
 	semester.loadTable(currClass);
 	Object[][]data = semester.currClassData;
 	String columns[] = semester.columnNames;
+	
 	JTable table = new JTable(data,columns);
         LogIn GUI = new LogIn(table,semester);
     }   
