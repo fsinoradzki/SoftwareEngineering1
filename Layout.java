@@ -83,8 +83,16 @@ public class Layout extends JFrame {
             addClass.add(savePanel, BorderLayout.SOUTH);
             
             save.addActionListener((ActionEvent e) -> {
+		if(className.getText().trim().equals("") ||  classNum.getText().trim().equals("")) {
+		    JOptionPane.showMessageDialog(null, "Data Not Entered");   
+		}
+		else if(!classNum.getText().matches("[0-9]+")) {
+		    JOptionPane.showMessageDialog(null, "Invalid Class Number");
+		    classNum.requestFocus();
+		}
+		else {
 		    String name = className.getText();
-		    int number =Integer.valueOf(classNum.getText());
+		    int number = Integer.valueOf(classNum.getText());
 		    Class c3 = new Class();
 		    c3.className= name;
 		    c3.classNum = number;
@@ -94,14 +102,15 @@ public class Layout extends JFrame {
 		    c3.createAssignmentsFile();
 		    semester.list.addElement(c3);
 		    semester.createClassFile();
-		//calls the new student pop up once the class has been saved
+		    //calls the new student pop up once the class has been saved
 		    semester.lastEdited = c3;
 		    AddStudent studentPopUp = new AddStudent(semester);
 		    studentPopUp.setVisible(true);
 		    studentPopUp.setLocation(500, 500);
 		    studentPopUp.setSize(350, 150);
 		    
-                dispose(); //this just shuts the window once everything is done
+                    dispose(); //this just shuts the window once everything is done
+		}
             });
             
             getContentPane().add(addClass);
@@ -190,7 +199,14 @@ public class Layout extends JFrame {
 
 	    
             save.addActionListener((ActionEvent e) -> {
-		    if (studentID.getText().matches("[0-9]+") && studentID.getText().length()>2) {
+		    if(studentID.getText().trim().equals("") || firstName.getText().trim().equals("") || lastName.getText().trim().equals("")) {
+			JOptionPane.showMessageDialog(null, "Data Not Entered");
+		    }
+		    else if (!studentID.getText().matches("[0-9]+")) {
+			JOptionPane.showMessageDialog(null, "Invalid Student ID");
+			studentID.requestFocus();
+		    }
+		    else {
 		    	Student test = new Student("Test","McTesterson",000);
 		    	test.fName = firstName.getText();
 			test.lName = lastName.getText();
@@ -199,24 +215,27 @@ public class Layout extends JFrame {
 		    	semester.lastEdited.createStudentsFile();
 		    	semester.lastEdited.createFile();
 			semester.saveLast();
-			 semester.loadTable(semester.lastEdited);
-			 Object[][]data = semester.currClassData;
-			 String columns[] = semester.columnNames;
-			 JTable table = new JTable(data, columns);
-			 Layout update = new Layout(table, semester);
-			 update.setVisible(true);
-			 update.setSize(1500, 1000);
-			 update.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			 dispose(); 
-		    }
-		    else {
-			JOptionPane.showMessageDialog(null, "Invalid Student ID");
-			studentID.requestFocus();
+			semester.loadTable(semester.lastEdited);
+			Object[][]data = semester.currClassData;
+			String columns[] = semester.columnNames;
+			JTable table = new JTable(data, columns);
+			Layout update = new Layout(table, semester);
+			update.setVisible(true);
+			update.setSize(1500, 1000);
+			update.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			dispose(); 
 		    }
             });
             
             savePlus.addActionListener((ActionEvent e) -> {
-		    if(studentID.getText().matches("[0-9]+") && studentID.getText().length()>2) {
+		    if(studentID.getText().trim().equals("") || firstName.getText().trim().equals("") || lastName.getText().trim().equals("")) {
+			JOptionPane.showMessageDialog(null, "Data Not Entered");
+		    }
+		    else if(!studentID.getText().matches("[0-9]+")) {
+		    	JOptionPane.showMessageDialog(null, "Invalid Student ID");
+			studentID.requestFocus();
+		    }
+		    else {
 		    	Student test = new Student("Testy","McTesterson",000);
 		    	test.fName = firstName.getText();
 			test.lName = lastName.getText();
@@ -230,10 +249,6 @@ public class Layout extends JFrame {
 		    	studentPopUp.setSize(350, 150);
 
 		    	dispose();
-		    }
-		    else {
-			JOptionPane.showMessageDialog(null, "Invalid Student ID");
-			studentID.requestFocus();
 		    }
             });            
                      
