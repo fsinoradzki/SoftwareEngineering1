@@ -406,8 +406,12 @@ public class Layout extends JFrame {
         //save grades button
         JButton saveGradesButton = new JButton("Save Grades");
         saveGradesButton.addActionListener((ActionEvent e) -> {
-		c1.createFile(grades);
-		JOptionPane.showMessageDialog(null, "Grades Saved");
+		if(c1.validTable(grades)==true){
+		    c1.createFile(grades);   
+		    JOptionPane.showMessageDialog(null, "Grades Saved");
+		}
+		else
+		    JOptionPane.showMessageDialog(null, "Invalid Grades");
         });
         
         //add Assignment Button
@@ -1502,6 +1506,27 @@ public class Layout extends JFrame {
 	    total = av/students.size();
 	    total = Math.sqrt(total);
 	    return total;
+	}
+
+	public Boolean validTable(JTable grades){
+	    int value =0;
+	    for(int i=3;i<grades.getColumnCount();i++){
+		if(values.get(i-3)==0)
+		    value = R.getHWValue();
+		else if(values.get(i-3)==1)
+		    value = R.getQuizValue();
+		else if(values.get(i-3)==2)
+		    value = R.getLabValue();
+		else if(values.get(i-3)==3)
+		    value = R.getParticipationValue();
+		else if(values.get(i-3)==4)
+		    value = R.getExtraCreditValue();
+		for(int k = 0;k<grades.getRowCount();k++);
+		    //		    if(grades.getModel().getValueAt(k,i)>value||grades.getModel().getValueAt(k,i)<0)
+		    //	return false;
+		    }
+	    return true;
+	    
 	}
 	
     }
