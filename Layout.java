@@ -2,6 +2,7 @@
   Authors: Ben Barriage, Phoebe Nezamis, Frank Sinoradzki
   Date: 11/14/16
   Purpose: Gradebook Functionality with working GUI
+  Known Bugs: Centipede, bess beetle, cricket
  */
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -971,8 +972,9 @@ public class Layout extends JFrame {
 	
 	/*
 	  Purpose: create a standard file to save the gradebook to for each class. This will be done by using the className and classNum to create a standard file name.
-	  This standard file name will be className+ClassNum+.txt and an example would be CISC1600.txt where CISC is the class name and 1600 is the class number.
+	  This standard file name will be className+ClassNum+.txt and an example would be CISC1600grades.txt where CISC is the class name and 1600 is the class number.
 	  Each of these files will be stored within a subdirectory called "Classes".
+	  @precondition: a class has been filled with gradebook values which will not be saved to a standard file 
 	  @post condition: at the end of the function, a .txt file will have been written containing the entire gradebook of the class. This file will have a unique standard name so that other classes do not conflict with it.
 	*/
 	public void createFile ()
@@ -981,13 +983,13 @@ public class Layout extends JFrame {
 		{
 		    String key = this.className + this.classNum;	//used to standardize file format
 		    File mydir = new File("./Classes/"+key);
-		    if(!mydir.exists())
+		    if(!mydir.exists()) //used if file directory has not yet been created 
 			mydir.mkdir();
 		    File file = new File ("./Classes/" + key + "/"+key+"grades.txt");	//accesses file of standard format within a subdirectory
-		    if (!file.exists ())
+		    if (!file.exists ()) //used if file has not yet been created 
 			file.createNewFile ();
 		    
-		    Vector < Vector < Integer >> matrix =new Vector < Vector < Integer >> ();
+		    Vector < Vector < Integer >> matrix =new Vector < Vector < Integer >> (); //temporary 2D vector for storing gradebook values 
 		    matrix = this.gradebook;
 		    FileWriter fw = new FileWriter (file);
 		    BufferedWriter bw = new BufferedWriter (fw);
@@ -995,41 +997,42 @@ public class Layout extends JFrame {
 			{
 			    for (int k = 0; k < (matrix.get (i).size ()); k++)
 				{
-				    bw.write (String.valueOf ((matrix.get (i)).get (k)));
+				    bw.write (String.valueOf ((matrix.get (i)).get (k))); //stores values of the gradebook into strings to be written to the standard file 
 				    bw.write (" ");
 				}
 			    bw.write ("\n");
 			}
 		    bw.close ();
-				  
+		    
 		}
-			  catch (IOException e)
-			      {
-			  }
+	    catch (IOException e)
+		{
+		}
 	}
-	
+
+	/*
+	  Purpose: generate a file for a class based on grades from the JTable, used when saving grades in savegrades button of GUI 
+	  @precondition: values in the JTable were edited and the user pushed the saveGrades button 
+	  @postcondition: values from the JTable have been saved to the standard grade file
+	 */
 	public void createFile(JTable grades) {
-		System.out.println("Saving Grades?");
 		try {
-			String key = this.className + this.classNum;
-			File file = new File ("./Classes/" + key + "/" + key + "grades.txt");
-			if (!file.exists())
-				file.createNewFile();
-			FileWriter fw = new FileWriter(file);
-			BufferedWriter bw = new BufferedWriter(fw);
-			System.out.println("rowCount == "+grades.getRowCount());
-			System.out.println("colCount == "+grades.getColumnCount());
-			for(int i=0; i<grades.getRowCount(); i++) {
-				for(int j=2; j<grades.getColumnCount(); j++) {
-				    if(grades.getModel().getValueAt(i,j)!=null) 
-					bw.write(grades.getModel().getValueAt(i, j) + " ");
-				    else
-					bw.write("0 ");
-					System.out.println(grades.getModel().getValueAt(i, j) + " ");
-				}
-				bw.write("\n");
+		    String key = this.className + this.classNum; //used for standard file load/saving
+		    File file = new File ("./Classes/" + key + "/" + key + "grades.txt");
+		    if (!file.exists()) //used if the file does not yet exist 
+			file.createNewFile();
+		    FileWriter fw = new FileWriter(file);
+		    BufferedWriter bw = new BufferedWriter(fw);
+		    for(int i=0; i<grades.getRowCount(); i++) {  //checks each row/student in order to save grades 
+			for(int j=2; j<grades.getColumnCount(); j++) { //checks each column for ID and grades of each student
+			    if(grades.getModel().getValueAt(i,j)!=null) 
+				bw.write(grades.getModel().getValueAt(i, j) + " ");
+			    else 
+				bw.write("0 "); //replaces null values of cell with 0's 
 			}
-			bw.close();
+			bw.write("\n");
+		    }
+		    bw.close();
 		}
 		catch(IOException e) {
 		}
@@ -1037,52 +1040,53 @@ public class Layout extends JFrame {
 
       /*
 	Purpose: create or modify a standard file containing a vector of integers representing assignment types
-	postcondition: the assignment types for a class have been saved to a standard file 
+	@precondition: an assignment vector of types has been created and filled for a class, now chosen for saving  
+	@postcondition: the assignment types for a class have been saved to a standard file 
        */
       public void createAssignmentsFile(){
 		  try{
-		  String key = this.className+this.classNum;
+		      String key = this.className+this.classNum; //used for standard Assignment file format 
 		  File file = new File("./Classes/"+key+"/"+key+"Assignments.txt");
-		  if(!file.exists())
+		  if(!file.exists()) //used if file has not yet been created 
 			  file.createNewFile();
 		  FileWriter fw = new FileWriter(file);
 		  BufferedWriter bw = new BufferedWriter(fw);
 		  for(int i =0;i<values.size();i++){
-		      bw.write(String.valueOf(values.get(i)));
+		      bw.write(String.valueOf(values.get(i))); //saves Assignment types from values vector of the class 
 		      bw.write("\n");
 		  }
 		  bw.close();
 		  }catch(IOException e){}
-	  }
-      
-      /*
-	Purpose: to return the values of an assignment vector to a gradebook from a standard file 
-	postcondition: values have been returned to represent the assignment types for a class
-       */
-      public void returnAssignmentsFile(){
-	  try{
-	      String key = this.className+this.classNum;
-	      File file = new File("./Classes/"+key+"/"+key+"Assignments.txt");
-	      Vector<Integer>indexes = new Vector<Integer>();
-	      BufferedReader br = new BufferedReader (new FileReader (file));
-              String line;
-              while ((line = br.readLine ()) != null)
-		  {
-		      StringTokenizer st = new StringTokenizer (line); 
-		      while (st.hasMoreTokens ())
-			  {
-			      int value1 = Integer.parseInt (st.nextToken ());
-			      if (!st.hasMoreTokens ())
-				  indexes.addElement(value1);
-			  }
-		  }	      
-	      this.values = indexes;
-	      System.out.println(values);
-	  }catch(IOException e){}
       }
+	
+	/*
+	  Purpose: to return the values of an assignment vector to a gradebook from a standard file 
+	  @precondition: a class has been chosen for loading of integer values into its values (Assignments) vector 
+	  @postcondition: values have been returned to represent the assignment types for a class
+	*/
+	public void returnAssignmentsFile(){
+	    try{
+		String key = this.className+this.classNum; //used for standard file format 
+		File file = new File("./Classes/"+key+"/"+key+"Assignments.txt");
+		Vector<Integer>indexes = new Vector<Integer>(); //temporary vector which will contain the assignment values  
+		BufferedReader br = new BufferedReader (new FileReader (file));
+		String line;
+		while ((line = br.readLine ()) != null)
+		    {
+			StringTokenizer st = new StringTokenizer (line); 
+			while (st.hasMoreTokens ())
+			    {
+				int value1 = Integer.parseInt (st.nextToken ()); //stores strings from file as integers to be stored in indexes vector
+				if (!st.hasMoreTokens ())
+				    indexes.addElement(value1); //pushes assignment value onto the index vector 
+			    }
+		    }	      
+		this.values = indexes; //class' values vector is now equal to the temporary int vector created earlier 
+	    }catch(IOException e){}
+	}
 
       /*
-	Purpose: Used within the GUI for Class creation to check whether the class has an existing file in the standard format. 
+	Purpose: Used within the GUI for Class creation to check whether the class has an existing file in the standard format.
 	@return: if the file exists, the function returns true, otherwise it returns false
       */
       public boolean checkFile(){

@@ -2,3 +2,5 @@
 2 SoftEng
 2000 Eng
 101 Chem
+1600 CIS
+101 Bio
