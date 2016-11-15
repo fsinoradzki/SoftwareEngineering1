@@ -1484,45 +1484,64 @@ public class Layout extends JFrame {
 	  else
 	      System.out.println("The average is valid!");
       }
-	
+
+	/*
+	  Purpose: return overall average for entire class
+	  @precondition: a gradebook has been filled with values
+	  @postcondition: a grade is returned representing overall class average
+	 */
 	public double getClassAverage(){
 	    double average = 0;
 	    double grade = 0;
-	    for(int i =0;i<students.size();i++){
+	    for(int i =0;i<students.size();i++){ //runs through each student and adds their average to toal number of averages
 		grade = getWeightedAverageForStudent(i);
 		average +=grade;
 	    }
-	    return average/students.size();
+	    return average/students.size(); //returns class mean 
 	}
-	
+
+	/*
+	  Purpose: return overall standard deviation for the class
+	  @precondition: a gradebook has been filled with values for a class
+	  @postcondition: a value is returned representing overall class standard deviation 
+	 */
 	public double getClassStdDev(){
 	    double total = 0;
 	    double av = 0;
-	    double mean = getClassAverage();
+	    double mean = getClassAverage(); //overall class average 
 	    for(int i=0;i<students.size();i++)
 		av+=((getWeightedAverageForStudent(i)-mean)*(getWeightedAverageForStudent(i)-mean));
 
 	    total = av/students.size();
 	    total = Math.sqrt(total);
-	    return total;
+	    return total; //returns class standard deviation 
 	}
 
+	/*
+	  Purpose: return highest average among the students 
+	 */
 	public double getClassMax(){
 	    double high = 0;
-	    for(int i=0;i<students.size();i++)
+	    for(int i=0;i<students.size();i++) //runs through each student 
 		if(getWeightedAverageForStudent(i)>high)
-		    high = getWeightedAverageForStudent(i);
+		    high = getWeightedAverageForStudent(i); //if a new highest grade is found, it is declared as the new highest grade 
 	    return high;
 	}
 
+	/*
+	  Purpose: return lowest average among the students 
+	 */
 	public double getClassMin(){
 	    double low = 100;
-	    for(int i =0;i<students.size();i++)
+	    for(int i =0;i<students.size();i++) //runs through each student 
 		if(getWeightedAverageForStudent(i)<low)
-		    low =getWeightedAverageForStudent(i);
+		    low =getWeightedAverageForStudent(i); //if a new lowest grade is found, it is declared as the new lowest grade 
 	    return low;
 	}
 
+	/*
+	  Purpose: check if entered values by user are within a range of 0 to the highest value for that type of assignment 
+	 */
 	public Boolean validTable(JTable grades){
 	    int value =0;
 	    for(int i=3;i<grades.getColumnCount();i++){
@@ -1537,8 +1556,8 @@ public class Layout extends JFrame {
 		else if(values.get(i-3)==4)
 		    value = R.getExtraCreditValue();
 		for(int k = 0;k<grades.getRowCount();k++){
-		    int test = Integer.parseInt(grades.getModel().getValueAt(k,i).toString());
-		    if(test>value ||test<0)
+		    int test = Integer.parseInt(grades.getModel().getValueAt(k,i).toString()); //grabs integer value from the table 
+		    if(test>value ||test<0) //checks whether the value is within the range and returns false if not 
 			return false;
 		}
 	    }
