@@ -585,10 +585,33 @@ public class Layout extends JFrame {
         
         
         //stats panel
-        JPanel statsPanel = new JPanel();
-        statsPanel.setBackground(Color.GREEN);
+        JPanel statsPanel = new JPanel(new BorderLayout());
+        statsPanel.setBackground(Color.WHITE);
         tabbedPane.add(new JScrollPane(statsPanel), "Statistics");
-        
+
+	//calling & declaring all stats values
+	double classAvg = c1.getClassAverage();
+	double classStdDev = c1.getClassStdDev();
+       	DecimalFormat df = new DecimalFormat("#.##");
+	classAvg = Double.valueOf(df.format(classAvg));
+	classStdDev = Double.valueOf(df.format(classStdDev));
+	
+	//creating/formatting the stats panel
+	JPanel statsContent = new JPanel();
+	statsContent.setLayout(new BoxLayout(statsContent, BoxLayout.PAGE_AXIS));
+	statsContent.setBackground(Color.WHITE);
+	statsContent.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), title + " Statistics", TitledBorder.LEFT, TitledBorder.TOP));
+
+	JLabel classAvgLabel = new JLabel("Class Average: " + classAvg);
+	JLabel classStdDevLabel = new JLabel("Class Standard Deviation: " + classStdDev);
+	classAvgLabel.setFont(rubricFont);
+	classStdDevLabel.setFont(rubricFont);
+	
+	statsContent.add(classAvgLabel);
+	statsContent.add(classStdDevLabel);
+
+	statsPanel.add(statsContent, BorderLayout.CENTER);
+  
         getContentPane().add(splitPane, BorderLayout.CENTER);
         setSize(1500, 1000);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
