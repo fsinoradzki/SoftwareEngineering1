@@ -612,11 +612,15 @@ public class Layout extends JFrame {
 	double classStdDev = c1.getClassStdDev();
 	double classHigh = c1.getClassMax();
 	double classLow = c1.getClassMin();
+	double classMode = c1.getMode();
+	double classMedian = c1.getMedian();
        	DecimalFormat df = new DecimalFormat("#.##");
 	classAvg = Double.valueOf(df.format(classAvg));
 	classStdDev = Double.valueOf(df.format(classStdDev));
 	classHigh = Double.valueOf(df.format(classHigh));
 	classLow = Double.valueOf(df.format(classLow));
+	classMode = Double.valueOf(df.format(classMode));
+	classMedian = Double.valueOf(df.format(classMedian));
 	
 	//creating/formatting the stats panel
 	JPanel statsContent = new JPanel();
@@ -628,16 +632,22 @@ public class Layout extends JFrame {
 	JLabel classStdDevLabel = new JLabel("Class Standard Deviation: " + classStdDev);
 	JLabel classHighLabel = new JLabel("Class High: " +classHigh);
 	JLabel classLowLabel = new JLabel("Class Low: " +classLow);
+	JLabel classModeLabel = new JLabel("Class Mode: "+classMode);
+	JLabel classMedianLabel = new JLabel("Class Median: "+classMedian);
 	
 	classAvgLabel.setFont(rubricFont);
 	classStdDevLabel.setFont(rubricFont);
 	classHighLabel.setFont(rubricFont);
 	classLowLabel.setFont(rubricFont);
+	classModeLabel.setFont(rubricFont);
+	classMedianLabel.setFont(rubricFont);
 	
 	statsContent.add(classAvgLabel);
 	statsContent.add(classStdDevLabel);
 	statsContent.add(classHighLabel);
 	statsContent.add(classLowLabel);
+	statsContent.add(classModeLabel);
+	statsContent.add(classMedianLabel);
 
 	statsPanel.add(statsContent, BorderLayout.CENTER);
   
@@ -1653,6 +1663,51 @@ public class Layout extends JFrame {
 		if(getWeightedAverageForStudent(i)>high)
 		    high = getWeightedAverageForStudent(i); //if a new highest grade is found, it is declared as the new highest grade 
 	    return high;
+	}
+
+	/*
+	  Purpose: return the most frequent average among students
+	  @precondition: students have had grades entered for assignments
+	  @postcondition: the most frequently earned average is returned 
+	 */
+	public double getMode(){
+	    double averages[]=new double[students.size()];
+	    for(int i=0;i<students.size();i++) //fills an array with all student averages
+		averages[i]=getWeightedAverageForStudent(i);
+	    
+	    double mode=0;
+	    double maxCount=0;
+	    for(int i=0;i<averages.length;i++){
+		int count = 0;
+		for(int j=0;j<averages.length;j++)
+		    if(averages[j]==averages[i])
+			count++; //counts the number of appearances of each value 
+		if(count>maxCount){ //if a new value is found a greater number of times than another, it is the new maxCount
+		    maxCount = count;
+		    mode = averages[i];
+		}
+	    }
+	    return mode;
+	}
+
+	/*
+	  Purpose: return the middle value of the averages
+	  @precondition: values have been entered for each students' assignments
+	  @postcondition: a middle value has been returned 
+	 */
+	public double getMedian(){
+	    double averages[]=new double[students.size()];
+	    for(int i=0;i<students.size();i++) //fills an array with all student averages
+		averages[i]=getWeightedAverageForStudent(i);
+	    
+	    Arrays.sort(averages);//sorts array
+
+	    int middle = averages.length/2;
+	    if(averages.length%2==1)
+		return averages[middle];
+	    else
+		return (averages[middle-1]+averages[middle])/2.0;
+	    
 	}
 
 	/*
