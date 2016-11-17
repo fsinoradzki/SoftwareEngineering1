@@ -610,9 +610,13 @@ public class Layout extends JFrame {
 	//calling & declaring all stats values
 	double classAvg = c1.getClassAverage();
 	double classStdDev = c1.getClassStdDev();
+	double classHigh = c1.getClassMax();
+	double classLow = c1.getClassMin();
        	DecimalFormat df = new DecimalFormat("#.##");
 	classAvg = Double.valueOf(df.format(classAvg));
 	classStdDev = Double.valueOf(df.format(classStdDev));
+	classHigh = Double.valueOf(df.format(classHigh));
+	classLow = Double.valueOf(df.format(classLow));
 	
 	//creating/formatting the stats panel
 	JPanel statsContent = new JPanel();
@@ -622,11 +626,18 @@ public class Layout extends JFrame {
 
 	JLabel classAvgLabel = new JLabel("Class Average: " + classAvg);
 	JLabel classStdDevLabel = new JLabel("Class Standard Deviation: " + classStdDev);
+	JLabel classHighLabel = new JLabel("Class High: " +classHigh);
+	JLabel classLowLabel = new JLabel("Class Low: " +classLow);
+	
 	classAvgLabel.setFont(rubricFont);
 	classStdDevLabel.setFont(rubricFont);
+	classHighLabel.setFont(rubricFont);
+	classLowLabel.setFont(rubricFont);
 	
 	statsContent.add(classAvgLabel);
 	statsContent.add(classStdDevLabel);
+	statsContent.add(classHighLabel);
+	statsContent.add(classLowLabel);
 
 	statsPanel.add(statsContent, BorderLayout.CENTER);
   
@@ -1633,7 +1644,6 @@ public class Layout extends JFrame {
 	    total = Math.sqrt(total);
 	    return total; //returns class standard deviation 
 	}
-
 	/*
 	  Purpose: return highest average among the students 
 	 */
