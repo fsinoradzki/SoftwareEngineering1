@@ -17,7 +17,11 @@ public class Layout extends JFrame {
     public static class LogIn extends JFrame {
         public LogIn() {
             super("Authentication");
-                        
+
+	    File mydir = new File("./Classes/");
+	    if(!mydir.exists())
+		mydir.mkdir();
+	    
             JButton loginButton = new JButton("Login");
             JPanel loginPanel = new JPanel();
             JPasswordField password = new JPasswordField(15);
@@ -38,51 +42,65 @@ public class Layout extends JFrame {
             loginPanel.getRootPane().setDefaultButton(loginButton);
             
             loginButton.addActionListener((ActionEvent e) -> {
-                String passwordEntered = password.getText();
-                if(passwordEntered.equals(userPassword)) {     
-		    File file = new File("./Classes/ClassList.txt");
-			//if the file is empty, runs new class
-		        if (file.length() <= 1) {
-				System.out.println("Is it empty?");
-				ClassList semester = new ClassList();
-			    	Class c1 = new Class();
-				Vector<Class> temp = new Vector<Class>();
-				semester.list = temp;
-			    	AddClass firstClass = new AddClass(semester, c1);
-			        
-			    	firstClass.setVisible(true);
-			    	firstClass.setLocation(500, 500);
-		            	firstClass.setSize(350, 150);
-		
- 		            	dispose();
-				}
-	                else {
-				
-				ClassList semester = new ClassList();
-				semester.loadClassFile();
-				semester.loadLast();
-	
-				Class currClass = semester.lastEdited;
-				semester.loadTable(currClass);
-				Object[][]data = semester.currClassData;
-				String columns[] = semester.columnNames;
-				
-				JTable table = new JTable(data, columns);
-	
-			    	Layout layout = new Layout(table,semester);
-			    	layout.setVisible(true);
-			    	layout.setSize(1500, 1000);
-			    	layout.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-            	            	dispose();
+		    try{
+			File psswd = new File("Classes/password.txt");
+			if(!psswd.exists()){
+			    psswd.createNewFile();
+			    FileWriter fw = new FileWriter(psswd);
+			    BufferedWriter bw = new BufferedWriter(fw);
+			    bw.write(password.getText());
+			    bw.close();
+			    LogIn entry = new LogIn();
 			}
-		}               
-                else {
-                    JOptionPane.showMessageDialog(null, "Wrong Passwrd");
-                    password.setText("");
-                    password.requestFocus();
-                }
-            });
+			else{
+			    String passwordEntered = password.getText();
+			    Scanner sc = new Scanner(psswd);
+			    if(passwordEntered.equals(sc.nextLine())){     
+				File file = new File("./Classes/ClassList.txt");
+				//if the file is empty, runs new class
+				if (file.length() <= 1) {
+				    System.out.println("Is it empty?");
+				    ClassList semester = new ClassList();
+				    Class c1 = new Class();
+				    Vector<Class> temp = new Vector<Class>();
+				    semester.list = temp;
+				    AddClass firstClass = new AddClass(semester, c1);
+				    
+				    firstClass.setVisible(true);
+				    firstClass.setLocation(500, 500);
+				    firstClass.setSize(350, 150);
+				    
+				    dispose();
+				}
+				else {
+				    
+				    ClassList semester = new ClassList();
+				    semester.loadClassFile();
+				    semester.loadLast();
+				    
+				    Class currClass = semester.lastEdited;
+				    semester.loadTable(currClass);
+				    Object[][]data = semester.currClassData;
+				    String columns[] = semester.columnNames;
+				    
+				    JTable table = new JTable(data, columns);
+				    
+				    Layout layout = new Layout(table,semester);
+				    layout.setVisible(true);
+				    layout.setSize(1500, 1000);
+				    layout.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				    
+				    dispose();
+				}
+			    }               
+			    else {
+				JOptionPane.showMessageDialog(null, "Wrong Passwrd");
+				password.setText("");
+				password.requestFocus();
+			    }
+			}
+		    }catch(IOException err){}
+		});
         }
     }
     
