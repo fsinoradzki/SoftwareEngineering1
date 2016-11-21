@@ -151,6 +151,7 @@ public class Layout extends JFrame {
 		    c3.createStudentsFile();
 		    c3.createRubricFile();
 		    c3.createAssignmentsFile();
+		    c3.createLockFile();
 		    semester.list.addElement(c3);
 		    semester.createClassFile();
 		    //calls the new student pop up once the class has been saved
@@ -1289,9 +1290,9 @@ public class Layout extends JFrame {
 		FileWriter fw = new FileWriter(file);
 		BufferedWriter bw = new BufferedWriter(fw);
 		if(this.locked==false)
-		    bw.write(0);
+		    bw.write("0");
 		else
-		    bw.write(1);
+		    bw.write("1");
 		bw.close();
 	    }catch(IOException e){}
 	}
