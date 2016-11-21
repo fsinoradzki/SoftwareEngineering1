@@ -59,7 +59,6 @@ public class Layout extends JFrame {
 				File file = new File("./Classes/ClassList.txt");
 				//if the file is empty, runs new class
 				if (file.length() <= 1) {
-				    System.out.println("Is it empty?");
 				    ClassList semester = new ClassList();
 				    Class c1 = new Class();
 				    Vector<Class> temp = new Vector<Class>();
@@ -546,13 +545,14 @@ public class Layout extends JFrame {
             finalGradesPopUp.setSize(300,250);
             finalGradesPopUp.setLocation(500,500);
         });
-        
-        gradesButtons.add(saveGradesButton);
-        gradesButtons.add(addAssignmentButton);
-        gradesButtons.add(addStudentButton);
-        gradesButtons.add(finalGradesButton);
-        gradesButtons.setBackground(Color.WHITE);
-        
+
+	if(c1.locked==false){
+	    gradesButtons.add(saveGradesButton);
+	    gradesButtons.add(addAssignmentButton);
+	    gradesButtons.add(addStudentButton);
+	    gradesButtons.add(finalGradesButton);
+	    gradesButtons.setBackground(Color.WHITE);
+        }
         //scroll pane for grades table & table formatting
         JScrollPane gradeScrollPane = new JScrollPane(grades);
         gradeScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), title + " Grades", TitledBorder.LEFT, TitledBorder.TOP));
@@ -610,8 +610,10 @@ public class Layout extends JFrame {
         });
 	
         rubricPanel.add(rubricContent, BorderLayout.CENTER);
-        rubricPanel.add(rubricButtons, BorderLayout.SOUTH);
-        
+	if(c1.locked==false){
+	    rubricPanel.add(rubricButtons, BorderLayout.SOUTH);
+	}
+	
         
         //stats panel
         JPanel statsPanel = new JPanel(new BorderLayout());
@@ -825,6 +827,7 @@ public class Layout extends JFrame {
 	    }catch(IOException e){}
 	}
 	
+	
     }
     
     public static class Student{
@@ -992,7 +995,8 @@ public class Layout extends JFrame {
 	    classNum = number;
 	    this.returnStudentsFile(); //grabs student vector from a file for the class' Student vector
 	    this.returnAssignmentsFile(); //grabs Assignment type vector from a file for the class' Assignments vector
-	    this.returnRubricFile(); //grabs Rubric content from a file for the class' Rubric variable 
+	    this.returnRubricFile(); //grabs Rubric content from a file for the class' Rubric variable
+	    this.returnLockFile();//grabs info on whether class is currently locked
 	    numHWs =0; 
 	    numLabs = 0;
 	    numQuizzes =0;
@@ -1004,7 +1008,6 @@ public class Layout extends JFrame {
 		if(this.values.get(i)==2)
 		    numLabs++;
 	    }
-	    locked = false; //ensures the class can currently be edited 
 	    try
 		{
 		    String key = this.className+this.classNum; //used name and number to load from directoy and files for class 
@@ -1271,8 +1274,59 @@ public class Layout extends JFrame {
 		this.values = indexes; //class' values vector is now equal to the temporary int vector created earlier 
 	    }catch(IOException e){}
 	}
-	  
-	  //Prints the whole gradebook
+
+	/*
+	  Purpose: create a file containing information on whether the class is locked 
+	  @precondition: a class has been created which is initialized to either locked or unlocked
+	  @postcondition: a file has been saved containing information on whether the class is locked 
+	 */
+	public void createLockFile(){
+	    try{
+		String key = this.className+this.classNum; //used to ensure standard file system based on className and classNum 
+		File file = new File("./Classes/"+key+"/"+key+"Lock.txt");
+		if(!file.exists()) //used when the file has never been created before 
+		    file.createNewFile();
+		FileWriter fw = new FileWriter(file);
+		BufferedWriter bw = new BufferedWriter(fw);
+		if(this.locked==false)
+		    bw.write(0);
+		else
+		    bw.write(1);
+		bw.close();
+	    }catch(IOException e){}
+	}
+
+	/*
+	  Purpose: return whether a class has been locked or not
+	  @precondition: a file has been created containing information on whether the class is locked or not
+	  @postcondition: a value has been returned determining whether or not the class is locked 
+	 */
+	public void returnLockFile(){
+	    try{
+		String key = this.className+this.classNum; //used for standard file format 
+		File file = new File("./Classes/"+key+"/"+key+"Lock.txt");
+		BufferedReader br = new BufferedReader (new FileReader (file));
+		String line;
+		int test = 2;
+		while ((line = br.readLine ()) != null)
+		    {
+			
+			StringTokenizer st = new StringTokenizer (line); 
+			while (st.hasMoreTokens ())
+			    {
+				test  = Integer.parseInt(st.nextToken());
+			    }
+		    }
+		if(test==0)
+		    this.locked=false;
+		else
+		    this.locked=true;
+	    }catch(IOException e){}
+	}
+
+
+	
+	//Prints the whole gradebook
 	  public void printGradebook ()
 		  {
 			  System.out.println (gradebook);
