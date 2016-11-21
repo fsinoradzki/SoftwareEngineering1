@@ -442,7 +442,6 @@ public class Layout extends JFrame {
 	navButtonPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         JButton addNewClassButton = new JButton("Add New Class");
 	addNewClassButton.setBackground(new Color(141, 232, 156));
-	addNewClassButton.setOpaque(true);
 	addNewClassButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         addNewClassButton.addActionListener((ActionEvent e) -> {
 	    AddClass addClassPopUp = new AddClass(semester, c1);
@@ -460,12 +459,21 @@ public class Layout extends JFrame {
 	    int number =semester.list.get(i).classNum;
 	    String name =semester.list.get(i).className;
 	    String key = name+number;
-	    JButton ClassButton = new JButton(key);
-	    ClassButton.setBackground(new Color(166, 221, 237));
+	    JButton ClassButton = new JButton(key);          
+	    System.out.println("This is the current class: " + title);
+	    System.out.println("This is the JButton Key: " + key); 
+	    if(title.equals(key)) {
+		System.out.println("Entering the IF statment...");
+		ClassButton.setBackground(new Color(229, 249, 255));
+	    }
+	    else {	   
+	    	ClassButton.setBackground(new Color(166, 221, 237));
+	    }
 	    ClassButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 	    navButtonPanel.add(ClassButton);
 	    navButtonPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-	    ClassButton.addActionListener((ActionEvent e) -> {
+	    if(!title.equals(key)) {
+	    	ClassButton.addActionListener((ActionEvent e) -> {
 		    Class last = new Class(name, number);
 		    semester.lastEdited = last;
 		    semester.saveLast();
@@ -477,9 +485,10 @@ public class Layout extends JFrame {
 		    test.setVisible(true);
                     test.setSize(1500, 1000);
                     test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		    
+		 		
 		    dispose();
 		});
+	    }
 	}
         
         //grades panel
@@ -1617,11 +1626,11 @@ public class Layout extends JFrame {
 		}
       //Checks to see if the grade is valid
       public void isGradeValid(double av){
-	  if (av > 100 || av < 0)
+/*	  if (av > 100 || av < 0)
 	      System.out.println("The average is invalid");
 	  else
 	      System.out.println("The average is valid!");
-      }
+*/      }
 
 	/*
 	  Purpose: return overall average for entire class
