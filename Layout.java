@@ -422,6 +422,7 @@ public class Layout extends JFrame {
 
         //panels for the split frame
         JPanel navPanel = new JPanel(new BorderLayout());
+  	Dimension navButtonSize = new Dimension(200, 25);
         
         //creating the tabbedpane
         JTabbedPane tabbedPane = new JTabbedPane();  
@@ -441,6 +442,7 @@ public class Layout extends JFrame {
 	navButtonPanel.setLayout(new BoxLayout(navButtonPanel, BoxLayout.PAGE_AXIS));
 	navButtonPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         JButton addNewClassButton = new JButton("Add New Class");
+	addNewClassButton.setMaximumSize(navButtonSize);
 	addNewClassButton.setBackground(new Color(141, 232, 156));
 	addNewClassButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         addNewClassButton.addActionListener((ActionEvent e) -> {
@@ -460,10 +462,8 @@ public class Layout extends JFrame {
 	    String name =semester.list.get(i).className;
 	    String key = name+number;
 	    JButton ClassButton = new JButton(key);          
-	    System.out.println("This is the current class: " + title);
-	    System.out.println("This is the JButton Key: " + key); 
+	    ClassButton.setMaximumSize(navButtonSize);
 	    if(title.equals(key)) {
-		System.out.println("Entering the IF statment...");
 		ClassButton.setBackground(new Color(229, 249, 255));
 	    }
 	    else {	   
