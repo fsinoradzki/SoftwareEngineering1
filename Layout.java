@@ -455,7 +455,9 @@ public class Layout extends JFrame {
 	navButtonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 	        
         navPanel.add(navTitle, BorderLayout.NORTH);
-        navPanel.add(navButtonPanel, BorderLayout.CENTER);
+	JScrollPane navScrollPane = new JScrollPane(navButtonPanel);
+	navScrollPane.setBorder(BorderFactory.createEmptyBorder());
+        navPanel.add(navScrollPane, BorderLayout.CENTER);
         navPanel.setBackground(Color.WHITE);
 	for(int i =0;i<semester.list.size();i++){
 	    int number =semester.list.get(i).classNum;
