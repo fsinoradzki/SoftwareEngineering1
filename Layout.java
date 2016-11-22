@@ -823,12 +823,13 @@ public class Layout extends JFrame {
         tabbedPane.add(new JScrollPane(statsPanel), "Statistics");
 
 	//calling & declaring all stats values
-	double classAvg = c1.getClassAverage();
-	double classStdDev = c1.getClassStdDev();
-	double classHigh = c1.getClassMax();
-	double classLow = c1.getClassMin();
-	double classMode = c1.getMode();
-	double classMedian = c1.getMedian();
+	Class test = new Class(c1.className, c1.classNum);
+	double classAvg = test.getClassAverage();
+	double classStdDev = test.getClassStdDev();
+	double classHigh = test.getClassMax();
+	double classLow = test.getClassMin();
+	double classMode = test.getMode();
+	double classMedian = test.getMedian();
        	DecimalFormat df = new DecimalFormat("#.##");
 	classAvg = Double.valueOf(df.format(classAvg));
 	classStdDev = Double.valueOf(df.format(classStdDev));
