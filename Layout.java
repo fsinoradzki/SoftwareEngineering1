@@ -730,6 +730,14 @@ public class Layout extends JFrame {
 	//lock class button
 	JButton lockClassButton = new JButton("Lock Class");
 	JButton unlockClassButton = new JButton("Unlock Class");
+
+	gradesButtons.add(saveGradesButton);
+	gradesButtons.add(addAssignmentButton);
+	gradesButtons.add(addStudentButton);
+        gradesButtons.add(finalGradesButton);
+	gradesButtons.add(lockClassButton);
+	gradesButtons.add(unlockClassButton);
+	
 	lockClassButton.setBackground(gradesButtonColor);
 	lockClassButton.addActionListener((ActionEvent e) -> {
      	    if (JOptionPane.showConfirmDialog(null, "Are you sure you want to lock this class?", "Lock Confirmation", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {	
@@ -760,15 +768,13 @@ public class Layout extends JFrame {
 	    });
 
 	if(c1.locked==false){
-	    gradesButtons.add(saveGradesButton);
-	    gradesButtons.add(addAssignmentButton);
-	    gradesButtons.add(addStudentButton);
-	    gradesButtons.add(finalGradesButton);
-	    gradesButtons.add(lockClassButton);
+	    unlockClassButton.setVisible(false);
         }
 	else{
-	    gradesButtons.add(finalGradesButton);
-	    gradesButtons.add(unlockClassButton);
+	    saveGradesButton.setVisible(false);
+	    addAssignmentButton.setVisible(false);
+	    addStudentButton.setVisible(false);
+	    lockClassButton.setVisible(false);
 	}
 	gradesButtons.setBackground(Color.WHITE);
 
