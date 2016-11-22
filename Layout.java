@@ -34,14 +34,14 @@ public class Layout extends JFrame {
             getContentPane().add(loginPanel);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setVisible(true);    
-            setSize(300, 200);
+            setSize(300, 100);
             setLocation(500, 280);
             
 	    String userPassword = "12345";
 	    
             loginPanel.getRootPane().setDefaultButton(loginButton);
             
-            loginButton.addActionListener((ActionEvent e) -> {
+            loginButton.addActionListener((ActionEvent e) -> { 
 		    try{
 			File psswd = new File("Classes/password.txt");
 			if(!psswd.exists()){
@@ -63,7 +63,7 @@ public class Layout extends JFrame {
 				    Class c1 = new Class();
 				    Vector<Class> temp = new Vector<Class>();
 				    semester.list = temp;
-				    AddClass firstClass = new AddClass(semester, c1);
+				    AddFirstClass firstClass = new AddFirstClass(semester, c1);
 				    
 				    firstClass.setVisible(true);
 				    firstClass.setLocation(500, 500);
@@ -104,7 +104,7 @@ public class Layout extends JFrame {
     }
     
     public static class AddClass extends JFrame {
-        public AddClass(ClassList semester, Class c1) {
+        public AddClass(ClassList semester, Class c1, Layout currLayout) {
             super("Add Class");
 	   
 	    JPanel addClass = new JPanel();
@@ -156,7 +156,74 @@ public class Layout extends JFrame {
 		    semester.createClassFile();
 		    //calls the new student pop up once the class has been saved
 		    semester.lastEdited = c3;
-		    AddStudent studentPopUp = new AddStudent(semester);
+		    AddStudent studentPopUp = new AddStudent(semester, currLayout);
+		    studentPopUp.setVisible(true);
+		    studentPopUp.setLocation(500, 500);
+		    studentPopUp.setSize(350, 150);
+
+		    		    
+                    dispose(); //this just shuts the window once everything is done
+		}
+            });
+            
+            getContentPane().add(addClass);
+        }    
+    }
+
+    public static class AddFirstClass extends JFrame {
+        public AddFirstClass(ClassList semester, Class c1) {
+            super("Add Class");
+	   
+	    JPanel addClass = new JPanel();
+            addClass.setLayout(new BorderLayout());
+            
+            //all the elements
+            JButton save = new JButton("Continue");
+	    Color addClassColor = new Color(65,169,181);
+	    save.setBackground(addClassColor);
+            JLabel label1 = new JLabel("Class Name:", SwingConstants.CENTER);
+            JTextField className = new JTextField("", 15);
+            JLabel label2 = new JLabel("Class Number:", SwingConstants.CENTER);
+            JTextField classNum = new JTextField("", 15);
+            
+            JPanel inputPanel = new JPanel();
+            inputPanel.setLayout(new GridLayout(0, 2, 10, 10));
+            JPanel savePanel = new JPanel();
+            
+            inputPanel.add(label1);
+            inputPanel.add(className);
+            inputPanel.add(label2);
+            inputPanel.add(classNum);
+            
+            savePanel.add(save);
+            
+            addClass.add(inputPanel, BorderLayout.CENTER);
+            addClass.add(savePanel, BorderLayout.SOUTH);
+            
+            save.addActionListener((ActionEvent e) -> {
+		if(className.getText().trim().equals("") ||  classNum.getText().trim().equals("")) {
+		    JOptionPane.showMessageDialog(null, "Data Not Entered");   
+		}
+		else if(!classNum.getText().matches("[0-9]+")) {
+		    JOptionPane.showMessageDialog(null, "Invalid Class Number");
+		    classNum.requestFocus();
+		}
+		else {
+		    String name = className.getText();
+		    int number = Integer.valueOf(classNum.getText());
+		    Class c3 = new Class();
+		    c3.className= name;
+		    c3.classNum = number;
+		    c3.createFile();
+		    c3.createStudentsFile();
+		    c3.createRubricFile();
+		    c3.createAssignmentsFile();
+		    c3.createLockFile();
+		    semester.list.addElement(c3);
+		    semester.createClassFile();
+		    //calls the new student pop up once the class has been saved
+		    semester.lastEdited = c3;
+		    AddFirstStudent studentPopUp = new AddFirstStudent(semester);
 		    studentPopUp.setVisible(true);
 		    studentPopUp.setLocation(500, 500);
 		    studentPopUp.setSize(350, 150);
@@ -169,8 +236,9 @@ public class Layout extends JFrame {
         }    
     }
     
+    
     public static class AddAssignment extends JFrame {
-        public AddAssignment(ClassList semester) { //this will need to call variables needed for assignment
+        public AddAssignment(ClassList semester, Layout currLayout) { //this will need to call variables needed for assignment
             super("New Assignment");
 	   
             JPanel addAssignment = new JPanel();
@@ -205,10 +273,12 @@ public class Layout extends JFrame {
 		    Object[][]data = semester.currClassData;
 		    String columns[] = semester.columnNames;
 		    JTable table = new JTable(data, columns);
-		    Layout test = new Layout(table, semester);
-		    test.setVisible(true);
-		    test.setSize(1500, 1000);
-		    test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		    Layout update = new Layout(table, semester);
+		    update.setVisible(true);
+		    update.setSize(1500, 1000);
+		    update.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		    currLayout.dispose();
                	    dispose(); //this just shuts the window once everything is done
 		    
            });
@@ -220,7 +290,105 @@ public class Layout extends JFrame {
     }
     
     public static class AddStudent extends JFrame {
-        public AddStudent(ClassList semester) { //this will need to call variables needed for student
+        public AddStudent(ClassList semester, Layout currLayout) { //this will need to call variables needed for student
+            super("New Student");
+	    
+            JPanel addStudent = new JPanel();
+            addStudent.setLayout(new BorderLayout());
+            
+            //all the elements
+            JButton save = new JButton("Save");
+            JButton savePlus = new JButton("Save & Add Another");
+	    Color addStudentColor = new Color(65,169,181);
+	    save.setBackground(addStudentColor);
+	    savePlus.setBackground(addStudentColor);
+            JLabel label1 = new JLabel("First Name:");
+            JTextField firstName = new JTextField("", 25);
+            JLabel label2 = new JLabel("Last Name:");
+            JTextField lastName = new JTextField("", 25);
+	    JLabel label3 = new JLabel("Student ID:");
+	    JTextField studentID = new JTextField("", 10);
+
+            JPanel inputPanel = new JPanel();
+            inputPanel.setLayout(new GridLayout(0, 2, 10, 10));
+            JPanel savePanel = new JPanel();
+            
+            inputPanel.add(label1);
+            inputPanel.add(firstName);
+	    inputPanel.add(label2);
+	    inputPanel.add(lastName);
+            inputPanel.add(label3);
+            inputPanel.add(studentID);
+            
+            savePanel.add(save, SwingConstants.CENTER);
+            savePanel.add(savePlus);
+            
+            addStudent.add(inputPanel, BorderLayout.CENTER);
+            addStudent.add(savePanel, BorderLayout.SOUTH);
+
+	    
+            save.addActionListener((ActionEvent e) -> {
+		    if(studentID.getText().trim().equals("") || firstName.getText().trim().equals("") || lastName.getText().trim().equals("")) {
+			JOptionPane.showMessageDialog(null, "Data Not Entered");
+		    }
+		    else if (!studentID.getText().matches("[0-9]+")) {
+			JOptionPane.showMessageDialog(null, "Invalid Student ID");
+			studentID.requestFocus();
+		    }
+		    else {
+		    	Student test = new Student("Test","McTesterson",000);
+		    	test.fName = firstName.getText();
+			test.lName = lastName.getText();
+		   	test.student_id = Integer.valueOf(studentID.getText());
+		    	semester.lastEdited.addStudent(test);
+		    	semester.lastEdited.createStudentsFile();
+		    	semester.lastEdited.createFile();
+			semester.saveLast();
+			semester.loadTable(semester.lastEdited);
+			Object[][]data = semester.currClassData;
+			String columns[] = semester.columnNames;
+			JTable table = new JTable(data, columns);
+			Layout update = new Layout(table, semester);
+			update.setVisible(true);
+			update.setSize(1500, 1000);
+			update.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+			currLayout.dispose();
+			dispose(); 
+		    }
+            });
+            
+            savePlus.addActionListener((ActionEvent e) -> {
+		    if(studentID.getText().trim().equals("") || firstName.getText().trim().equals("") || lastName.getText().trim().equals("")) {
+			JOptionPane.showMessageDialog(null, "Data Not Entered");
+		    }
+		    else if(!studentID.getText().matches("[0-9]+")) {
+		    	JOptionPane.showMessageDialog(null, "Invalid Student ID");
+			studentID.requestFocus();
+		    }
+		    else {
+		    	Student test = new Student("Testy","McTesterson",000);
+		    	test.fName = firstName.getText();
+			test.lName = lastName.getText();
+		    	test.student_id = Integer.valueOf(studentID.getText());
+		    	semester.lastEdited.addStudent(test);
+		    	semester.lastEdited.createStudentsFile();
+			semester.lastEdited.createFile();
+		    	AddStudent studentPopUp = new AddStudent(semester, currLayout);
+		  	studentPopUp.setVisible(true);
+		    	studentPopUp.setLocation(500, 500);
+		    	studentPopUp.setSize(350, 150);
+
+		    	dispose();
+		    }
+            });            
+                     
+            getContentPane().add(addStudent); 
+        }
+    }
+
+    public static class AddFirstStudent extends JFrame {
+        public AddFirstStudent(ClassList semester) { //this will need to call variables needed for student
             super("New Student");
 	    
             JPanel addStudent = new JPanel();
@@ -302,7 +470,7 @@ public class Layout extends JFrame {
 		    	semester.lastEdited.addStudent(test);
 		    	semester.lastEdited.createStudentsFile();
 			semester.lastEdited.createFile();
-		    	AddStudent studentPopUp = new AddStudent(semester);
+		    	AddFirstStudent studentPopUp = new AddFirstStudent(semester);
 		  	studentPopUp.setVisible(true);
 		    	studentPopUp.setLocation(500, 500);
 		    	studentPopUp.setSize(350, 150);
@@ -352,7 +520,7 @@ public class Layout extends JFrame {
     }
     
     public class EditRubric extends JFrame {
-        public EditRubric(Class c1) { //will need to call variables needed for rubric
+        public EditRubric(Class c1, ClassList semester, JTable table, Layout currLayout) { //will need to call variables needed for rubric
             super("Edit Rubric");
 	    
 	    String HWValue = Integer.toString(c1.R.getHWValue());
@@ -400,8 +568,14 @@ public class Layout extends JFrame {
 		    int extraC = Integer.valueOf(ExC.getText());
 		    c1.R.editRubricValues(HW, QZ, LAB, participation, extraC);
 		    c1.createRubricFile();
+		   
+		    Layout update = new Layout(table, semester);
+		    update.setVisible(true);
+		    update.setSize(1500, 1000);
+		    update.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 
-                dispose();
+		    currLayout.dispose();
+              	    dispose();
             });
             
             savePanel.add(save);
@@ -446,10 +620,10 @@ public class Layout extends JFrame {
 	addNewClassButton.setBackground(new Color(141, 232, 156));
 	addNewClassButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         addNewClassButton.addActionListener((ActionEvent e) -> {
-	    AddClass addClassPopUp = new AddClass(semester, c1);
+	    AddClass addClassPopUp = new AddClass(semester, c1, this);
             addClassPopUp.setVisible(true);
             addClassPopUp.setLocation(500, 500);
-            addClassPopUp.setSize(350, 150);
+            addClassPopUp.setSize(350, 100);
         });
         navButtonPanel.add(addNewClassButton);
 	navButtonPanel.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -483,10 +657,10 @@ public class Layout extends JFrame {
 		    Object[][]data = semester.currClassData;
 		    String columns[] = semester.columnNames;
 		    JTable table = new JTable(data, columns);
-		    Layout test = new Layout(table, semester);
-		    test.setVisible(true);
-                    test.setSize(1500, 1000);
-                    test.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		    Layout update = new Layout(table, semester);
+		    update.setVisible(true);
+                    update.setSize(1500, 1000);
+                    update.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		 		
 		    dispose();
 		});
@@ -509,6 +683,11 @@ public class Layout extends JFrame {
 		if(c1.validTable(grades)==true){
 		    c1.createFile(grades);   
 		    JOptionPane.showMessageDialog(null, "Grades Saved");
+		    Layout update = new Layout(grades, semester);
+		    update.setVisible(true);
+		    update.setSize(1500, 1000);
+		    update.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		    dispose();
 		}
 		else
 		    JOptionPane.showMessageDialog(null, "Invalid Grades");
@@ -518,10 +697,10 @@ public class Layout extends JFrame {
         JButton addAssignmentButton = new JButton ("Add Assignment");
 	addAssignmentButton.setBackground(gradesButtonColor);
         addAssignmentButton.addActionListener((ActionEvent e) -> {
-            AddAssignment assignmentPopUp = new AddAssignment(semester);
+            AddAssignment assignmentPopUp = new AddAssignment(semester, this);
             assignmentPopUp.setVisible(true);
             assignmentPopUp.setLocation(500, 500);
-            assignmentPopUp.setSize(350, 110);
+            assignmentPopUp.setSize(350, 65);
 	    
 	    //dispose();
         });
@@ -530,7 +709,7 @@ public class Layout extends JFrame {
         JButton addStudentButton = new JButton ("Add Student");
 	addStudentButton.setBackground(gradesButtonColor);
         addStudentButton.addActionListener((ActionEvent e) -> {
-            AddStudent studentPopUp = new AddStudent(semester);
+            AddStudent studentPopUp = new AddStudent(semester, this);
             studentPopUp.setVisible(true);
             studentPopUp.setLocation(500, 500);
             studentPopUp.setSize(350, 150);
@@ -543,7 +722,7 @@ public class Layout extends JFrame {
         finalGradesButton.addActionListener((ActionEvent e) -> {
             FinalGrades finalGradesPopUp = new FinalGrades(c1);
             finalGradesPopUp.setVisible(true);
-            finalGradesPopUp.setSize(300,250);
+            finalGradesPopUp.setSize(350,250);
             finalGradesPopUp.setLocation(500,500);
         });
 	
@@ -622,7 +801,7 @@ public class Layout extends JFrame {
 	editRubricButton.setBackground(gradesButtonColor);
         rubricButtons.add(editRubricButton, SwingConstants.CENTER);
         editRubricButton.addActionListener((ActionEvent e) -> {
-            EditRubric editRubricPopUp = new EditRubric(c1);
+            EditRubric editRubricPopUp = new EditRubric(c1, semester, grades, this);
             
             editRubricPopUp.setVisible(true);
             editRubricPopUp.setSize(310, 250);
