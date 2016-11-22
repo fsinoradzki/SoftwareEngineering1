@@ -546,14 +546,33 @@ public class Layout extends JFrame {
             finalGradesPopUp.setSize(300,250);
             finalGradesPopUp.setLocation(500,500);
         });
+	
+	//lock class button
+	JButton lockClassButton = new JButton("Lock Class");
+	lockClassButton.setBackground(gradesButtonColor);
+	lockClassButton.addActionListener((ActionEvent e) -> {
+     	    c1.locked = true;
+	    c1.createLockFile();
+
+	    saveGradesButton.setVisible(false);
+	    addAssignmentButton.setVisible(false);
+	    addStudentButton.setVisible(false);
+	    lockClassButton.setVisible(false);
+			    
+   	});
 
 	if(c1.locked==false){
 	    gradesButtons.add(saveGradesButton);
 	    gradesButtons.add(addAssignmentButton);
 	    gradesButtons.add(addStudentButton);
 	    gradesButtons.add(finalGradesButton);
-	    gradesButtons.setBackground(Color.WHITE);
+	    gradesButtons.add(lockClassButton);
         }
+	else
+	    gradesButtons.add(finalGradesButton);
+
+	gradesButtons.setBackground(Color.WHITE);
+
         //scroll pane for grades table & table formatting
         JScrollPane gradeScrollPane = new JScrollPane(grades);
         gradeScrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), title + " Grades", TitledBorder.LEFT, TitledBorder.TOP));
