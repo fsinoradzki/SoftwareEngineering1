@@ -2,7 +2,7 @@
   Authors: Ben Barriage, Phoebe Nezamis, Frank Sinoradzki
   Date: 11/14/16
   Purpose: Gradebook Functionality with working GUI
-  Known Bugs: Centipede, bess beetle, cricket
+  Known Bugs: Centipede, bess beetle, cricket, SPIDER!!!! Oh wait, spiders aren't bugs. My bad...
  */
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -720,11 +720,12 @@ public class Layout extends JFrame {
         JButton finalGradesButton = new JButton ("Compute Final Grades");
 	finalGradesButton.setBackground(gradesButtonColor);
         finalGradesButton.addActionListener((ActionEvent e) -> {
-            FinalGrades finalGradesPopUp = new FinalGrades(c1);
-            finalGradesPopUp.setVisible(true);
-            finalGradesPopUp.setSize(350,250);
-            finalGradesPopUp.setLocation(500,500);
-        });
+		Class test = new Class(c1.className, c1.classNum);
+		FinalGrades finalGradesPopUp = new FinalGrades(test);
+		finalGradesPopUp.setVisible(true);
+		finalGradesPopUp.setSize(350,250);
+		finalGradesPopUp.setLocation(500,500);
+	    });
 	
 	//lock class button
 	JButton lockClassButton = new JButton("Lock Class");
