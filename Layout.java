@@ -67,7 +67,7 @@ public class Layout extends JFrame {
 				    
 				    firstClass.setVisible(true);
 				    firstClass.setLocation(500, 500);
-				    firstClass.setSize(350, 150);
+				    firstClass.setSize(350, 100);
 				    
 				    dispose();
 				}
