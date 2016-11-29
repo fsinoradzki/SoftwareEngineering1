@@ -650,19 +650,21 @@ public class Layout extends JFrame {
 	    navButtonPanel.add(Box.createRigidArea(new Dimension(0, 5)));
 	    if(!title.equals(key)) {
 	    	ClassButton.addActionListener((ActionEvent e) -> {
-		    Class last = new Class(name, number);
-		    semester.lastEdited = last;
-		    semester.saveLast();
-		    semester.loadTable(last);
-		    Object[][]data = semester.currClassData;
-		    String columns[] = semester.columnNames;
-		    JTable table = new JTable(data, columns);
-		    Layout update = new Layout(table, semester);
-		    update.setVisible(true);
-                    update.setSize(1500, 1000);
-                    update.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		 		
-		    dispose();
+			if(semester.lastEdited.validTable(grades)==true)
+			    semester.lastEdited.createFile(grades);
+			Class last = new Class(name, number);
+			semester.lastEdited = last;
+			semester.saveLast();
+			semester.loadTable(last);
+			Object[][]data = semester.currClassData;
+			String columns[] = semester.columnNames;
+			JTable table = new JTable(data, columns);
+			Layout update = new Layout(table, semester);
+			update.setVisible(true);
+			update.setSize(1500, 1000);
+			update.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			
+			dispose();
 		});
 	    }
 	}
